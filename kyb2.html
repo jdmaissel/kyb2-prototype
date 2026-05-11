@@ -1,0 +1,3782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYB - Business Financing Application</title>
+    <style>
+        /* System-installed Barclays Effra fonts */
+
+        /* Fixed mobile width container */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f6f6f6;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 375px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #f6f6f6;
+            align-items: center;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 16px;
+            background: #000000;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            height: 24px;
+            flex-shrink: 0;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            width: 100%;
+            max-width: 375px;
+            box-sizing: border-box;
+        }
+
+        .status-time {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #f6f6f6;
+            border-bottom: 1px solid #e2e2e2;
+            font-size: 14px;
+            color: #515151;
+            flex-shrink: 0;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            width: 100%;
+            max-width: 375px;
+            box-sizing: border-box;
+        }
+
+        .search-icon {
+            font-size: 16px;
+        }
+
+        .search-text {
+            flex: 1;
+            color: #006de3;
+            font-weight: 500;
+        }
+
+        .refresh-icon {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e2e2;
+            flex-shrink: 0;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            width: 100%;
+            max-width: 375px;
+            box-sizing: border-box;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-back {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .barclays-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f6f6f6;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #272727;
+            letter-spacing: 0.5px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .lock-icon {
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .secure-text {
+            letter-spacing: 0.5px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Step Tracker Section */
+        .step-tracker-section {
+            padding: 16px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e2e2;
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 375px;
+            box-sizing: border-box;
+        }
+
+        .screen-title {
+            font-size: 32px;
+            font-weight: 500;
+            color: #272727;
+            margin-bottom: 16px;
+            line-height: 38px;
+            letter-spacing: -0.64px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .progress-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-bar-container {
+            position: relative;
+            height: 6px;
+            background: #e2e2e2;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-background {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background: #e2e2e2;
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            height: 100%;
+            background: #006de3;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            gap: 4px;
+            font-size: 14px;
+            color: #515151;
+            font-weight: 500;
+            line-height: 18px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .screen h2 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 24px;
+            letter-spacing: -0.2px;
+        }
+
+        /* Question Group */
+        .question-group {
+            margin-bottom: 24px;
+            padding-bottom: 0;
+        }
+
+        .question-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #272727;
+            margin-bottom: 4px;
+            display: block;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            letter-spacing: 0;
+        }
+
+        .hint-text {
+            font-size: 14px;
+            color: #515151;
+            margin-bottom: 12px;
+            font-style: normal;
+            font-weight: 400;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .radio-group.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid #8e8e8e;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            border-color: #006de3;
+            background: #ffffff;
+        }
+
+        .radio-option input[type="radio"] {
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 14px;
+            accent-color: #006de3;
+            margin-top: 3px;
+        }
+
+        .radio-option:has(input[type="radio"]:checked) {
+            border-color: #006de3;
+            background: #ffffff;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            padding-top: 3px;
+            flex: 1;
+        }
+
+        /* Input Fields */
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 12px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            margin-top: 8px;
+            transition: border-color 0.2s;
+            color: #272727;
+            line-height: 22px;
+            box-sizing: border-box;
+            letter-spacing: 0;
+        }
+
+        .address-field input[type="text"] {
+            height: 48px;
+            border: 2px solid #8e8e8e;
+            margin-top: 12px;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        .address-field {
+            margin-bottom: 24px;
+        }
+
+        .address-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .address-field .question-label {
+            margin-bottom: 0;
+            display: block;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        select {
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+        }
+
+        select option {
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #272727;
+        }
+
+        /* Custom Select Dropdown */
+        .custom-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: 12px 12px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            background: #ffffff;
+            color: #272727;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            letter-spacing: 0;
+        }
+
+        .custom-select-trigger:hover {
+            border-color: #006de3;
+        }
+
+        .custom-select-trigger:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        .custom-select-placeholder {
+            flex: 1;
+            text-align: left;
+        }
+
+        .custom-select-arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .custom-select-arrow svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .custom-select-trigger.active .custom-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #8e8e8e;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-select-dropdown.open {
+            display: block;
+        }
+
+        .custom-select-option {
+            padding: 12px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            color: #272727;
+            line-height: 22px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .custom-select-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-select-option:hover {
+            background: #f6f6f6;
+        }
+
+        .custom-select-option.selected {
+            background: #e8f1ff;
+            color: #006de3;
+            font-weight: 500;
+        }
+
+        /* Custom Multi-select Dropdown */
+        .multi-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .multi-select-trigger {
+            width: 100%;
+            padding: 12px 12px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            margin-top: 8px;
+            background: #ffffff;
+            color: #272727;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            line-height: 22px;
+            text-align: left;
+            transition: border-color 0.2s;
+        }
+
+        .multi-select-trigger:hover {
+            border-color: #006de3;
+        }
+
+        .multi-select-trigger:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        .multi-select-placeholder {
+            flex: 1;
+        }
+
+        .multi-select-arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .multi-select-arrow svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .multi-select-trigger.active .multi-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #8e8e8e;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            display: none;
+            overflow: hidden;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .multi-select-dropdown.open {
+            display: block;
+        }
+
+        .multi-select-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .multi-select-option:last-child {
+            border-bottom: none;
+        }
+
+        .multi-select-option:hover {
+            background: #f6f6f6;
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            accent-color: #006de3;
+            margin: 0;
+        }
+
+        .multi-select-option label {
+            flex: 1;
+            font-size: 16px;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .multi-select-search {
+            padding: 12px;
+            border-bottom: 1px solid #e2e2e2;
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            z-index: 10;
+        }
+
+        .multi-select-search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .multi-select-search-input {
+            width: 100%;
+            padding: 8px 12px;
+            padding-right: 36px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .multi-select-search-input:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        .multi-select-search-clear {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #515151;
+            transition: opacity 0.2s;
+        }
+
+        .multi-select-search-clear:hover {
+            opacity: 0.7;
+        }
+
+        .multi-select-search-clear svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .multi-select-options-list {
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .multi-select-option.hidden {
+            display: none;
+        }
+
+        .multi-select-option.no-results {
+            padding: 16px 12px;
+            text-align: center;
+            color: #515151;
+            background: #f6f6f6;
+            cursor: default;
+            border-bottom: none;
+        }
+
+        .multi-select-option.no-results:hover {
+            background: #f6f6f6;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Character Counter */
+        .textarea-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .char-counter {
+            font-size: 14px;
+            color: #515151;
+            text-align: right;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .char-counter.over-limit {
+            color: #d32f2f;
+            font-weight: 400;
+        }
+
+        /* Progressive Disclosure */
+        .follow-up-group {
+            display: none;
+            padding: 16px 0 0 0;
+            background: #f6f6f6;
+            margin-top: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .follow-up-group.visible {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Multi-select */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 2px solid #8e8e8e;
+            background: #ffffff;
+        }
+
+        .checkbox-option:hover {
+            border-color: #006de3;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            accent-color: #006de3;
+            margin-top: 3px;
+        }
+
+        .checkbox-option label {
+            font-size: 16px;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+        }
+
+        /* List View for selected items */
+        .selected-items-list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Country table header */
+        .country-table-header {
+            display: flex;
+            background: #f6f6f6;
+            border: 1px solid #e2e2e2;
+            padding: 12px;
+            gap: 12px;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .country-table-header-cell {
+            font-size: 14px;
+            font-weight: 500;
+            color: #515151;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 18px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .country-table-header-cell.country {
+            flex: 1;
+        }
+
+        .country-table-header-cell.amount {
+            flex: 0 0 160px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* Country table rows */
+        .country-table-row {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-left: 1px solid #e2e2e2;
+            border-right: 1px solid #e2e2e2;
+            border-bottom: 1px solid #e2e2e2;
+            align-items: center;
+        }
+
+        .country-table-row:last-child {
+            border-bottom: 1px solid #e2e2e2;
+            border-radius: 0 0 4px 4px;
+        }
+
+        #revenue-split-revenueSources .country-table-row:last-of-type {
+            border-bottom: 1px solid #e2e2e2 !important;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .country-table-cell {
+            display: flex;
+            align-items: center;
+        }
+
+        .country-table-cell.country {
+            flex: 1;
+        }
+
+        .country-table-cell.amount {
+            flex: 0 0 160px;
+            justify-content: flex-end;
+        }
+
+        .country-name {
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .currency-input-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            position: relative;
+            width: 100%;
+        }
+
+        .currency-symbol {
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+            flex-shrink: 0;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .currency-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: #272727;
+            line-height: 22px;
+            transition: border-color 0.2s;
+            width: 100%;
+            font-weight: 400;
+        }
+
+        .currency-input:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        .percent-input-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            position: relative;
+            width: auto;
+        }
+
+        .percent-symbol {
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+            flex-shrink: 0;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .percent-input {
+            flex: 0 0 60px;
+            padding: 8px 8px;
+            border: 1px solid #8e8e8e;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: #272727;
+            line-height: 22px;
+            transition: border-color 0.2s;
+            width: 60px;
+            font-weight: 400;
+            text-align: left;
+        }
+
+        .percent-input::placeholder {
+            text-align: left;
+        }
+
+        .percent-input:focus {
+            outline: none;
+            border-color: #006de3;
+            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+        }
+
+        /* Currency country tables — sized so "United Arab Emirates" doesn't wrap and 999,999,999 fits */
+        .country-amounts-group[data-percentage-required="false"] .country-table-header {
+            gap: 8px;
+        }
+
+        .country-amounts-group[data-percentage-required="false"] .country-table-row {
+            gap: 8px;
+            align-items: baseline;
+        }
+
+        .country-amounts-group[data-percentage-required="false"] .country-table-header-cell.amount {
+            flex: 0 0 115px;
+        }
+
+        .country-amounts-group[data-percentage-required="false"] .country-table-cell.amount {
+            flex: 0 0 115px;
+        }
+
+        .country-amounts-group[data-percentage-required="false"] .currency-input {
+            padding: 8px 4px;
+        }
+
+        /* Revenue sources table specific styles */
+        #revenue-split-revenueSources .country-table-header-cell.country {
+            flex: 1 1 100%;
+        }
+
+        #revenue-split-revenueSources .country-table-header-cell.amount {
+            flex: 0 0 100px;
+            text-align: left;
+        }
+
+        #revenue-split-revenueSources .country-table-cell.country {
+            flex: 1 1 auto;
+        }
+
+        #revenue-split-revenueSources .country-table-cell.amount {
+            flex: 0 0 100px;
+        }
+
+        .country-amounts-group {
+            margin-top: 12px;
+            margin-left: 0;
+            margin-right: 0;
+            padding: 16px 0;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+            background: #f6f6f6;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .country-amounts-group.visible {
+            display: block;
+        }
+
+        /* Sticky Summary Bar - Hidden */
+        .sticky-summary {
+            display: none;
+        }
+
+        /* Revenue Split Summary Bar */
+        .revenue-split-summary {
+            background: #ffffff;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-top: 16px;
+            margin-bottom: 0px;
+            border-radius: 8px;
+        }
+
+        .summary-progress-container {
+            margin-bottom: 0px;
+        }
+
+        .summary-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .summary-progress-fill {
+            height: 100%;
+            background: #006de3;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        .summary-progress-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .revenue-split-error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 12px;
+            padding: 0 20px;
+            display: none;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .revenue-split-error.visible {
+            display: block;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #515151;
+            line-height: 22px;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 0px;
+            margin-top: 0px;
+            font-weight: 500;
+            color: #006de3;
+        }
+
+        .summary-total.invalid {
+            color: #d32f2f;
+        }
+
+        /* Buttons */
+        .button-group {
+            background: #f6f6f6;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 375px;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .button-group button {
+            width: 335px;
+        }
+
+        button {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            letter-spacing: 0;
+        }
+
+        .btn-primary {
+            background: #006de3;
+            color: #f6f6f6;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #0052a3;
+            box-shadow: 0 2px 8px rgba(0, 109, 227, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #006de3;
+            border: 2px solid #006de3;
+        }
+
+        .btn-secondary:hover {
+            border-color: #006de3;
+            color: #006de3;
+            background: #ffffff;
+        }
+
+        .btn-danger {
+            background: #ffffff;
+            color: #006de3;
+            border: 2px solid #006de3;
+        }
+
+        .btn-danger:hover {
+            border-color: #006de3;
+            background: #ffffff;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f6f6f6;
+            padding: 20px;
+            font-size: 16px;
+            color: #515151;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 22px;
+            letter-spacing: 0;
+            width: 100%;
+            max-width: 375px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .footer-content {
+            margin-bottom: 24px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+            color: #515151;
+            line-height: 22px;
+            margin-bottom: 12px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            letter-spacing: 0;
+            margin: 0 0 12px 0;
+        }
+
+        .footer-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .footer-logos {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            font-size: 12px;
+            color: #515151;
+            text-align: center;
+            min-width: 50px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 16px;
+            font-weight: 400;
+        }
+
+        .footer-logo-spacer {
+            width: 1px;
+            height: 40px;
+            background: #e2e2e2;
+        }
+
+        /* Drawer Sheet */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+        }
+
+        .drawer-overlay.open {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .drawer-sheet {
+            background: #ffffff;
+            border-radius: 12px 12px 0 0;
+            width: 100%;
+            max-width: 375px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .drawer-header {
+            background: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e2e2;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+
+        .drawer-close:hover {
+            opacity: 0.7;
+        }
+
+        .drawer-close svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .drawer-content {
+            padding: 24px;
+            background: #f6f6f6;
+        }
+
+        .drawer-intro {
+            font-size: 16px;
+            color: #515151;
+            margin-bottom: 24px;
+            line-height: 22px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .drawer-example {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: #515151;
+            line-height: 22px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .drawer-example:last-child {
+            margin-bottom: 0;
+        }
+
+        .drawer-bullets {
+            list-style: disc;
+            padding-left: 24px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: #515151;
+            line-height: 22px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .drawer-bullets li {
+            margin-bottom: 0;
+        }
+
+        .drawer-outro {
+            font-size: 16px;
+            color: #515151;
+            line-height: 22px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Help link */
+        .help-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #006de3;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            text-decoration: none;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .help-link:hover {
+            text-decoration: underline;
+        }
+
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-left: 4px;
+        }
+
+        .help-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Percentage validation */
+        .percentage-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .percentage-input input {
+            flex: 1;
+        }
+
+        .percentage-input span {
+            font-size: 16px;
+            color: #515151;
+            min-width: 20px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 22px;
+        }
+
+        /* Data card (read-only) */
+        .data-card {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .data-card-label {
+            font-size: 12px;
+            color: #515151;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 500;
+            line-height: 16px;
+        }
+
+        .data-card-value {
+            font-weight: 400;
+            color: #272727;
+            font-size: 16px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        /* Document upload section */
+        .document-upload-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .upload-intro {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .upload-intro-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 28px;
+            letter-spacing: -0.36px;
+            margin: 0;
+        }
+
+        .upload-intro-hint {
+            font-size: 16px;
+            color: #515151;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            margin: 0;
+        }
+
+        .review-card {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            width: 312px;
+            box-sizing: border-box;
+        }
+
+        .review-card-label {
+            font-size: 16px;
+            font-weight: 400;
+            color: #515151;
+            margin-bottom: 8px;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .review-card-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .accordion-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 312px;
+        }
+
+        .accordion-section {
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .accordion-section:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .accordion-section:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .accordion-section:first-child .accordion-button {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .accordion-section:last-child .accordion-button {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .accordion-button {
+            width: 100%;
+            padding: 16px;
+            background: #ffffff;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            line-height: 22px;
+            box-sizing: border-box;
+        }
+
+        /* No hover background — Barclays DS Accordion stays white in both Closed and Open states */
+
+        .accordion-chevron {
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .accordion-button.expanded .accordion-chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 0 16px 16px 16px;
+            background: #ffffff;
+            border-radius: 0 0 8px 8px;
+            margin-top: -8px; /* visually compress so the gap with the trigger row is 16px (balanced with internal 16px) */
+        }
+
+        .accordion-content.open {
+            display: block;
+        }
+
+        .accordion-content p {
+            font-size: 16px;
+            color: #515151;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            margin: 0 0 16px 0;
+        }
+
+        .accordion-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-list {
+            margin: 0;
+            padding-left: 24px;
+            list-style-type: disc;
+        }
+
+        .accordion-list li {
+            font-size: 16px;
+            color: #515151;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            font-weight: 400;
+            margin: 0;
+            padding: 0;
+        }
+
+        .accordion-list li strong {
+            font-weight: 700;
+            color: #515151;
+        }
+
+        .requirements-heading {
+            font-size: 20px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 24px;
+            letter-spacing: -0.2px;
+            margin: 0;
+        }
+
+        .requirements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 312px;
+        }
+
+        .requirement-item {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            min-height: 56px;
+            box-sizing: border-box;
+        }
+
+        .requirement-item:last-child {
+            align-items: flex-start;
+        }
+
+        .requirement-checkmark {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #006de3;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 0;
+        }
+
+        .requirement-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            margin: 0;
+            flex: 1;
+        }
+
+        .upload-area {
+            border: 2px dashed #006de3;
+            border-radius: 8px;
+            padding: 40px 16px;
+            background: #f2f8fe;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 312px;
+            height: 224px;
+            box-sizing: border-box;
+        }
+
+        .upload-area:hover {
+            background: #e8f4fd;
+        }
+
+        .upload-icon-wrapper {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-text {
+            font-size: 20px;
+            font-weight: 500;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 24px;
+            letter-spacing: -0.2px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .browse-button {
+            background: #ffffff;
+            border: 2px solid #006de3;
+            color: #006de3;
+            padding: 4px 16px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            line-height: 24px;
+        }
+
+        .browse-button:hover {
+            background: #f2f8fe;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        .confirmation-checkbox {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            width: 312px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            box-sizing: border-box;
+        }
+
+        .confirmation-checkbox input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid #8e8e8e;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0;
+        }
+
+        .confirmation-text {
+            font-size: 16px;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            margin: 0;
+            flex: 1;
+        }
+
+        /* Screen styling */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 375px;
+            padding: 0 20px;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease-in;
+            box-sizing: border-box;
+        }
+
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Content Area (includes header, screens, button group and footer) -->
+        <div class="content-area" id="contentArea">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-time">9:41</div>
+                <div class="status-icons">
+                    <span>📶</span>
+                    <span>🔋</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <span class="search-text">figma.com</span>
+                <span class="refresh-icon">🔄</span>
+            </div>
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button id="backBtn" class="header-back" onclick="previousScreen()" style="display: none;">
+                        <img src="https://www.figma.com/api/mcp/asset/3160b3c5-1fc6-44dd-964b-324bb1a32efc" alt="Back" style="width: 24px; height: 24px; object-fit: contain;">
+                    </button>
+                    <div class="barclays-logo">
+                        <img src="https://www.figma.com/api/mcp/asset/45af1e12-bd0f-4555-b8df-e6456ca27ef6" alt="Barclays Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                    </div>
+                </div>
+                <div class="secure-badge">
+                    <span class="lock-icon">🔒</span>
+                    <span class="secure-text">SECURE</span>
+                </div>
+            </div>
+
+            <!-- Step Tracker Section -->
+            <div class="step-tracker-section">
+                <div class="screen-title" id="screenTitle">Business Identity</div>
+                <div class="progress-tracker">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-background"></div>
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="stepDisplay">Step 1 of 7</span>
+                        <span>- Business borrowing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen content will be inserted here -->
+            <div id="screenContainer"></div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="btn-primary" id="continueBtn" onclick="nextScreen()">Continue</button>
+                <button class="btn-secondary" id="exitBtn" onclick="exitApplication()">Exit</button>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-content">
+                    <p class="footer-text">Barclays Bank UK PLC and Barclays Bank PLC are each authorised by the Prudential Regulation Authority and regulated by the Financial Conduct Authority and the Prudential Regulation Authority.</p>
+                    <p class="footer-text">Barclays Insurance Services Company Limited and Barclays Investment Solutions Limited are each authorised and regulated by the Financial Conduct Authority.</p>
+                    <p class="footer-text">Registered office for all: 1 Churchill Place,<br>London E14 5HP</p>
+                </div>
+                <div class="footer-logos">
+                    <img src="https://www.figma.com/api/mcp/asset/f7aa902b-e8e3-406d-84d8-6f7f2cd86609" alt="FSCS Logo" style="width: 62.488px; height: 64px; object-fit: contain;">
+                    <div class="footer-logo-spacer"></div>
+                    <img src="https://www.figma.com/api/mcp/asset/ce59f02a-7280-4e77-95b6-f892e86d06e0" alt="Secure Logo" style="width: 47.434px; height: 40px; object-fit: contain;">
+                    <div class="footer-logo-spacer"></div>
+                    <img src="https://www.figma.com/api/mcp/asset/6d3df326-3dfb-434d-ac65-b41ce16f0f88" alt="Mark of Trust Kitemark" style="width: 78.831px; height: 40px; object-fit: contain;">
+                    <div class="footer-logo-spacer"></div>
+                    <img src="https://www.figma.com/api/mcp/asset/4279aa5f-7e47-4b06-a25f-4db5463da59d" alt="Take Five Stacked" style="width: 33.192px; height: 40px; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Drawer Overlay -->
+        <div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer(event)">
+            <div class="drawer-sheet" onclick="event.stopPropagation()">
+                <div class="drawer-header">
+                    <div class="drawer-title" id="drawerTitle">Describing your business</div>
+                    <button class="drawer-close" onclick="closeDrawer()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="drawer-content" id="drawerContent">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentScreen = 0;
+        const screens = [];
+        const formData = {};
+
+        // Screen definitions with questions
+        const screenDefinitions = [
+            {
+                title: 'Business identity',
+                questions: [
+                    {
+                        id: 'tradingName',
+                        type: 'radio',
+                        label: 'Do you use a trading name for your business that\'s different to the one registered at Companies House?',
+                        hint: 'For example, the name that\'s above your shop door, or the name customers use to search for your company online.',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'tradingNameValue',
+                                type: 'text',
+                                label: 'What\'s your trading name?',
+                                hint: 'We\'ll use this name for your account.'
+                            }
+                        }
+                    },
+                    {
+                        id: 'abbreviations',
+                        type: 'radio',
+                        label: 'Does your trading name include any initials, abbreviations or non-English words?',
+                        hint: 'For example, JB Uno Properties Limited.',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'abbreviationsExplain',
+                                type: 'textarea',
+                                label: 'Please explain the meaning for any initials, abbreviations or non-English words.',
+                                hint: 'For example, \'JB\' is the initials for Joe Bloggs, and \'Uno\' means \'one\' in Spanish.',
+                                maxLength: 250
+                            }
+                        }
+                    },
+                    {
+                        id: 'website',
+                        type: 'radio',
+                        label: 'Do you have a company website?',
+                        hint: 'This can be a website or a page on a site or social network like Facebook or Yelp.',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'websiteUrl',
+                                type: 'url',
+                                label: 'Your company website',
+                                hint: 'Please give the full web address—for example, facebook.com/barclaysUK'
+                            }
+                        }
+                    },
+                    {
+                        id: 'businessDescription',
+                        type: 'textarea',
+                        label: 'Briefly describe what your business does and who your customers are',
+                        hint: 'To help us process your application faster, as if talking to a friend, tell us about the products and services you provide to bring in revenue.',
+                        maxLength: 250,
+                        helpText: {
+                            title: 'Describing your business',
+                            intro: 'Make sure you include key products or services offered, target markets and any specialisation.',
+                            examples: [
+                                '"Northbridge Global Imports Ltd imports household electronics goods, such as laptops, monitors and servers from China and supply to local retailers."',
+                                '"Silverstone Auto Works is a local garage, providing MOT, servicing and emergency vehicle replacement."'
+                            ]
+                        }
+                    },
+                    {
+                        id: 'employees',
+                        type: 'select',
+                        label: 'How many employees, including directors, do you have?',
+                        options: ['1 to 9', '10 to 24', '25 to 49', '50-99', '100-149', '150-199', '200-249', '250-499', '500-999', '1000+']
+                    }
+                ]
+            },
+            {
+                title: 'Funding sources',
+                questions: [
+                    {
+                        id: 'fundingSource',
+                        type: 'multi-select',
+                        label: 'Where did the money you used to start your business come from?',
+                        options: ['Angel investor', 'Crowd funding platform', 'Gift', 'Inheritance', 'Investment sales', 'Life/saving policy maturity', 'Loan', 'Personal savings', 'Property/asset/business sale', 'Redundancy', 'Trust fund', 'Venture capital firm', 'Other'],
+                        followUp: {
+                            'Other': {
+                                id: 'fundingSourceOther',
+                                type: 'text',
+                                label: 'What is the source of the \'other\' funds?'
+                            }
+                        }
+                    },
+                    {
+                        id: 'internationalFunding',
+                        type: 'radio',
+                        label: 'Did any of the money you used to start your business come from outside the UK?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'fundingCountries',
+                                type: 'country-multi',
+                                label: 'Which countries did the money come from?',
+                                percentageRequired: true
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Revenue profile',
+                requiresSummary: true,
+                questions: [
+                    {
+                        id: 'revenueSources',
+                        type: 'multi-select',
+                        label: 'How does your business earn revenue?',
+                        placeholder: 'Select all sources',
+                        selectedLabel: 'revenue sources',
+                        options: ['Consulting', 'Crowdfunding', 'Crypto/digital asset', 'Fundraising/donations', 'Income from property (including property management)', 'Membership fees', 'Outside investment', 'Providing a service', 'Sale of goods (online, physical stores)', 'Sale of technology solutions', 'Other'],
+                        percentageRequired: true
+                    },
+                    {
+                        id: 'seasonal',
+                        type: 'radio',
+                        label: 'Is your business seasonal and will turnover vary, depending on the time of year?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'seasonalExplain',
+                                type: 'textarea',
+                                label: 'Please explain why?',
+                                maxLength: 300
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Business locations',
+                questions: [
+                    {
+                        id: 'operationLocation',
+                        type: 'select',
+                        label: 'Where do you operate your business from?',
+                        options: ['Registered address', 'Trading address', 'Home address', 'Mobile business'],
+                        followUp: {
+                            'Registered address': {
+                                id: 'operationActivities',
+                                type: 'textarea',
+                                label: 'What activities take place at this address?',
+                                hint: 'We need to know the specific business activities you do from this address.',
+                                maxLength: 250,
+                                helpText: {
+                                    title: 'Activities at this address',
+                                    intro: 'Make sure you include key business activities that take place at your trading address',
+                                    examples: [
+                                        'I manage the day to day running of my business, and arrange making payments to my staff and suppliers from this address',
+                                        'This address is where my office/salon/shop is based and where all my services are provided',
+                                        'I am usually at multiple sites due to the nature of my job, but I manage the day to day running of the business from my home office'
+                                    ]
+                                }
+                            },
+                            'Trading address': {
+                                id: 'operationActivities',
+                                type: 'textarea',
+                                label: 'What activities take place at this address?',
+                                hint: 'We need to know the specific business activities you do from this address.',
+                                maxLength: 250,
+                                helpText: {
+                                    title: 'Activities at this address',
+                                    intro: 'Make sure you include key business activities that take place at your trading address',
+                                    examples: [
+                                        'I manage the day to day running of my business, and arrange making payments to my staff and suppliers from this address',
+                                        'This address is where my office/salon/shop is based and where all my services are provided',
+                                        'I am usually at multiple sites due to the nature of my job, but I manage the day to day running of the business from my home office'
+                                    ]
+                                }
+                            },
+                            'Home address': {
+                                id: 'operationActivities',
+                                type: 'textarea',
+                                label: 'What activities take place at this address?',
+                                hint: 'We need to know the specific business activities you do from this address.',
+                                maxLength: 250,
+                                helpText: {
+                                    title: 'Activities at this address',
+                                    intro: 'Make sure you include key business activities that take place at your trading address',
+                                    examples: [
+                                        'I manage the day to day running of my business, and arrange making payments to my staff and suppliers from this address',
+                                        'This address is where my office/salon/shop is based and where all my services are provided',
+                                        'I am usually at multiple sites due to the nature of my job, but I manage the day to day running of the business from my home office'
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'internationalOps',
+                        type: 'radio',
+                        label: 'Does your business have any operations outside of the UK?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'internationalOpsDetails',
+                                type: 'textarea',
+                                label: 'What operations exist outside the UK?',
+                                hint: 'For example, you have a registered office, warehouse or retail space.',
+                                maxLength: 250,
+                                helpText: {
+                                    title: 'International operations',
+                                    intro: 'List all the operations outside the UK, for example:',
+                                    examples: [
+                                        '"We operate a manufacturing plant in Spain that produces our core textile components."',
+                                        '"The company maintains a sales office and a small distribution hub in Dublin to serve our EU clients."'
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'correspondenceAddress',
+                        type: 'select',
+                        label: 'Where should we send letters about your loan?',
+                        options: ['Registered address', 'Trading address', 'Home address', 'Another address'],
+                        followUp: {
+                            'Another address': {
+                                id: 'customCorrespondenceAddress',
+                                type: 'address-fields',
+                                label: 'Enter your correspondence address:',
+                                fields: [
+                                    {
+                                        id: 'customCorrespondenceAddress-line1',
+                                        label: 'Address line 1',
+                                        placeholder: 'Street address'
+                                    },
+                                    {
+                                        id: 'customCorrespondenceAddress-line2',
+                                        label: 'Address line 2 (Optional)',
+                                        placeholder: 'Apt, suite, etc.'
+                                    },
+                                    {
+                                        id: 'customCorrespondenceAddress-city',
+                                        label: 'City',
+                                        placeholder: 'City'
+                                    },
+                                    {
+                                        id: 'customCorrespondenceAddress-postcode',
+                                        label: 'Postcode',
+                                        placeholder: 'Postcode'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Proof of business address',
+                hideTitle: true,
+                questions: [
+                    {
+                        id: 'documentUpload',
+                        type: 'document-upload',
+                        label: 'Upload proof of your business address',
+                        hint: 'Provide a document that shows the address your business operates from'
+                    }
+                ]
+            },
+            {
+                title: 'Industry regulation',
+                questions: [
+                    {
+                        id: 'travelRegulator',
+                        type: 'multi-select',
+                        label: 'Who are you regulated by?',
+                        placeholder: 'Select regulators',
+                        selectedLabel: 'regulators',
+                        options: ['ABTA', 'ATOL'],
+                        conditionalFollowUps: {
+                            'ABTA': {
+                                id: 'abtaNumber',
+                                type: 'text',
+                                label: 'ABTA membership number',
+                                hint: 'Usually 5 digits'
+                            },
+                            'ATOL': {
+                                id: 'atolNumber',
+                                type: 'text',
+                                label: 'ATOL licence number',
+                                hint: 'Usually starts with "T" followed by 4 or 5 digits'
+                            }
+                        }
+                    },
+                    {
+                        id: 'financialServices',
+                        type: 'radio',
+                        label: 'Does your business lend money, deal with debt or provide other financial services?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'regulationBody',
+                                type: 'select',
+                                label: 'Who are you regulated by?',
+                                options: ['Financial Conduct Authority', 'Prudential Regulation Authority', 'Other'],
+                                followUp: {
+                                    'Financial Conduct Authority': {
+                                        id: 'fcaRefNumber',
+                                        type: 'text',
+                                        label: 'Firm reference number',
+                                        hint: 'This is typically 6 or 7 digits.',
+                                        helpText: {
+                                            title: 'Firm reference number',
+                                            intro: "You can find your reference number on the FCA's Financial Services Register. Search for the 'Financial Services Register' online, and official documents you may have received from the FCA.",
+                                            linkText: 'Where can I find this?'
+                                        }
+                                    },
+                                    'Prudential Regulation Authority': {
+                                        id: 'praRefNumber',
+                                        type: 'text',
+                                        label: 'Firm reference number',
+                                        hint: 'This is typically 6 or 7 digits.',
+                                        helpText: {
+                                            title: 'Where can I find my reference number?',
+                                            examples: [
+                                                '"You can find your reference number on the FCA\'s Financial Services Register"',
+                                                '"Search for the Financial Services Register online"',
+                                                '"Official documents you may have received from the FCA or PRA"'
+                                            ]
+                                        }
+                                    },
+                                    'Other': {
+                                        id: 'otherAuthority',
+                                        type: 'text',
+                                        label: 'Which other authority are you regulated by?',
+                                        followUp: {
+                                            true: {
+                                                id: 'otherRefNumber',
+                                                type: 'text',
+                                                label: 'Firm reference number',
+                                                hint: 'This is typically 6 or 7 digits.'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'gambling',
+                        type: 'radio',
+                        label: 'Are you involved in online gambling, online gaming associated with the gambling sector, or the provision of services to an online gambling company?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'gamblingDetails',
+                                type: 'textarea',
+                                label: 'Please give more information about how your business is involved with online gambling or gaming',
+                                maxLength: 250,
+                                helpText: {
+                                    title: 'Online gambling involvement',
+                                    intro: 'Ensure you provide as much detail as possible when describing how your business is involved in online gambling or games',
+                                    examples: [
+                                        '"Our products include sports betting, online casino, online poker and online bingo."',
+                                        '"Our online platform offers loot boxes and micro-transactions for a range of popular online games"'
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'International trade & payments',
+                requiresSummary: true,
+                questions: [
+                    {
+                        id: 'importExport',
+                        type: 'select',
+                        label: 'Does your business involve import or export?',
+                        options: ['No', 'Import only', 'Export only', 'Import and export'],
+                        followUp: {
+                            'Import only': {
+                                id: 'importCountries',
+                                type: 'country-multi',
+                                label: 'Which countries do you import from?',
+                                percentageRequired: true,
+                                percentageLabel: 'What % of your imports come from each country?',
+                                percentageHeaderLabel: '% OF IMPORTS',
+                                summaryLabel: 'Total allocated',
+                                errorMessage: 'Error: total imports must be 100%',
+                                showPercentageBar: true
+                            },
+                            'Export only': {
+                                id: 'exportCountries',
+                                type: 'country-multi',
+                                label: 'Which countries do you export to?',
+                                percentageRequired: true,
+                                percentageLabel: 'What % of your exports go to each country?',
+                                percentageHeaderLabel: '% OF EXPORTS',
+                                summaryLabel: 'Total allocated',
+                                errorMessage: 'Error: total exports must be 100%',
+                                showPercentageBar: true
+                            },
+                            'Import and export': [
+                                {
+                                    id: 'importCountriesBoth',
+                                    type: 'country-multi',
+                                    label: 'Which countries do you import from?',
+                                    percentageRequired: true,
+                                    percentageLabel: 'What % of your imports come from each country?',
+                                    percentageHeaderLabel: '% OF IMPORTS',
+                                    summaryLabel: 'Total allocated',
+                                    errorMessage: 'Error: total imports must be 100%',
+                                    showPercentageBar: true
+                                },
+                                {
+                                    id: 'exportCountriesBoth',
+                                    type: 'country-multi',
+                                    label: 'Which countries do you export to?',
+                                    percentageRequired: true,
+                                    percentageLabel: 'What % of your exports go to each country?',
+                                    percentageHeaderLabel: '% OF EXPORTS',
+                                    summaryLabel: 'Total allocated',
+                                    errorMessage: 'Error: total exports must be 100%',
+                                    showPercentageBar: true
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        id: 'internationalPayments',
+                        type: 'radio',
+                        label: 'Do you send or receive payments outside of the UK?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'paymentDirection',
+                                type: 'select',
+                                label: 'Direction of payments',
+                                options: ['Send only', 'Receive only', 'Send and receive'],
+                                followUp: {
+                                    'Send only': {
+                                        id: 'sendPaymentCountries',
+                                        type: 'country-multi',
+                                        label: 'Which countries do you send payments to?',
+                                        percentageRequired: true,
+                                        percentageLabel: 'What % of your total turnover do you send to each country?',
+                                        showPercentageBar: false
+                                    },
+                                    'Receive only': {
+                                        id: 'receivePaymentCountries',
+                                        type: 'country-multi',
+                                        label: 'Which countries do you receive payments from?',
+                                        percentageRequired: true,
+                                        percentageLabel: 'What % of your total turnover do you receive from each country?',
+                                        showPercentageBar: false
+                                    },
+                                    'Send and receive': [
+                                        {
+                                            id: 'sendPaymentCountriesBoth',
+                                            type: 'country-multi',
+                                            label: 'Which countries do you send payments to?',
+                                            percentageRequired: true,
+                                            percentageLabel: 'What % of your total turnover do you send to each country?',
+                                            showPercentageBar: false
+                                        },
+                                        {
+                                            id: 'receivePaymentCountriesBoth',
+                                            type: 'country-multi',
+                                            label: 'Which countries do you receive payments from?',
+                                            percentageRequired: true,
+                                            percentageLabel: 'What % of your total turnover do you receive from each country?',
+                                            showPercentageBar: false
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Tax & VAT details',
+                questions: [
+                    {
+                        id: 'ukTax',
+                        type: 'radio',
+                        label: 'Does your business pay tax in the UK?',
+                        hint: 'This means paying corporation tax or business rates in the UK.',
+                        options: ['Yes', 'No']
+                    },
+                    {
+                        id: 'usPerson',
+                        type: 'radio',
+                        label: 'Does the business fall under the definition of a U.S. person or resident?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'usTaxId',
+                                type: 'text',
+                                label: 'Enter US Tax Identification Number',
+                                hint: 'Enter it exactly as written on your official tax document.'
+                            }
+                        }
+                    },
+                    {
+                        id: 'otherCountriesTax',
+                        type: 'radio',
+                        label: 'Does your business pay tax in other countries that aren\'t the UK or US?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'taxCountries',
+                                type: 'country-multi',
+                                label: 'Select all the countries where your business pays tax and enter the Tax Identification Number',
+                                taxIdRequired: true
+                            }
+                        }
+                    },
+                    {
+                        id: 'vatRegistered',
+                        type: 'radio',
+                        label: 'Are you VAT registered?',
+                        options: ['Yes', 'No'],
+                        followUp: {
+                            'Yes': {
+                                id: 'vatNumber',
+                                type: 'text',
+                                label: 'VAT registration number',
+                                hint: 'Usually starts with "GB" followed by 9 digits.',
+                                helpText: {
+                                    title: 'Find your VAT registration number',
+                                    linkText: 'Where can I find this?',
+                                    intro: 'You can find your VAT number on:',
+                                    bullets: [
+                                        'Your VAT registration certificate from HMRC',
+                                        'Business invoices',
+                                        'Letters or emails from HMRC',
+                                        'Documents from your accountant or finance team',
+                                        'The HMRC VAT number checker'
+                                    ],
+                                    outro: 'Still need help? Contact the HMRC VAT helpline.'
+                                }
+                            },
+                            'No': {
+                                id: 'vatReason',
+                                type: 'select',
+                                label: 'Please tell us why you\'re not registered for VAT',
+                                options: ['Taxable income is below £90,000', 'Everything the business sells is exempt from VAT', 'Other'],
+                                followUp: {
+                                    'Other': {
+                                        id: 'vatReasonOther',
+                                        type: 'textarea',
+                                        label: 'Please specify',
+                                        maxLength: 250
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ];
+
+        // Initialize app
+        function initApp() {
+            renderScreen(0);
+            window.addEventListener('beforeunload', saveFormData);
+        }
+
+        // Render current screen
+        function renderScreen(screenIndex) {
+            if (screenIndex < 0 || screenIndex >= screenDefinitions.length) return;
+
+            currentScreen = screenIndex;
+            const screenDef = screenDefinitions[screenIndex];
+            const screenContainer = document.getElementById('screenContainer');
+
+            // Update header and tracker
+            document.getElementById('stepDisplay').textContent = `Step ${screenIndex + 1} of ${screenDefinitions.length}`;
+            document.getElementById('screenTitle').textContent = screenDef.title;
+
+            // Update progress bar
+            const progressPercentage = ((screenIndex + 1) / screenDefinitions.length) * 100;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+
+            document.getElementById('backBtn').style.display = screenIndex > 0 ? 'block' : 'none';
+
+            // Build screen HTML
+            let html = `<div class="screen active" id="screen-${screenIndex}">`;
+            if (!screenDef.hideTitle) {
+                html += `<h2>${screenDef.title}</h2>`;
+            }
+
+            screenDef.questions.forEach(q => {
+                html += renderQuestion(q, screenIndex);
+            });
+
+            if (screenDef.requiresSummary) {
+                html += `<div class="sticky-summary" id="summary-${screenIndex}"><div id="summary-content-${screenIndex}"></div></div>`;
+            }
+
+            html += `</div>`;
+            screenContainer.innerHTML = html;
+
+            // Restore form values
+            restoreFormValues(screenIndex);
+
+            // Update summary if needed
+            if (screenDef.requiresSummary) {
+                updateSummary(screenIndex);
+            }
+        }
+
+        // Render a single question
+        function renderQuestion(question, screenIndex, parentId = null) {
+            let html = `<div class="question-group" id="q-${question.id}">`;
+
+            // Main question (skip default label/hint for document-upload — it provides its own intro section)
+            if (question.type !== 'document-upload') {
+                html += `<label class="question-label">${question.label}</label>`;
+                if (question.hint) html += `<div class="hint-text">${question.hint}</div>`;
+            }
+
+            // Input based on type
+            if (question.type === 'radio') {
+                const isBinaryYesNo = question.options.length === 2 &&
+                    (question.options.includes('Yes') || question.options.includes('No'));
+                html += `<div class="radio-group ${isBinaryYesNo ? '' : 'full-width'}">`;
+                question.options.forEach(opt => {
+                    const inputId = `${question.id}-${opt}`;
+                    html += `<div class="radio-option">
+                        <input type="radio" id="${inputId}" name="${question.id}" value="${opt}"
+                            onchange="handleInputChange('${question.id}', '${opt}', ${screenIndex}, ${question.percentageRequired || false})">
+                        <label for="${inputId}">${opt}</label>
+                    </div>`;
+                });
+                html += `</div>`;
+            } else if (question.type === 'checkbox') {
+                html += `<div class="checkbox-group">`;
+                question.options.forEach(opt => {
+                    const inputId = `${question.id}-${opt}`;
+                    html += `<div class="checkbox-option">
+                        <input type="checkbox" id="${inputId}" name="${question.id}" value="${opt}"
+                            onchange="handleInputChange('${question.id}', null, ${screenIndex}, ${question.percentageRequired || false})">
+                        <label for="${inputId}">${opt}</label>
+                    </div>`;
+                });
+                html += `</div>`;
+
+                // Add selected items list for percentage input
+                if (question.percentageRequired) {
+                    html += `<div class="selected-items-list" id="list-${question.id}"></div>`;
+                }
+            } else if (question.type === 'select') {
+                html += `<div class="custom-select-container">`;
+                html += `<button type="button" class="custom-select-trigger" id="${question.id}-trigger" onclick="toggleCustomSelectDropdown('${question.id}')">
+                    <span class="custom-select-placeholder" id="${question.id}-placeholder">Select an option</span>
+                    <span class="custom-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>`;
+                html += `<div class="custom-select-dropdown" id="${question.id}-dropdown">`;
+                question.options.forEach(opt => {
+                    html += `<div class="custom-select-option" onclick="selectCustomOption('${question.id}', '${opt}', ${screenIndex})">${opt}</div>`;
+                });
+                html += `</div></div>`;
+                // Add address display for operation location and correspondence address
+                if (question.id === 'operationLocation' || question.id === 'correspondenceAddress') {
+                    html += `<div class="data-card" id="address-display-${question.id}" style="display: none; margin-top: 12px;">
+                        <div class="data-card-value" id="address-text-${question.id}"></div>
+                    </div>`;
+                }
+            } else if (question.type === 'multi-select') {
+                html += `<div class="multi-select-container">`;
+                html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')" data-placeholder="${question.placeholder || 'Select options'}" data-selected-label="${question.selectedLabel || 'options'}">
+                    <span class="multi-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select options'}</span>
+                    <span class="multi-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>`;
+                html += `<div class="multi-select-dropdown" id="${question.id}-dropdown">`;
+                question.options.forEach(opt => {
+                    const inputId = `${question.id}-checkbox-${opt}`;
+                    html += `<div class="multi-select-option">
+                        <input type="checkbox" id="${inputId}" name="${question.id}-checkbox" value="${opt}"
+                            onchange="handleMultiSelectChange('${question.id}', ${screenIndex})">
+                        <label for="${inputId}">${opt}</label>
+                    </div>`;
+                });
+                html += `</div>`;
+                html += `</div>`;
+                // Render conditional follow-up fields (shown based on which options are checked)
+                if (question.conditionalFollowUps) {
+                    Object.entries(question.conditionalFollowUps).forEach(([option, followUpQ]) => {
+                        html += `<div class="follow-up-group" id="conditional-${question.id}-${option}" style="display:none; margin-top: 16px;">`;
+                        html += renderQuestion(followUpQ, screenIndex);
+                        html += `</div>`;
+                    });
+                }
+                // Add summary card for funding sources (shown when >1 selected)
+                if (question.id === 'fundingSource') {
+                    html += `<div class="data-card" id="fundingSource-summary-card" style="display: none; margin-top: 12px;">
+                        <div class="data-card-value" id="fundingSource-summary-text"></div>
+                    </div>`;
+                }
+                // Add follow-up section for revenue sources
+                if (question.id === 'revenueSources') {
+                    html += `<div class="follow-up-group revenue-split-group" id="revenue-split-${question.id}">`;
+                    html += `<label class="question-label">How is your revenue divided?</label>`;
+                    html += `<div class="hint-text">Enter estimates that add up to 100%.</div>`;
+                    html += `<div class="selected-items-list" id="list-${question.id}"></div>`;
+                    html += `</div>`;
+                }
+            } else if (question.type === 'textarea') {
+                const maxLength = question.maxLength || 250;
+                html += `<textarea id="${question.id}" maxlength="${maxLength}"
+                    oninput="updateCharCounter('${question.id}', ${maxLength}); handleInputChange('${question.id}', null, ${screenIndex}, false)"></textarea>`;
+                html += `<div class="textarea-footer">`;
+                if (question.helpText) {
+                    html += `<button class="help-link" onclick="openDrawer('${question.id}')">
+                        View examples <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    </button>`;
+                }
+                html += `<div class="char-counter" id="counter-${question.id}">0/${maxLength}</div>`;
+                html += `</div>`;
+            } else if (question.type === 'text' || question.type === 'url') {
+                html += `<input type="${question.type}" id="${question.id}"
+                    oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">`;
+                if (question.helpText) {
+                    const linkLabel = question.helpText.linkText || 'View examples';
+                    html += `<button class="help-link" onclick="openDrawer('${question.id}')">
+                        ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    </button>`;
+                }
+            } else if (question.type === 'country-multi') {
+                html += renderCountryMultiSelect(question);
+            } else if (question.type === 'address') {
+                html += `
+                    <input type="text" id="${question.id}-line1" placeholder="Address line 1"
+                        oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">
+                    <input type="text" id="${question.id}-line2" placeholder="Address line 2 (Optional)"
+                        oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">
+                    <input type="text" id="${question.id}-city" placeholder="City"
+                        oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">
+                    <input type="text" id="${question.id}-postcode" placeholder="Postcode"
+                        oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">
+                `;
+            } else if (question.type === 'address-fields') {
+                if (question.fields && Array.isArray(question.fields)) {
+                    question.fields.forEach(field => {
+                        html += `<div class="address-field">`;
+                        html += `<label class="question-label">${field.label}</label>`;
+                        html += `<input type="text" id="${field.id}" placeholder="${field.placeholder}"
+                            oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">`;
+                        html += `</div>`;
+                    });
+                }
+            } else if (question.type === 'document-upload') {
+                html += `<div class="document-upload-container">`;
+
+                // Intro section with title and hint
+                html += `<div class="upload-intro">
+                    <p class="upload-intro-title">${question.label}</p>
+                    <p class="upload-intro-hint">${question.hint}</p>
+                </div>`;
+
+                // Determine address based on user's selection in operationLocation
+                // For 'Mobile business', fall back to the Trading address.
+                const operationLocationToAddress = {
+                    'Registered address': '11 White Street, Manchester, M20 7PQ',
+                    'Trading address': '22 Green Street, Manchester, M20 7PQ',
+                    'Home address': '33 Blue Street, Manchester, M20 7PQ',
+                    'Mobile business': '22 Green Street, Manchester, M20 7PQ'
+                };
+                const operationLocationValue = formData['operationLocation'];
+                const reviewAddress = operationLocationToAddress[operationLocationValue]
+                    || operationLocationToAddress['Trading address'];
+
+                // Review card with address
+                html += `<div class="review-card">
+                    <div class="review-card-label">Where you operate</div>
+                    <div class="review-card-value">${reviewAddress}</div>
+                </div>`;
+
+                // Accordion sections
+                html += `<div class="accordion-group">
+                    <div class="accordion-section">
+                        <button class="accordion-button" onclick="toggleAccordion(event, '${question.id}-accept')">
+                            <span>Documents we accept</span>
+                            <svg class="accordion-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 9L12 15L18 9" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="accordion-content" id="${question.id}-accept">
+                            <ul class="accordion-list">
+                                <li><strong>Bank</strong> or <strong>credit card statement</strong> from past 3 months, showing at least 1 transaction. This can't be for a Barclays account or digital-only bank.</li>
+                                <li><strong>Utility bill</strong> from the past 3 months</li>
+                                <li><strong>HMRC letter</strong> from your current financial year</li>
+                                <li><strong>Current insurance document</strong> (contract, policy, renewal document, certificate or schedule)</li>
+                                <li>Current property <strong>lease</strong>, <strong>licence</strong> or <strong>rental agreement</strong></li>
+                                <li><strong>Companies House letter</strong> from the past 12 months</li>
+                                <li><strong>Regulator letter</strong> (for example, from FCA, The Law Society) from the past 12 months</li>
+                                <li>A letter from an <strong>accountant</strong> or <strong>solicitor</strong> on headed paper confirming your business trading address, from the past 12 months</li>
+                                <li><strong>HMRC letter</strong> from the current financial year</li>
+                                <li><strong>Business rates</strong> demanded from the past 12 months</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-section">
+                        <button class="accordion-button" onclick="toggleAccordion(event, '${question.id}-no-doc')">
+                            <span>Don't have a document we need?</span>
+                            <svg class="accordion-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 9L12 15L18 9" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="accordion-content" id="${question.id}-no-doc">
+                            <p>You'll need to make an appointment to talk to us in one in person to prove your business address. Please call us on 0333 202 7431 to make an appointment.</p>
+                            <p>We're here Monday to Friday, 8:30am to 8pm, except bank holidays.</p>
+                        </div>
+                    </div>
+                </div>`;
+
+                // Requirements heading
+                html += `<p class="requirements-heading">Please make sure your document is:</p>`;
+
+                // Requirements list
+                html += `<div class="requirements-list">
+                    <div class="requirement-item">
+                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-text">Clearly readable</div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-text">Less than 5MB file size</div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-text">Saved as a PDF, PNG, JPEG, DOC, TXT, BMP, XLS or TIF file.</div>
+                    </div>
+                </div>`;
+
+                // Upload area
+                html += `<div class="upload-area" onclick="document.getElementById('${question.id}-file-input').click()">
+                    <div class="upload-icon-wrapper">
+                        <svg width="72" height="68" viewBox="0 0 72 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M58 30C58 21.7157 51.2843 15 43 15C36.5 15 30.9 19.1 28.8 24.8C27.5 24.3 26 24 24.5 24C18 24 13 29 13 35.5C13 41.7 17.7 46.8 23.8 47.4C24.6 47.5 25.4 47.5 26.2 47.5H56C61.5 47.5 66 43 66 37.5C66 32.5 62.4 28.4 57.6 27.7C57.9 28.4 58 29.2 58 30Z" fill="#FFCB05"/>
+                            <path d="M36 26L36 42M36 26L30 32M36 26L42 32" stroke="#006DE3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="36" cy="62" r="5" fill="#006DE3"/>
+                            <line x1="36" y1="50" x2="36" y2="55" stroke="#006DE3" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <p class="upload-text">Upload a document</p>
+                    <button class="browse-button" type="button" onclick="document.getElementById('${question.id}-file-input').click()">Browse</button>
+                </div>`;
+
+                html += `<input type="file" id="${question.id}-file-input" class="file-input-hidden"
+                    onchange="handleFileUpload('${question.id}', ${screenIndex})">`;
+
+                // Confirmation checkbox
+                html += `<div class="confirmation-checkbox">
+                    <input type="checkbox" id="${question.id}-confirm">
+                    <p class="confirmation-text">I confirm the document I've uploaded clearly shows proof of my business address and is a document type that you accept.</p>
+                </div>`;
+
+                html += `</div>`;
+            }
+
+            // Follow-ups
+            if (question.followUp) {
+                for (const [triggerValue, followUpDef] of Object.entries(question.followUp)) {
+                    if (triggerValue === 'any') {
+                        // Show for any selection
+                        html += `<div class="follow-up-group" id="followup-${question.id}-any">`;
+                        html += renderQuestion(followUpDef, screenIndex, question.id);
+                        html += `</div>`;
+                    } else if (Array.isArray(followUpDef)) {
+                        // Array of follow-ups (sequential questions)
+                        html += `<div class="follow-up-group" id="followup-${question.id}-${triggerValue}">`;
+                        followUpDef.forEach(def => {
+                            html += renderQuestion(def, screenIndex, question.id);
+                        });
+                        html += `</div>`;
+                    } else if (typeof followUpDef === 'object') {
+                        // Direct follow-up
+                        html += `<div class="follow-up-group" id="followup-${question.id}-${triggerValue}">`;
+                        html += renderQuestion(followUpDef, screenIndex, question.id);
+                        html += `</div>`;
+                    }
+                }
+            }
+
+            html += `</div>`;
+            return html;
+        }
+
+        // Render country multi-select
+        function renderCountryMultiSelect(question) {
+            const countries = [
+                { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+                { code: 'CA', name: 'Canada', flag: '🇨🇦' },
+                { code: 'CN', name: 'China', flag: '🇨🇳' },
+                { code: 'DE', name: 'Germany', flag: '🇩🇪' },
+                { code: 'FR', name: 'France', flag: '🇫🇷' },
+                { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
+                { code: 'IN', name: 'India', flag: '🇮🇳' },
+                { code: 'JP', name: 'Japan', flag: '🇯🇵' },
+                { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' },
+                { code: 'SG', name: 'Singapore', flag: '🇸🇬' },
+                { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪' },
+                { code: 'US', name: 'United States', flag: '🇺🇸' }
+            ];
+
+            let html = `<div class="multi-select-container">`;
+            html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')">
+                <span class="multi-select-placeholder" id="${question.id}-placeholder">Select countries</span>
+                <span class="multi-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>`;
+            html += `<div class="multi-select-dropdown" id="${question.id}-dropdown">`;
+            html += `<div class="multi-select-search">
+                <div class="multi-select-search-wrapper">
+                    <input type="text" class="multi-select-search-input" id="${question.id}-search" placeholder="Search countries..."
+                        oninput="filterCountries('${question.id}')">
+                    <button type="button" class="multi-select-search-clear" id="${question.id}-search-clear"
+                        onclick="clearCountrySearch('${question.id}')" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="#515151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>`;
+            html += `<div class="multi-select-options-list" id="${question.id}-options-list">`;
+            countries.forEach(country => {
+                const inputId = `${question.id}-checkbox-${country.code}`;
+                html += `<div class="multi-select-option" data-country-name="${country.name.toLowerCase()}">
+                    <input type="checkbox" id="${inputId}" name="${question.id}-checkbox" value="${country.code}" data-country="${country.name}"
+                        onchange="handleCountryMultiSelectChange('${question.id}')">
+                    <label for="${inputId}">${country.flag} ${country.name}</label>
+                </div>`;
+            });
+            html += `</div></div>`;
+            html += `</div>`;
+
+            // Use custom percentage label if provided, otherwise use default currency label
+            // Only use percentage inputs when a percentageLabel is explicitly set
+            const labelText = question.percentageLabel || 'How much money came from each country?';
+            html += `<div class="follow-up-group country-amounts-group" id="country-amounts-${question.id}" data-percentage-required="${question.percentageLabel ? 'true' : 'false'}" data-show-percentage-bar="${question.showPercentageBar !== false}" data-percentage-header-label="${question.percentageHeaderLabel || ''}" data-summary-label="${question.summaryLabel || ''}" data-error-message="${question.errorMessage || ''}">`;
+            html += `<label class="question-label">${labelText}</label>`;
+            html += `<div class="selected-items-list" id="list-${question.id}"></div>`;
+            html += `</div>`;
+
+            return html;
+        }
+
+        // Handle input changes
+        function handleInputChange(questionId, value, screenIndex, percentageRequired) {
+            const element = document.getElementById(questionId);
+            const radioElement = document.querySelector(`input[name="${questionId}"]`);
+
+            if (!element && !radioElement) return;
+
+            // Store value
+            if (radioElement) {
+                // Handle radio buttons
+                formData[questionId] = document.querySelector(`input[name="${questionId}"]:checked`)?.value;
+            } else if (element) {
+                // Handle other input types
+                if (element.type === 'checkbox') {
+                    formData[questionId] = Array.from(document.querySelectorAll(`input[name="${questionId}"]:checked`)).map(e => e.value);
+                } else if (element.multiple) {
+                    // Handle multi-select dropdown
+                    formData[questionId] = Array.from(element.selectedOptions).map(opt => opt.value);
+                } else {
+                    formData[questionId] = element.value;
+                }
+            }
+
+            // Show/hide follow-ups
+            showFollowUps(questionId, screenIndex);
+
+            // Update summary if needed
+            const screenDef = screenDefinitions[screenIndex];
+            if (screenDef.requiresSummary) {
+                updateSummary(screenIndex);
+            }
+
+            // Update button state
+            updateButtonState(screenIndex);
+        }
+
+        // Show follow-up questions
+        function showFollowUps(questionId, screenIndex) {
+            const element = document.getElementById(questionId);
+            const radioElement = document.querySelector(`input[name="${questionId}"]`);
+            const customMultiSelect = document.getElementById(`${questionId}-trigger`);
+            let selectedValue;
+
+            if (radioElement) {
+                // Handle radio buttons
+                selectedValue = document.querySelector(`input[name="${questionId}"]:checked`)?.value;
+            } else if (customMultiSelect) {
+                // Handle custom multi-select dropdown
+                const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
+                const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                selected.forEach(val => {
+                    const followUpId = `followup-${questionId}-${val}`;
+                    const followUpElement = document.getElementById(followUpId);
+                    if (followUpElement) followUpElement.classList.add('visible');
+                });
+                // Hide unselected ones
+                document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
+                    const val = el.id.replace(`followup-${questionId}-`, '');
+                    if (!selected.includes(val)) el.classList.remove('visible');
+                });
+                return;
+            } else if (element && element.type === 'checkbox') {
+                const checked = Array.from(document.querySelectorAll(`input[name="${questionId}"]:checked`)).map(e => e.value);
+                checked.forEach(val => {
+                    const followUpId = `followup-${questionId}-${val}`;
+                    const followUpElement = document.getElementById(followUpId);
+                    if (followUpElement) followUpElement.classList.add('visible');
+                });
+                // Hide unchecked ones
+                document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
+                    const val = el.id.replace(`followup-${questionId}-`, '');
+                    if (!checked.includes(val)) el.classList.remove('visible');
+                });
+                return;
+            } else if (element && element.multiple) {
+                // Handle native multi-select dropdown
+                const selected = Array.from(element.selectedOptions).map(opt => opt.value);
+                selected.forEach(val => {
+                    const followUpId = `followup-${questionId}-${val}`;
+                    const followUpElement = document.getElementById(followUpId);
+                    if (followUpElement) followUpElement.classList.add('visible');
+                });
+                // Hide unselected ones
+                document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
+                    const val = el.id.replace(`followup-${questionId}-`, '');
+                    if (!selected.includes(val)) el.classList.remove('visible');
+                });
+                return;
+            } else if (element && element.tagName === 'SELECT') {
+                selectedValue = element.value;
+            }
+
+            // Show/hide follow-up
+            document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
+                el.classList.remove('visible');
+            });
+
+            if (selectedValue) {
+                const followUpId = `followup-${questionId}-${selectedValue}`;
+                const followUpElement = document.getElementById(followUpId);
+                if (followUpElement) {
+                    followUpElement.classList.add('visible');
+                }
+            }
+        }
+
+        // Format number with thousand separators
+        function formatCurrencyDisplay(value) {
+            if (!value) return '';
+            // Remove all non-numeric characters except decimal
+            const numericValue = value.toString().replace(/[^\d.]/g, '');
+            if (!numericValue) return '';
+            // Split into integer and decimal parts
+            const parts = numericValue.split('.');
+            const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            const decimalPart = parts[1] ? '.' + parts[1].slice(0, 2) : '';
+            return integerPart + decimalPart;
+        }
+
+        // Parse currency value (remove commas, return numeric)
+        function parseCurrencyValue(value) {
+            if (!value) return 0;
+            return parseFloat(value.toString().replace(/[^\d.]/g, '')) || 0;
+        }
+
+        // Handle currency input formatting
+        function handleCurrencyInput(event) {
+            const input = event.target;
+            const value = input.value;
+            const cursorPosition = input.selectionStart;
+            const oldLength = value.length;
+
+            // Format the display
+            const formatted = formatCurrencyDisplay(value);
+            input.value = formatted;
+
+            // Maintain cursor position approximately
+            const newLength = formatted.length;
+            const diff = newLength - oldLength;
+            input.selectionStart = Math.max(0, cursorPosition + diff);
+            input.selectionEnd = input.selectionStart;
+        }
+
+        // Toggle multi-select dropdown
+        function toggleMultiSelectDropdown(questionId) {
+            const trigger = document.getElementById(`${questionId}-trigger`);
+            const dropdown = document.getElementById(`${questionId}-dropdown`);
+            const searchInput = document.getElementById(`${questionId}-search`);
+
+            trigger.classList.toggle('active');
+            dropdown.classList.toggle('open');
+
+            // Clear search and filter when closing
+            if (dropdown.classList.contains('open') && searchInput) {
+                searchInput.focus();
+            } else if (!dropdown.classList.contains('open') && searchInput) {
+                searchInput.value = '';
+                filterCountries(questionId);
+            }
+        }
+
+        // Handle multi-select checkbox change
+        function handleMultiSelectChange(questionId, screenIndex) {
+            const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
+            // Update placeholder
+            const placeholder = document.getElementById(`${questionId}-placeholder`);
+            const trigger = document.getElementById(`${questionId}-trigger`);
+            const defaultPlaceholder = trigger?.getAttribute('data-placeholder') || 'Select options';
+            if (selected.length === 0) {
+                placeholder.textContent = defaultPlaceholder;
+            } else if (selected.length === 1) {
+                placeholder.textContent = selected[0];
+            } else {
+                const selectedLabel = trigger?.getAttribute('data-selected-label') || 'options';
+                placeholder.textContent = `${selected.length} ${selectedLabel} selected`;
+            }
+
+            // Update form data
+            formData[questionId] = selected;
+
+            // Handle funding source summary card (show when >1 selected)
+            if (questionId === 'fundingSource') {
+                const card = document.getElementById('fundingSource-summary-card');
+                const cardText = document.getElementById('fundingSource-summary-text');
+                if (card && cardText) {
+                    if (selected.length > 1) {
+                        cardText.innerHTML = selected.map(s => `<div>${s}</div>`).join('');
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            }
+
+            // Handle revenue sources special case
+            if (questionId === 'revenueSources') {
+                handleRevenueSourcesChange(questionId, selected, screenIndex);
+            }
+
+            // Handle conditional follow-ups (show/hide based on which options are checked)
+            const screenDef = screenDefinitions[currentScreen];
+            const questionDef = findQuestionById(questionId, screenDef.questions);
+            if (questionDef && questionDef.conditionalFollowUps) {
+                Object.entries(questionDef.conditionalFollowUps).forEach(([option, followUpQ]) => {
+                    const el = document.getElementById(`conditional-${questionId}-${option}`);
+                    if (el) {
+                        el.style.display = selected.includes(option) ? 'block' : 'none';
+                    }
+                });
+            }
+
+            // Show/hide follow-ups
+            showFollowUps(questionId, screenIndex);
+
+            // Update button state
+            updateButtonState(screenIndex);
+        }
+
+        // Toggle custom select dropdown
+        function toggleCustomSelectDropdown(questionId) {
+            const dropdown = document.getElementById(`${questionId}-dropdown`);
+            const trigger = document.getElementById(`${questionId}-trigger`);
+
+            // Close other dropdowns
+            document.querySelectorAll('.custom-select-dropdown.open').forEach(el => {
+                if (el.id !== `${questionId}-dropdown`) {
+                    el.classList.remove('open');
+                    el.previousElementSibling.classList.remove('active');
+                }
+            });
+
+            dropdown.classList.toggle('open');
+            trigger.classList.toggle('active');
+        }
+
+        // Select custom option
+        function selectCustomOption(questionId, value, screenIndex) {
+            // Update form data
+            formData[questionId] = value;
+
+            // Update placeholder
+            const placeholder = document.getElementById(`${questionId}-placeholder`);
+            placeholder.textContent = value;
+
+            // Close dropdown
+            const dropdown = document.getElementById(`${questionId}-dropdown`);
+            const trigger = document.getElementById(`${questionId}-trigger`);
+            dropdown.classList.remove('open');
+            trigger.classList.remove('active');
+
+            // Update selected state styling
+            document.querySelectorAll(`#${questionId}-dropdown .custom-select-option`).forEach(el => {
+                el.classList.remove('selected');
+                if (el.textContent === value) {
+                    el.classList.add('selected');
+                }
+            });
+
+            // Show/hide follow-ups for custom select
+            document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
+                el.classList.remove('visible');
+            });
+
+            const followUpId = `followup-${questionId}-${value}`;
+            const followUpElement = document.getElementById(followUpId);
+            if (followUpElement) {
+                followUpElement.classList.add('visible');
+            }
+
+            // Update address display for operation location and correspondence address
+            if (questionId === 'operationLocation' || questionId === 'correspondenceAddress') {
+                const addressDisplay = document.getElementById(`address-display-${questionId}`);
+                const addressText = document.getElementById(`address-text-${questionId}`);
+
+                if (value === 'Another address') {
+                    // For 'Another address', hide the card - user will fill in custom address
+                    addressDisplay.style.display = 'none';
+                } else {
+                    switch(value) {
+                        case 'Registered address':
+                            addressText.textContent = "11 White Street, Manchester, M20 7PQ";
+                            break;
+                        case 'Trading address':
+                            addressText.textContent = "22 Green Street, Manchester, M20 7PQ";
+                            break;
+                        case 'Home address':
+                            addressText.textContent = "33 Blue Street, Manchester, M20 7PQ";
+                            break;
+                        case 'Mobile business':
+                            addressText.textContent = "You don't operate from a fixed address.";
+                            break;
+                    }
+                    addressDisplay.style.display = 'block';
+                }
+            }
+
+            // Update button state
+            updateButtonState(screenIndex);
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.custom-select-container') && !event.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.custom-select-dropdown.open').forEach(el => {
+                    el.classList.remove('open');
+                    el.previousElementSibling.classList.remove('active');
+                });
+                document.querySelectorAll('.multi-select-dropdown.open').forEach(el => {
+                    el.classList.remove('open');
+                    el.previousElementSibling.classList.remove('active');
+                });
+            }
+        });
+
+        // Filter countries based on search input
+        function filterCountries(questionId) {
+            const searchInput = document.getElementById(`${questionId}-search`);
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const optionsList = document.getElementById(`${questionId}-options-list`);
+            const options = optionsList.querySelectorAll('.multi-select-option');
+
+            let visibleCount = 0;
+
+            options.forEach(option => {
+                if (option.classList.contains('no-results')) {
+                    option.remove();
+                    return;
+                }
+
+                const countryName = option.getAttribute('data-country-name');
+                if (searchTerm === '' || countryName.includes(searchTerm)) {
+                    option.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    option.classList.add('hidden');
+                }
+            });
+
+            // Show "no results" message if needed
+            if (visibleCount === 0 && searchTerm !== '') {
+                const noResults = document.createElement('div');
+                noResults.className = 'multi-select-option no-results';
+                noResults.textContent = 'No countries found';
+                optionsList.appendChild(noResults);
+            }
+
+            // Show/hide clear button
+            const clearBtn = document.getElementById(`${questionId}-search-clear`);
+            if (clearBtn) {
+                clearBtn.style.display = searchTerm ? 'flex' : 'none';
+            }
+        }
+
+        // Clear search input
+        function clearCountrySearch(questionId) {
+            const searchInput = document.getElementById(`${questionId}-search`);
+            searchInput.value = '';
+            searchInput.focus();
+            filterCountries(questionId);
+        }
+
+        // Handle country multi-select change
+        function handleCountryMultiSelectChange(questionId) {
+            const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => ({
+                code: cb.value,
+                name: cb.getAttribute('data-country')
+            }));
+
+            // Update placeholder
+            const placeholder = document.getElementById(`${questionId}-placeholder`);
+            if (selected.length === 0) {
+                placeholder.textContent = 'Select countries';
+            } else if (selected.length === 1) {
+                placeholder.textContent = selected[0].name;
+            } else {
+                placeholder.textContent = `${selected.length} countries selected`;
+            }
+
+            // Show/hide follow-up question based on selection
+            const countryAmountsGroup = document.getElementById(`country-amounts-${questionId}`);
+            if (selected.length > 0) {
+                countryAmountsGroup.classList.add('visible');
+            } else {
+                countryAmountsGroup.classList.remove('visible');
+            }
+
+            // Update form data
+            formData[questionId] = selected.map(c => c.code);
+
+            // Update list with table structure
+            const listElement = document.getElementById(`list-${questionId}`);
+            listElement.innerHTML = '';
+
+            // Check if this is a percentage-required field
+            const percentageRequired = countryAmountsGroup.getAttribute('data-percentage-required') === 'true';
+            const showPercentageBar = countryAmountsGroup.getAttribute('data-show-percentage-bar') !== 'false';
+
+            // Create table header
+            const headerRow = document.createElement('div');
+            headerRow.className = 'country-table-header';
+            const customHeaderLabel = countryAmountsGroup.getAttribute('data-percentage-header-label');
+            const headerColumnText = customHeaderLabel || (percentageRequired ? '% OF TURNOVER' : 'AMOUNT IN £');
+            headerRow.innerHTML = `
+                <div class="country-table-header-cell country">Country</div>
+                <div class="country-table-header-cell amount">${headerColumnText}</div>
+            `;
+            listElement.appendChild(headerRow);
+
+            // Create table rows
+            selected.forEach((country, index) => {
+                const row = document.createElement('div');
+                row.className = 'country-table-row';
+                // Convert country code to flag emoji
+                const countryCode = country.code.toUpperCase();
+                const flag = countryCode
+                  .split('')
+                  .map(char => String.fromCodePoint(127397 + char.charCodeAt()))
+                  .join('');
+
+                let cellHTML;
+                if (percentageRequired) {
+                    // Render percentage input
+                    cellHTML = `
+                        <div class="country-table-cell country">
+                            <span class="country-name">${flag} ${country.name}</span>
+                        </div>
+                        <div class="country-table-cell amount">
+                            <div class="percent-input-wrapper">
+                                <input type="text" id="${questionId}-${country.code}-percent"
+                                    placeholder="0" inputmode="numeric" maxlength="3"
+                                    oninput="handlePercentInput(event); handleCountryPercentChange('${questionId}')"
+                                    class="percent-input">
+                                <span class="percent-symbol">%</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Render currency input (£ prefix, no % symbol)
+                    cellHTML = `
+                        <div class="country-table-cell country">
+                            <span class="country-name">${flag} ${country.name}</span>
+                        </div>
+                        <div class="country-table-cell amount">
+                            <div class="currency-input-wrapper">
+                                <span class="currency-symbol">£</span>
+                                <input type="text" id="${questionId}-${country.code}-amount"
+                                    placeholder="0" inputmode="decimal"
+                                    oninput="handleCurrencyInput(event); handleInputChange('${questionId}', null, ${currentScreen}, false)"
+                                    class="currency-input">
+                            </div>
+                        </div>
+                    `;
+                }
+                row.innerHTML = cellHTML;
+                listElement.appendChild(row);
+            });
+
+            // Add percentage summary bar if needed (but only if showPercentageBar is true)
+            if (percentageRequired && showPercentageBar) {
+                const customSummaryLabel = countryAmountsGroup.getAttribute('data-summary-label') || 'Total';
+                const summaryBar = document.createElement('div');
+                summaryBar.className = 'revenue-split-summary';
+                summaryBar.id = `summary-${questionId}`;
+                summaryBar.innerHTML = `
+                    <div class="summary-progress-container">
+                        <div class="summary-progress-bar">
+                            <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                        </div>
+                        <div class="summary-progress-text">${customSummaryLabel}: <span id="percent-total-${questionId}">0</span>%</div>
+                    </div>
+                `;
+                listElement.appendChild(summaryBar);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'revenue-split-error';
+                errorDiv.id = `percent-error-${questionId}`;
+                const customErrorMessage = countryAmountsGroup.getAttribute('data-error-message') || 'Error: total must be 100%';
+                errorDiv.textContent = customErrorMessage;
+                listElement.appendChild(errorDiv);
+            }
+
+            // Update summary if needed
+            const screenIndex = currentScreen;
+            const screenDef = screenDefinitions[screenIndex];
+            if (screenDef.requiresSummary) {
+                updateSummary(screenIndex);
+            }
+
+            updateButtonState(screenIndex);
+        }
+
+        // Handle revenue sources selection and display split table
+        function handleRevenueSourcesChange(questionId, selected, screenIndex) {
+            // Show/hide revenue split follow-up
+            const revenueSplitGroup = document.getElementById(`revenue-split-${questionId}`);
+            if (selected.length > 0) {
+                revenueSplitGroup.classList.add('visible');
+                updateRevenueSourcesTable(questionId, selected);
+            } else {
+                revenueSplitGroup.classList.remove('visible');
+            }
+        }
+
+        // Update revenue sources table
+        function updateRevenueSourcesTable(questionId, selected) {
+            const listElement = document.getElementById(`list-${questionId}`);
+            listElement.innerHTML = '';
+
+            // Create table header
+            const headerRow = document.createElement('div');
+            headerRow.className = 'country-table-header';
+            headerRow.innerHTML = `
+                <div class="country-table-header-cell country">Source</div>
+                <div class="country-table-header-cell amount">% OF REVENUE</div>
+            `;
+            listElement.appendChild(headerRow);
+
+            // Create table rows
+            selected.forEach((source, index) => {
+                const row = document.createElement('div');
+                row.className = 'country-table-row';
+                row.innerHTML = `
+                    <div class="country-table-cell country">
+                        <span class="country-name">${source}</span>
+                    </div>
+                    <div class="country-table-cell amount">
+                        <div class="percent-input-wrapper">
+                            <input type="text" id="${questionId}-${index}-percent"
+                                placeholder="0" inputmode="numeric" maxlength="3"
+                                oninput="handlePercentInput(event); updateRevenueSummary('${questionId}')"
+                                class="percent-input">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                `;
+                listElement.appendChild(row);
+            });
+
+            // Create summary bar
+            const summaryBar = document.createElement('div');
+            summaryBar.className = 'revenue-split-summary';
+            summaryBar.id = `summary-${questionId}`;
+            summaryBar.innerHTML = `
+                <div class="summary-progress-container">
+                    <div class="summary-progress-bar">
+                        <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                    </div>
+                    <div class="summary-progress-text">Total allocated: <span id="revenue-total-${questionId}">0</span>%</div>
+                </div>
+            `;
+            listElement.appendChild(summaryBar);
+
+            // Create error message as a sibling (outside the white box)
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'revenue-split-error';
+            errorMsg.id = `revenue-error-${questionId}`;
+            errorMsg.textContent = 'Error: total revenue must be 100%';
+            listElement.appendChild(errorMsg);
+
+            // Initialize summary
+            updateRevenueSummary(questionId);
+        }
+
+        // Handle percent input validation
+        function handlePercentInput(event) {
+            const input = event.target;
+            // Allow only integers
+            input.value = input.value.replace(/[^0-9]/g, '');
+            // Limit to 100
+            if (parseInt(input.value) > 100) {
+                input.value = '100';
+            }
+        }
+
+        // Update revenue split summary
+        function updateRevenueSummary(questionId) {
+            // Get all percent input fields for this question
+            const inputs = document.querySelectorAll(`#list-${questionId} .percent-input`);
+            let total = 0;
+
+            inputs.forEach(input => {
+                const value = parseInt(input.value) || 0;
+                total += value;
+            });
+
+            // Use actual total for both display and progress bar
+            // Clamp progress bar to 100% for visual purposes
+            const progressWidth = Math.min(total, 100);
+
+            // Update progress bar
+            const progressFill = document.getElementById(`progress-fill-${questionId}`);
+            if (progressFill) {
+                progressFill.style.width = progressWidth + '%';
+            }
+
+            // Update total percentage text with actual total
+            const totalText = document.getElementById(`revenue-total-${questionId}`);
+            if (totalText) {
+                totalText.textContent = total;
+            }
+
+            // Show/hide error message:
+            // - always show if total > 100
+            // - show if all fields have a value > 0 but total is still < 100
+            // - hide while user is still filling in fields (some still at 0)
+            const errorMsg = document.getElementById(`revenue-error-${questionId}`);
+            if (errorMsg) {
+                const allFilled = inputs.length > 0 && Array.from(inputs).every(input => (parseInt(input.value) || 0) > 0);
+                if (total > 100 || (allFilled && total < 100)) {
+                    errorMsg.classList.add('visible');
+                } else {
+                    errorMsg.classList.remove('visible');
+                }
+            }
+        }
+
+        // Handle country percentage input change
+        function handleCountryPercentChange(questionId) {
+            const percentageGroup = document.getElementById(`country-amounts-${questionId}`);
+            if (!percentageGroup) return;
+
+            const showPercentageBar = percentageGroup.getAttribute('data-show-percentage-bar') !== 'false';
+
+            if (showPercentageBar) {
+                // Get all percent input fields for this question
+                const inputs = document.querySelectorAll(`#list-${questionId} .percent-input`);
+                let total = 0;
+
+                inputs.forEach(input => {
+                    const value = parseInt(input.value) || 0;
+                    total += value;
+                });
+
+                // Update progress bar (clamped to 100%)
+                const progressWidth = Math.min(total, 100);
+                const progressFill = document.getElementById(`progress-fill-${questionId}`);
+                if (progressFill) {
+                    progressFill.style.width = progressWidth + '%';
+                }
+
+                // Update total percentage text
+                const totalText = document.getElementById(`percent-total-${questionId}`);
+                if (totalText) {
+                    totalText.textContent = total;
+                }
+
+                // Show/hide error: only if over 100% or all filled but under 100%
+                const errorMsg = document.getElementById(`percent-error-${questionId}`);
+                if (errorMsg) {
+                    const allFilled = inputs.length > 0 && Array.from(inputs).every(input => (parseInt(input.value) || 0) > 0);
+                    if (total > 100 || (allFilled && total < 100)) {
+                        errorMsg.classList.add('visible');
+                    } else {
+                        errorMsg.classList.remove('visible');
+                    }
+                }
+            }
+
+            // Update form data
+            const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+            const percentages = {};
+            selected.forEach(countryCode => {
+                const input = document.getElementById(`${questionId}-${countryCode}-percent`);
+                if (input) {
+                    percentages[countryCode] = parseInt(input.value) || 0;
+                }
+            });
+            formData[questionId] = { countries: selected, percentages: percentages };
+
+            // Update button state
+            updateButtonState(currentScreen);
+        }
+
+        // Close multi-select dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const multiSelectContainers = document.querySelectorAll('.multi-select-container');
+            multiSelectContainers.forEach(container => {
+                const trigger = container.querySelector('.multi-select-trigger');
+                const dropdown = container.querySelector('.multi-select-dropdown');
+
+                if (!container.contains(event.target)) {
+                    trigger.classList.remove('active');
+                    dropdown.classList.remove('open');
+                }
+            });
+        });
+
+        // Handle country selection
+        function handleCountrySelection(questionId) {
+            const selected = Array.from(document.querySelectorAll(`input[name="${questionId}"]:checked`))
+                .map(el => ({
+                    code: el.value,
+                    name: el.getAttribute('data-country')
+                }));
+
+            // Update list
+            const listElement = document.getElementById(`list-${questionId}`);
+            listElement.innerHTML = '';
+
+            selected.forEach(country => {
+                const item = document.createElement('div');
+                item.className = 'selected-item';
+                item.innerHTML = `
+                    <div class="selected-item-label">${country.name}</div>
+                    <div class="percentage-input">
+                        <input type="number" id="${questionId}-${country.code}-percent"
+                            min="0" max="100" placeholder="0"
+                            oninput="updatePercentageTotal('${questionId}')"
+                            class="percentage-input">
+                        <span>%</span>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+
+            formData[questionId] = selected.map(c => c.code);
+        }
+
+        // Update percentage total for validation
+        function updatePercentageTotal(questionId) {
+            const inputs = document.querySelectorAll(`#list-${questionId} input[type="number"]`);
+            let total = 0;
+            inputs.forEach(input => {
+                total += parseInt(input.value) || 0;
+            });
+
+            // Update summary
+            const screenIndex = currentScreen;
+            const screenDef = screenDefinitions[screenIndex];
+            if (screenDef.requiresSummary) {
+                updateSummary(screenIndex);
+            }
+
+            updateButtonState(screenIndex);
+        }
+
+        // Update summary bar
+        function updateSummary(screenIndex) {
+            const screenDef = screenDefinitions[screenIndex];
+            if (!screenDef.requiresSummary) return;
+
+            const summaryContent = document.getElementById(`summary-content-${screenIndex}`);
+            if (!summaryContent) return;
+
+            let totalPercentage = 0;
+            let html = '';
+
+            // Find all percentage inputs on this screen
+            document.querySelectorAll(`#screen-${screenIndex} input[type="number"][placeholder="0"]`).forEach(input => {
+                const value = parseInt(input.value) || 0;
+                totalPercentage += value;
+            });
+
+            html = `<div class="summary-row"><strong>Total Revenue:</strong></div>`;
+            html += `<div class="summary-total ${totalPercentage === 100 ? '' : 'invalid'}">
+                Total: <strong>${totalPercentage}%</strong>
+            </div>`;
+
+            summaryContent.innerHTML = html;
+
+            // Continue button is always enabled - validation will be added later
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = false;
+        }
+
+        // Update character counter
+        function updateCharCounter(questionId, maxLength) {
+            const element = document.getElementById(questionId);
+            const counter = document.getElementById(`counter-${questionId}`);
+            const length = element.value.length;
+            counter.textContent = `${length}/${maxLength}`;
+            if (length >= maxLength) {
+                counter.classList.add('over-limit');
+            } else {
+                counter.classList.remove('over-limit');
+            }
+        }
+
+        // Toggle accordion
+        function toggleAccordion(event, contentId) {
+            event.preventDefault();
+            const content = document.getElementById(contentId);
+            if (content) {
+                content.classList.toggle('open');
+                // Toggle chevron rotation on the button that triggered this
+                const button = event.currentTarget;
+                if (button) {
+                    button.classList.toggle('expanded');
+                }
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload(questionId, screenIndex) {
+            const fileInput = document.getElementById(`${questionId}-file-input`);
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Store file info in form data
+                formData[questionId] = {
+                    filename: file.name,
+                    size: file.size,
+                    type: file.type
+                };
+
+                // Show success message (in production, this would upload the file)
+                console.log('File selected:', file.name);
+
+                // Update button state
+                updateButtonState(screenIndex);
+            }
+        }
+
+        // Update button state
+        function updateButtonState(screenIndex) {
+            const continueBtn = document.getElementById('continueBtn');
+            // Continue button is always enabled - validation will be added later
+            continueBtn.disabled = false;
+        }
+
+        // Get total percentage for current screen
+        function getTotalPercentage(screenIndex) {
+            let total = 0;
+            document.querySelectorAll(`#screen-${screenIndex} input[type="number"][placeholder="0"]`).forEach(input => {
+                total += parseInt(input.value) || 0;
+            });
+            return total;
+        }
+
+        // Navigate to next screen
+        function nextScreen() {
+            if (currentScreen < screenDefinitions.length - 1) {
+                renderScreen(currentScreen + 1);
+                document.getElementById('contentArea').scrollTop = 0;
+            }
+        }
+
+        // Navigate to previous screen
+        function previousScreen() {
+            if (currentScreen > 0) {
+                renderScreen(currentScreen - 1);
+                document.getElementById('contentArea').scrollTop = 0;
+            }
+        }
+
+        // Exit application
+        function exitApplication() {
+            if (confirm('Are you sure you want to exit? Your data will not be saved.')) {
+                alert('Application exited. In a real scenario, this would take you to a confirmation screen.');
+            }
+        }
+
+        // Save form data to localStorage
+        function saveFormData() {
+            localStorage.setItem('kybFormData', JSON.stringify(formData));
+        }
+
+        // Restore form values from memory
+        function restoreFormValues(screenIndex) {
+            const screenDef = screenDefinitions[screenIndex];
+            screenDef.questions.forEach(q => {
+                const value = formData[q.id];
+                if (value) {
+                    const element = document.getElementById(q.id);
+                    if (element || q.type === 'country-multi' || q.type === 'multi-select') {
+                        if (q.type === 'checkbox') {
+                            if (Array.isArray(value)) {
+                                value.forEach(v => {
+                                    const cb = document.querySelector(`input[name="${q.id}"][value="${v}"]`);
+                                    if (cb) cb.checked = true;
+                                });
+                            }
+                            handleCountrySelection(q.id); // Update list
+                        } else if (q.type === 'multi-select') {
+                            if (Array.isArray(value)) {
+                                value.forEach(v => {
+                                    const cb = document.querySelector(`input[name="${q.id}-checkbox"][value="${v}"]`);
+                                    if (cb) cb.checked = true;
+                                });
+                                handleMultiSelectChange(q.id, screenIndex);
+                            }
+                        } else if (q.type === 'country-multi') {
+                            if (Array.isArray(value)) {
+                                value.forEach(v => {
+                                    const cb = document.querySelector(`input[name="${q.id}-checkbox"][value="${v}"]`);
+                                    if (cb) cb.checked = true;
+                                });
+                                handleCountryMultiSelectChange(q.id);
+                            }
+                        } else if (q.type === 'radio') {
+                            const rb = document.querySelector(`input[name="${q.id}"][value="${value}"]`);
+                            if (rb) rb.checked = true;
+                            showFollowUps(q.id, screenIndex);
+                        } else if (q.type === 'select') {
+                            // Handle custom select dropdown
+                            const placeholder = document.getElementById(`${q.id}-placeholder`);
+                            if (placeholder) {
+                                placeholder.textContent = value;
+                            }
+                            // Update selected state styling
+                            document.querySelectorAll(`#${q.id}-dropdown .custom-select-option`).forEach(el => {
+                                el.classList.remove('selected');
+                                if (el.textContent === value) {
+                                    el.classList.add('selected');
+                                }
+                            });
+                            showFollowUps(q.id, screenIndex);
+                        } else {
+                            element.value = value;
+                            if (q.type === 'textarea') {
+                                updateCharCounter(q.id, q.maxLength || 250);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Drawer functions
+        function findQuestionById(questionId, questions) {
+            for (const q of questions) {
+                if (q.id === questionId) return q;
+                if (q.followUp) {
+                    const nested = findQuestionById(questionId, Object.values(q.followUp));
+                    if (nested) return nested;
+                }
+            }
+            return null;
+        }
+
+        function openDrawer(questionId) {
+            const screenDef = screenDefinitions[currentScreen];
+            let question = findQuestionById(questionId, screenDef.questions);
+
+            if (!question || !question.helpText) return;
+
+            const drawerContent = document.getElementById('drawerContent');
+            const drawerTitle = document.getElementById('drawerTitle');
+
+            drawerTitle.textContent = question.helpText.title;
+
+            let html = '';
+
+            if (question.helpText.intro) {
+                html += `<div class="drawer-intro">${question.helpText.intro}</div>`;
+            }
+
+            if (question.helpText.bullets && question.helpText.bullets.length > 0) {
+                html += `<ul class="drawer-bullets">`;
+                question.helpText.bullets.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += `</ul>`;
+            }
+
+            if (question.helpText.examples && question.helpText.examples.length > 0) {
+                question.helpText.examples.forEach(example => {
+                    html += `<div class="drawer-example">${example}</div>`;
+                });
+            }
+
+            if (question.helpText.outro) {
+                html += `<div class="drawer-outro">${question.helpText.outro}</div>`;
+            }
+
+            drawerContent.innerHTML = html;
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer(event) {
+            // Close if clicking outside or on close button
+            if (event && event.target.id !== 'drawerOverlay') return;
+
+            document.getElementById('drawerOverlay').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Start app
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
