@@ -38,58 +38,71 @@
 
         /* Status Bar */
         .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 16px;
-            background: #000000;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            height: 24px;
+            position: relative;
+            background: #ffffff;
+            height: 56px;
             flex-shrink: 0;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             width: 100%;
             max-width: 375px;
             box-sizing: border-box;
         }
 
         .status-time {
-            font-size: 14px;
-            font-weight: 600;
+            position: absolute;
+            left: 68.7px;
+            transform: translateX(-50%);
+            top: calc(50% - 10.11px);
+            margin: 0;
+            font-size: 16.221px;
+            font-weight: 700;
+            color: #000000;
+            text-align: center;
+            width: 51.527px;
+            font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif;
+            line-height: normal;
+            letter-spacing: -0.3817px;
+        }
+
+        .dynamic-island {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 10.5px;
+            width: 119.275px;
+            height: 35.305px;
+            background: #000000;
+            border-radius: 17.176px;
         }
 
         .status-icons {
-            display: flex;
-            gap: 4px;
-            font-size: 12px;
+            position: absolute;
+            right: 31.18px;
+            top: calc(50% - 0.48px);
+            transform: translateY(-50%);
+            width: 74.739px;
+            height: 13.041px;
         }
 
         /* Search Bar */
         .search-bar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: #f6f6f6;
-            border-bottom: 1px solid #e2e2e2;
-            font-size: 14px;
-            color: #515151;
+            justify-content: center;
+            padding-bottom: 10px;
+            background: #ffffff;
             flex-shrink: 0;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             width: 100%;
             max-width: 375px;
             box-sizing: border-box;
         }
 
-        .search-icon {
-            font-size: 16px;
-        }
-
-        .search-text {
-            flex: 1;
-            color: #006de3;
-            font-weight: 500;
+        .search-pill {
+            position: relative;
+            width: 353px;
+            height: 34px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 9.542px;
+            flex-shrink: 0;
         }
 
         .refresh-icon {
@@ -104,7 +117,6 @@
             align-items: center;
             padding: 12px 16px;
             background: #ffffff;
-            border-bottom: 1px solid #e2e2e2;
             flex-shrink: 0;
             font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             width: 100%;
@@ -139,41 +151,43 @@
         .secure-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: #f6f6f6;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #272727;
-            letter-spacing: 0.5px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        .lock-icon {
+            gap: 4px;
+            padding: 3px 8px;
+            background: #eeeeee;
+            border-radius: 4px;
             font-size: 14px;
-            line-height: 1;
-        }
-
-        .secure-text {
-            letter-spacing: 0.5px;
+            font-weight: 400;
+            color: #515151;
+            letter-spacing: 0.07px;
             font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 18px;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
         /* Step Tracker Section */
         .step-tracker-section {
-            padding: 16px 20px;
+            padding: 23px 24px 12px;
             background: #ffffff;
-            border-bottom: 1px solid #e2e2e2;
             flex-shrink: 0;
             width: 100%;
             max-width: 375px;
             box-sizing: border-box;
         }
 
+        .tracker-back {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
         .screen-title {
             font-size: 32px;
-            font-weight: 500;
+            font-weight: 700;
             color: #272727;
             margin-bottom: 16px;
             line-height: 38px;
@@ -519,6 +533,7 @@
             line-height: 22px;
             text-align: left;
             transition: border-color 0.2s;
+            box-sizing: border-box;
         }
 
         .multi-select-trigger:hover {
@@ -533,6 +548,7 @@
 
         .multi-select-placeholder {
             flex: 1;
+            text-align: left;
         }
 
         .multi-select-arrow {
@@ -1151,44 +1167,50 @@
         /* Footer */
         .footer {
             background: #f6f6f6;
-            padding: 20px;
+            padding: 40px 24px;
             font-size: 16px;
             color: #515151;
             font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             font-weight: 400;
-            line-height: 22px;
+            line-height: 24px;
             letter-spacing: 0;
             width: 100%;
             max-width: 375px;
             flex-shrink: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        .footer-content {
-            margin-bottom: 24px;
+        .footer-divider {
+            width: 100%;
+            height: 1px;
+            background: #e2e2e2;
+            flex-shrink: 0;
+            margin-bottom: 0;
         }
 
         .footer-text {
             font-size: 16px;
             color: #515151;
-            line-height: 22px;
-            margin-bottom: 12px;
+            line-height: 24px;
             font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             font-weight: 400;
             letter-spacing: 0;
-            margin: 0 0 12px 0;
-        }
-
-        .footer-text:last-child {
-            margin-bottom: 0;
+            margin: 0;
         }
 
         .footer-logos {
             display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .footer-logos-row {
+            display: flex;
             gap: 16px;
             align-items: center;
-            justify-content: flex-start;
-            flex-wrap: wrap;
         }
 
         .footer-logo {
@@ -1741,6 +1763,11 @@
         .screen.active {
             display: block;
         }
+
+        #screenContainer {
+            width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -1749,38 +1776,62 @@
         <div class="content-area" id="contentArea">
             <!-- Status Bar -->
             <div class="status-bar">
-                <div class="status-time">9:41</div>
+                <p class="status-time">9:41</p>
+                <div class="dynamic-island"></div>
                 <div class="status-icons">
-                    <span>📶</span>
-                    <span>🔋</span>
+                    <img src="https://www.figma.com/api/mcp/asset/d8f53022-5f2e-4287-9e24-49942b142d40" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
                 </div>
             </div>
 
             <!-- Search Bar -->
             <div class="search-bar">
-                <span class="search-icon">🔍</span>
-                <span class="search-text">figma.com</span>
-                <span class="refresh-icon">🔄</span>
+                <div class="search-pill">
+                    <!-- aA icon (left) -->
+                    <div style="position: absolute; top: 50%; transform: translateY(-50%); left: 9.65px; width: 17.846px; height: 11.766px;">
+                        <img src="https://www.figma.com/api/mcp/asset/f5e63b14-75a1-4997-a465-fa4e98769a98" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                    </div>
+                    <!-- Domain text (centred) -->
+                    <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 8.59px; display: flex; gap: 3.817px; align-items: center; white-space: nowrap; overflow: hidden;">
+                        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <rect x="1" y="5.5" width="9" height="7" rx="1.5" fill="#000"/>
+                            <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span style="font-family: -apple-system, sans-serif; font-size: 15.267px; color: #000; letter-spacing: -0.4275px; line-height: normal;">figma.com</span>
+                    </div>
+                    <!-- Reload icon (right) -->
+                    <div style="position: absolute; top: 50%; transform: translateY(-50%); right: 8.36px; width: 14.081px; height: 17.159px;">
+                        <img src="https://www.figma.com/api/mcp/asset/74010663-d7cc-4a4e-b0a1-f79edbd71906" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                    </div>
+                </div>
             </div>
 
             <!-- Header -->
             <div class="header">
                 <div class="header-left">
-                    <button id="backBtn" class="header-back" onclick="previousScreen()" style="display: none;">
-                        <img src="https://www.figma.com/api/mcp/asset/3160b3c5-1fc6-44dd-964b-324bb1a32efc" alt="Back" style="width: 24px; height: 24px; object-fit: contain;">
-                    </button>
                     <div class="barclays-logo">
-                        <img src="https://www.figma.com/api/mcp/asset/45af1e12-bd0f-4555-b8df-e6456ca27ef6" alt="Barclays Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                        <img src="https://www.figma.com/api/mcp/asset/49755813-8945-46e1-94a2-3d992ba398ee" alt="Barclays Logo" style="width: 32px; height: 32px; object-fit: contain;">
                     </div>
                 </div>
                 <div class="secure-badge">
-                    <span class="lock-icon">🔒</span>
-                    <span class="secure-text">SECURE</span>
+                    <div style="position: relative; width: 16px; height: 16px; flex-shrink: 0; overflow: hidden;">
+                        <div style="position: absolute; inset: 8.33% 16.66%;">
+                            <img src="https://www.figma.com/api/mcp/asset/8240f458-d32e-482a-a8b3-74be5c237db0" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                        </div>
+                        <img src="https://www.figma.com/api/mcp/asset/a8c5d4a9-da66-456c-83a0-0d9cbfde2e26" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                    </div>
+                    <span>SECURE</span>
                 </div>
             </div>
 
             <!-- Step Tracker Section -->
             <div class="step-tracker-section">
+                <button id="backBtn" class="tracker-back" onclick="previousScreen()" style="display: none;">
+                    <div style="position: relative; width: 24px; height: 24px; overflow: hidden;">
+                        <div style="position: absolute; inset: 14.58% 8.33%;">
+                            <img src="https://www.figma.com/api/mcp/asset/5e4c69e3-48b5-491b-88f0-418413eb8d54" alt="Back" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                        </div>
+                    </div>
+                </button>
                 <div class="screen-title" id="screenTitle">Business Identity</div>
                 <div class="progress-tracker">
                     <div class="progress-bar-container">
@@ -1805,19 +1856,36 @@
 
             <!-- Footer -->
             <div class="footer">
-                <div class="footer-content">
-                    <p class="footer-text">Barclays Bank UK PLC and Barclays Bank PLC are each authorised by the Prudential Regulation Authority and regulated by the Financial Conduct Authority and the Prudential Regulation Authority.</p>
-                    <p class="footer-text">Barclays Insurance Services Company Limited and Barclays Investment Solutions Limited are each authorised and regulated by the Financial Conduct Authority.</p>
-                    <p class="footer-text">Registered office for all: 1 Churchill Place,<br>London E14 5HP</p>
-                </div>
+                <div class="footer-divider"></div>
+                <p class="footer-text">Barclays Bank UK PLC and Barclays Bank PLC are each authorised by the Prudential Regulation Authority and regulated by the Financial Conduct Authority and the Prudential Regulation Authority. Barclays Insurance Services Company Limited and Barclays Investment Solutions Limited are each authorised and regulated by the Financial Conduct Authority.<br>Registered office for all: 1 Churchill Place, London E14 5HP</p>
                 <div class="footer-logos">
-                    <img src="https://www.figma.com/api/mcp/asset/f7aa902b-e8e3-406d-84d8-6f7f2cd86609" alt="FSCS Logo" style="width: 62.488px; height: 64px; object-fit: contain;">
-                    <div class="footer-logo-spacer"></div>
-                    <img src="https://www.figma.com/api/mcp/asset/ce59f02a-7280-4e77-95b6-f892e86d06e0" alt="Secure Logo" style="width: 47.434px; height: 40px; object-fit: contain;">
-                    <div class="footer-logo-spacer"></div>
-                    <img src="https://www.figma.com/api/mcp/asset/6d3df326-3dfb-434d-ac65-b41ce16f0f88" alt="Mark of Trust Kitemark" style="width: 78.831px; height: 40px; object-fit: contain;">
-                    <div class="footer-logo-spacer"></div>
-                    <img src="https://www.figma.com/api/mcp/asset/4279aa5f-7e47-4b06-a25f-4db5463da59d" alt="Take Five Stacked" style="width: 33.192px; height: 40px; object-fit: contain;">
+                    <!-- Row 1: FSCS + Cyber Essentials -->
+                    <div class="footer-logos-row">
+                        <img src="https://www.figma.com/api/mcp/asset/d8439d63-2422-4a40-90e1-67762c3e969e" alt="FSCS Protected" style="width: 53.244px; height: 72px; object-fit: contain; flex-shrink: 0;">
+                        <img src="https://www.figma.com/api/mcp/asset/1e6fc6c1-82d9-408c-b55c-fd1f4d01976b" alt="Cyber Essentials Certified" style="width: 129.6px; height: 72px; object-fit: contain; flex-shrink: 0;">
+                    </div>
+                    <!-- Row 2: BSI Secure Digital Banking + BSI ISO/IEC 27001 -->
+                    <div class="footer-logos-row" style="gap: 24px; align-items: flex-start;">
+                        <div style="position: relative; width: 142px; height: 72px; overflow: hidden; flex-shrink: 0;">
+                            <!-- Roundel -->
+                            <div style="position: absolute; top: 0; right: 53.86%; bottom: 0; left: 0;">
+                                <img src="https://www.figma.com/api/mcp/asset/f448a5db-d3f0-48cc-bf7b-fccb9f9b43a2" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                            </div>
+                            <!-- Key line -->
+                            <div style="position: absolute; top: 9.1%; right: 0; bottom: -0.01%; left: 22.49%;">
+                                <img src="https://www.figma.com/api/mcp/asset/64fb6174-eec3-4584-99f6-26ff1bbdc897" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                            </div>
+                            <!-- Scheme text -->
+                            <div style="position: absolute; top: 18.49%; right: 9.37%; bottom: 53.63%; left: 50.29%;">
+                                <img src="https://www.figma.com/api/mcp/asset/117a206f-be4e-42fd-9726-3403103eaa9a" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                            </div>
+                            <!-- Scheme type -->
+                            <div style="position: absolute; top: 74.95%; right: 14.54%; bottom: 15.41%; left: 50.41%;">
+                                <img src="https://www.figma.com/api/mcp/asset/fa8ebde3-4899-44fe-836a-fd93552985dd" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;">
+                            </div>
+                        </div>
+                        <img src="https://www.figma.com/api/mcp/asset/c3ec296d-142a-4336-908d-2f030da42362" alt="BSI ISO/IEC 27001 Information Security Management Certified" style="width: 142px; height: 72px; object-fit: contain; flex-shrink: 0;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -2062,11 +2130,29 @@
                                 }
                             }
                         }
-                    },
+                    }
+                ]
+            },
+            {
+                title: 'Proof of business address',
+                hideTitle: true,
+                questions: [
+                    {
+                        id: 'documentUpload',
+                        type: 'document-upload',
+                        label: 'Upload proof of your business address',
+                        hint: 'Provide a document that shows the address your business operates from'
+                    }
+                ]
+            },
+            {
+                title: 'Mailing address',
+                questions: [
                     {
                         id: 'correspondenceAddress',
                         type: 'select',
-                        label: 'Where should we send letters about your loan?',
+                        label: 'Where should we send loan communications?',
+                        placeholder: 'Select or specify an address',
                         options: ['Registered address', 'Trading address', 'Home address', 'Another address'],
                         followUp: {
                             'Another address': {
@@ -2101,18 +2187,6 @@
                 ]
             },
             {
-                title: 'Proof of business address',
-                hideTitle: true,
-                questions: [
-                    {
-                        id: 'documentUpload',
-                        type: 'document-upload',
-                        label: 'Upload proof of your business address',
-                        hint: 'Provide a document that shows the address your business operates from'
-                    }
-                ]
-            },
-            {
                 title: 'Industry regulation',
                 questions: [
                     {
@@ -2136,7 +2210,12 @@
                                 hint: 'Usually starts with "T" followed by 4 or 5 digits'
                             }
                         }
-                    },
+                    }
+                ]
+            },
+            {
+                title: 'Financial activities',
+                questions: [
                     {
                         id: 'financialServices',
                         type: 'radio',
@@ -2430,7 +2509,7 @@
             const progressPercentage = ((screenIndex + 1) / screenDefinitions.length) * 100;
             document.getElementById('progressFill').style.width = progressPercentage + '%';
 
-            document.getElementById('backBtn').style.display = screenIndex > 0 ? 'block' : 'none';
+            document.getElementById('backBtn').style.display = screenIndex > 0 ? 'flex' : 'none';
 
             // Build screen HTML
             let html = `<div class="screen active" id="screen-${screenIndex}">`;
@@ -2501,7 +2580,7 @@
             } else if (question.type === 'select') {
                 html += `<div class="custom-select-container">`;
                 html += `<button type="button" class="custom-select-trigger" id="${question.id}-trigger" onclick="toggleCustomSelectDropdown('${question.id}')">
-                    <span class="custom-select-placeholder" id="${question.id}-placeholder">Select an option</span>
+                    <span class="custom-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select an option'}</span>
                     <span class="custom-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </button>`;
                 html += `<div class="custom-select-dropdown" id="${question.id}-dropdown">`;
