@@ -1929,7 +1929,7 @@
                             'Yes': {
                                 id: 'tradingNameValue',
                                 type: 'text',
-                                label: 'What\'s your trading name?',
+                                label: 'Your trading name',
                                 hint: 'We\'ll use this name for your account.'
                             }
                         }
@@ -1944,7 +1944,7 @@
                             'Yes': {
                                 id: 'abbreviationsExplain',
                                 type: 'textarea',
-                                label: 'What do these initials, abbreviations or words mean?',
+                                label: 'Explain initials, abbreviations and non-English words',
                                 hint: 'E.g. \'JB\' = Joe Bloggs, \'Uno\' = one in Spanish',
                                 maxLength: 250
                             }
@@ -1953,23 +1953,23 @@
                     {
                         id: 'website',
                         type: 'radio',
-                        label: 'Do you have a company website?',
-                        hint: 'This can be a website or a page on a site or social network like Facebook or Yelp.',
+                        label: 'Does your business have a website?',
+                        hint: 'A Facebook, Yelp or social media page also works.',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'websiteUrl',
                                 type: 'url',
-                                label: 'Your company website',
-                                hint: 'Please give the full web address—for example, facebook.com/barclaysUK'
+                                label: 'Your website address',
+                                hint: 'E.g. facebook.com/barclaysUK'
                             }
                         }
                     },
                     {
                         id: 'businessDescription',
                         type: 'textarea',
-                        label: 'Briefly describe what your business does and who your customers are',
-                        hint: 'To help us process your application faster, as if talking to a friend, tell us about the products and services you provide to bring in revenue.',
+                        label: 'Describe your business and customers',
+                        hint: 'List your products or services and who you serve.',
                         maxLength: 250,
                         helpText: {
                             title: 'Describing your business',
@@ -1983,7 +1983,7 @@
                     {
                         id: 'employees',
                         type: 'select',
-                        label: 'How many employees, including directors, do you have?',
+                        label: 'Number of employees, including directors',
                         options: ['1 to 9', '10 to 24', '25 to 49', '50-99', '100-149', '150-199', '200-249', '250-499', '500-999', '1000+']
                     }
                 ]
