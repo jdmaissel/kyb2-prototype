@@ -1922,8 +1922,8 @@
                     {
                         id: 'tradingName',
                         type: 'radio',
-                        label: 'Do you use a trading name for your business that\'s different to the one registered at Companies House?',
-                        hint: 'For example, the name that\'s above your shop door, or the name customers use to search for your company online.',
+                        label: 'Do you use a trading name that\'s different from the name registered with Companies House?',
+                        hint: 'The name you use publicly or online.',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
@@ -1937,15 +1937,15 @@
                     {
                         id: 'abbreviations',
                         type: 'radio',
-                        label: 'Does your trading name include any initials, abbreviations or non-English words?',
-                        hint: 'For example, JB Uno Properties Limited.',
+                        label: 'Does your trading name include initials, abbreviations or non-English words?',
+                        hint: 'E.g. JB Uno Plumbing',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'abbreviationsExplain',
                                 type: 'textarea',
-                                label: 'Please explain the meaning for any initials, abbreviations or non-English words.',
-                                hint: 'For example, \'JB\' is the initials for Joe Bloggs, and \'Uno\' means \'one\' in Spanish.',
+                                label: 'What do these initials, abbreviations or words mean?',
+                                hint: 'E.g. \'JB\' = Joe Bloggs, \'Uno\' = one in Spanish',
                                 maxLength: 250
                             }
                         }
