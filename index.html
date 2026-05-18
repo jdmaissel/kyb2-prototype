@@ -1055,8 +1055,8 @@
         }
 
         .summary-progress-text {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 400;
             color: #272727;
             font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
         }
@@ -1094,6 +1094,36 @@
 
         .summary-total.invalid {
             color: #d32f2f;
+        }
+
+        .country-total-summary {
+            background: #ffffff;
+            padding: 16px;
+            margin-top: 16px;
+            border-radius: 8px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .country-total-summary.visible {
+            display: flex;
+        }
+
+        .country-total-summary-label {
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+        }
+
+        .country-total-summary-amount {
+            font-size: 16px;
+            font-weight: 400;
+            color: #272727;
+            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
         }
 
         /* Buttons */
@@ -1640,10 +1670,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #006de3;
-            font-weight: bold;
-            font-size: 16px;
+            color: #000000;
             margin-top: 0;
+        }
+
+        .requirement-checkmark svg {
+            width: 100%;
+            height: 100%;
         }
 
         .requirement-text {
@@ -1994,7 +2027,9 @@
                     {
                         id: 'fundingSource',
                         type: 'multi-select',
-                        label: 'Where did the money you used to start your business come from?',
+                        label: 'Where did your business funding come from?',
+                        placeholder: 'Select funding sources',
+                        selectedLabel: 'sources',
                         options: ['Angel investor', 'Crowd funding platform', 'Gift', 'Inheritance', 'Investment sales', 'Life/saving policy maturity', 'Loan', 'Personal savings', 'Property/asset/business sale', 'Redundancy', 'Trust fund', 'Venture capital firm', 'Other'],
                         followUp: {
                             'Other': {
@@ -2007,14 +2042,13 @@
                     {
                         id: 'internationalFunding',
                         type: 'radio',
-                        label: 'Did any of the money you used to start your business come from outside the UK?',
+                        label: 'Did any business funding come from outside the UK?',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'fundingCountries',
                                 type: 'country-multi',
-                                label: 'Which countries did the money come from?',
-                                percentageRequired: true
+                                label: 'Which countries did the funding come from?'
                             }
                         }
                     }
@@ -2029,20 +2063,20 @@
                         type: 'multi-select',
                         label: 'How does your business earn revenue?',
                         placeholder: 'Select all sources',
-                        selectedLabel: 'revenue sources',
+                        selectedLabel: 'sources',
                         options: ['Consulting', 'Crowdfunding', 'Crypto/digital asset', 'Fundraising/donations', 'Income from property (including property management)', 'Membership fees', 'Outside investment', 'Providing a service', 'Sale of goods (online, physical stores)', 'Sale of technology solutions', 'Other'],
                         percentageRequired: true
                     },
                     {
                         id: 'seasonal',
                         type: 'radio',
-                        label: 'Is your business seasonal and will turnover vary, depending on the time of year?',
+                        label: 'Is your business seasonal?',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'seasonalExplain',
                                 type: 'textarea',
-                                label: 'Please explain why?',
+                                label: 'Explain when and why your revenue changes.',
                                 maxLength: 300
                             }
                         }
@@ -2062,7 +2096,7 @@
                                 id: 'operationActivities',
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
-                                hint: 'We need to know the specific business activities you do from this address.',
+                                hint: 'Describe the activities at this location.',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -2078,7 +2112,7 @@
                                 id: 'operationActivities',
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
-                                hint: 'We need to know the specific business activities you do from this address.',
+                                hint: 'Describe the activities at this location.',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -2094,7 +2128,7 @@
                                 id: 'operationActivities',
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
-                                hint: 'We need to know the specific business activities you do from this address.',
+                                hint: 'Describe the activities at this location.',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -2111,14 +2145,14 @@
                     {
                         id: 'internationalOps',
                         type: 'radio',
-                        label: 'Does your business have any operations outside of the UK?',
+                        label: 'Does your business operate outside the UK?',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'internationalOpsDetails',
                                 type: 'textarea',
-                                label: 'What operations exist outside the UK?',
-                                hint: 'For example, you have a registered office, warehouse or retail space.',
+                                label: 'What operations do you have outside the UK?',
+                                hint: 'E.g. registered office, warehouse or retail space',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'International operations',
@@ -2219,7 +2253,7 @@
                     {
                         id: 'financialServices',
                         type: 'radio',
-                        label: 'Does your business lend money, deal with debt or provide other financial services?',
+                        label: 'Does your business lend money, manage debt or provide financial services?',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
@@ -2273,13 +2307,13 @@
                     {
                         id: 'gambling',
                         type: 'radio',
-                        label: 'Are you involved in online gambling, online gaming associated with the gambling sector, or the provision of services to an online gambling company?',
+                        label: 'Is your business involved in online gambling, gambling-related gaming or related services?',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
                                 id: 'gamblingDetails',
                                 type: 'textarea',
-                                label: 'Please give more information about how your business is involved with online gambling or gaming',
+                                label: 'Describe your involvement.',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Online gambling involvement',
@@ -2301,7 +2335,7 @@
                     {
                         id: 'importExport',
                         type: 'select',
-                        label: 'Does your business involve import or export?',
+                        label: 'Does your business import or export?',
                         options: ['No', 'Import only', 'Export only', 'Import and export'],
                         followUp: {
                             'Import only': {
@@ -2309,7 +2343,7 @@
                                 type: 'country-multi',
                                 label: 'Which countries do you import from?',
                                 percentageRequired: true,
-                                percentageLabel: 'What % of your imports come from each country?',
+                                percentageLabel: 'What % of imports come from each country?',
                                 percentageHeaderLabel: '% OF IMPORTS',
                                 summaryLabel: 'Total allocated',
                                 errorMessage: 'Error: total imports must be 100%',
@@ -2320,7 +2354,7 @@
                                 type: 'country-multi',
                                 label: 'Which countries do you export to?',
                                 percentageRequired: true,
-                                percentageLabel: 'What % of your exports go to each country?',
+                                percentageLabel: 'What % of exports go to each country?',
                                 percentageHeaderLabel: '% OF EXPORTS',
                                 summaryLabel: 'Total allocated',
                                 errorMessage: 'Error: total exports must be 100%',
@@ -2332,7 +2366,7 @@
                                     type: 'country-multi',
                                     label: 'Which countries do you import from?',
                                     percentageRequired: true,
-                                    percentageLabel: 'What % of your imports come from each country?',
+                                    percentageLabel: 'What % of imports come from each country?',
                                     percentageHeaderLabel: '% OF IMPORTS',
                                     summaryLabel: 'Total allocated',
                                     errorMessage: 'Error: total imports must be 100%',
@@ -2343,7 +2377,7 @@
                                     type: 'country-multi',
                                     label: 'Which countries do you export to?',
                                     percentageRequired: true,
-                                    percentageLabel: 'What % of your exports go to each country?',
+                                    percentageLabel: 'What % of exports go to each country?',
                                     percentageHeaderLabel: '% OF EXPORTS',
                                     summaryLabel: 'Total allocated',
                                     errorMessage: 'Error: total exports must be 100%',
@@ -2628,7 +2662,7 @@
                 // Add follow-up section for revenue sources
                 if (question.id === 'revenueSources') {
                     html += `<div class="follow-up-group revenue-split-group" id="revenue-split-${question.id}">`;
-                    html += `<label class="question-label">How is your revenue divided?</label>`;
+                    html += `<label class="question-label">How is your revenue split?</label>`;
                     html += `<div class="hint-text">Enter estimates that add up to 100%.</div>`;
                     html += `<div class="selected-items-list" id="list-${question.id}"></div>`;
                     html += `</div>`;
@@ -2748,15 +2782,15 @@
                 // Requirements list
                 html += `<div class="requirements-list">
                     <div class="requirement-item">
-                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                         <div class="requirement-text">Clearly readable</div>
                     </div>
                     <div class="requirement-item">
-                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                         <div class="requirement-text">Less than 5MB file size</div>
                     </div>
                     <div class="requirement-item">
-                        <div class="requirement-checkmark">✓</div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                         <div class="requirement-text">Saved as a PDF, PNG, JPEG, DOC, TXT, BMP, XLS or TIF file.</div>
                     </div>
                 </div>`;
@@ -2781,7 +2815,7 @@
                 // Confirmation checkbox
                 html += `<div class="confirmation-checkbox">
                     <input type="checkbox" id="${question.id}-confirm">
-                    <p class="confirmation-text">I confirm the document I've uploaded clearly shows proof of my business address and is a document type that you accept.</p>
+                    <p class="confirmation-text">This document shows my business address and meets upload requirements.</p>
                 </div>`;
 
                 html += `</div>`;
@@ -3014,6 +3048,41 @@
             const diff = newLength - oldLength;
             input.selectionStart = Math.max(0, cursorPosition + diff);
             input.selectionEnd = input.selectionStart;
+
+            // Update currency total if this is part of a country amounts table
+            const questionId = input.id.split('-').slice(0, -2).join('-');
+            if (questionId && document.getElementById(`currency-summary-${questionId}`)) {
+                updateCurrencyTotal(questionId);
+            }
+        }
+
+        function updateCurrencyTotal(questionId) {
+            const summaryElement = document.getElementById(`currency-total-${questionId}`);
+            const summaryCard = document.getElementById(`currency-summary-${questionId}`);
+            if (!summaryElement || !summaryCard) return;
+
+            // Sum all currency inputs for this question
+            let total = 0;
+            const inputs = document.querySelectorAll(`input[id^="${questionId}-"][id$="-amount"]`);
+            inputs.forEach(input => {
+                const value = input.value.replace(/[£,\s]/g, '');
+                const num = parseFloat(value) || 0;
+                total += num;
+            });
+
+            // Show/hide summary based on whether there's a non-zero total
+            if (total > 0) {
+                summaryCard.classList.add('visible');
+            } else {
+                summaryCard.classList.remove('visible');
+            }
+
+            // Format total with thousand separators
+            const formatted = total.toLocaleString('en-GB', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            summaryElement.textContent = '£' + formatted;
         }
 
         // Toggle multi-select dropdown
@@ -3344,7 +3413,7 @@
                         <div class="summary-progress-bar">
                             <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
                         </div>
-                        <div class="summary-progress-text">${customSummaryLabel}: <span id="percent-total-${questionId}">0</span>%</div>
+                        <div class="summary-progress-text"><span id="percent-total-${questionId}">0</span>% <span id="percent-label-${questionId}">remaining</span></div>
                     </div>
                 `;
                 listElement.appendChild(summaryBar);
@@ -3354,6 +3423,18 @@
                 const customErrorMessage = countryAmountsGroup.getAttribute('data-error-message') || 'Error: total must be 100%';
                 errorDiv.textContent = customErrorMessage;
                 listElement.appendChild(errorDiv);
+            } else if (!percentageRequired) {
+                // Add currency total summary for foreign funding
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'country-total-summary';
+                summaryDiv.id = `currency-summary-${questionId}`;
+                summaryDiv.innerHTML = `
+                    <div class="country-total-summary-label">Total foreign funding</div>
+                    <div class="country-total-summary-amount" id="currency-total-${questionId}">£0</div>
+                `;
+                listElement.appendChild(summaryDiv);
+                // Calculate initial total
+                updateCurrencyTotal(questionId);
             }
 
             // Update summary if needed
@@ -3422,7 +3503,7 @@
                     <div class="summary-progress-bar">
                         <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
                     </div>
-                    <div class="summary-progress-text">Total allocated: <span id="revenue-total-${questionId}">0</span>%</div>
+                    <div class="summary-progress-text"><span id="revenue-total-${questionId}">100</span>% <span id="revenue-label-${questionId}">remaining</span></div>
                 </div>
             `;
             listElement.appendChild(summaryBar);
@@ -3470,10 +3551,22 @@
                 progressFill.style.width = progressWidth + '%';
             }
 
-            // Update total percentage text with actual total
+            // Update remaining/allocated/over percentage text and label
             const totalText = document.getElementById(`revenue-total-${questionId}`);
-            if (totalText) {
-                totalText.textContent = total;
+            const labelText = document.getElementById(`revenue-label-${questionId}`);
+            if (totalText && labelText) {
+                if (total > 100) {
+                    const over = total - 100;
+                    totalText.textContent = over;
+                    labelText.textContent = 'over';
+                } else if (total === 100) {
+                    totalText.textContent = '100';
+                    labelText.textContent = 'allocated';
+                } else {
+                    const remaining = 100 - total;
+                    totalText.textContent = remaining;
+                    labelText.textContent = 'remaining';
+                }
             }
 
             // Show/hide error message:
@@ -3515,10 +3608,22 @@
                     progressFill.style.width = progressWidth + '%';
                 }
 
-                // Update total percentage text
+                // Update total percentage text with three-state logic
                 const totalText = document.getElementById(`percent-total-${questionId}`);
-                if (totalText) {
-                    totalText.textContent = total;
+                const labelText = document.getElementById(`percent-label-${questionId}`);
+                if (totalText && labelText) {
+                    if (total > 100) {
+                        const over = total - 100;
+                        totalText.textContent = over;
+                        labelText.textContent = 'over';
+                    } else if (total === 100) {
+                        totalText.textContent = '100';
+                        labelText.textContent = 'allocated';
+                    } else {
+                        const remaining = 100 - total;
+                        totalText.textContent = remaining;
+                        labelText.textContent = 'remaining';
+                    }
                 }
 
                 // Show/hide error: only if over 100% or all filled but under 100%
