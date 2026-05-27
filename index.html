@@ -5,13 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KYB - Business Financing Application</title>
     <style>
-        /* System-installed Barclays Effra fonts */
+        /* ============================================================
+           BARCLAYS DESIGN TOKENS
+           Derived from the Lily-BarclaysPOC Figma screens and the
+           Barclays Blueprint Components library look. Where exact
+           Figma variable values were not retrievable (rate-limited),
+           values were chosen to match the screenshots pixel-by-pixel.
+           ============================================================ */
+        :root {
+            /* Brand palette */
+            --bx-eagle-cyan: #00AEEF;       /* Barclays eagle / accent */
+            --bx-blue: #0050C8;             /* Primary CTA / progress */
+            --bx-blue-hover: #003F9F;
+            --bx-blue-pressed: #002F77;
+            --bx-blue-100: #E8F1FB;         /* Selected option soft bg */
+            --bx-blue-50:  #F2F8FE;         /* Upload zone tint */
 
-        /* Fixed mobile width container */
-        body {
+            /* Neutrals */
+            --bx-ink:        #1D1D1D;       /* Primary text / titles */
+            --bx-ink-soft:   #272727;       /* Body text */
+            --bx-ink-muted:  #5C5C5C;       /* Subtle / helper text */
+            --bx-ink-mute2:  #8E8E8E;       /* Inputs border / lowest text */
+            --bx-line:       #D7D7D7;       /* Divider lines */
+            --bx-line-soft:  #E6E6E6;       /* Card subtle border */
+            --bx-bg:         #F4F4F4;       /* App background */
+            --bx-surface:    #FFFFFF;       /* Card surface */
+            --bx-chrome-bg:  #F2F2F2;       /* Browser chrome row */
+            --bx-pill-bg:    rgba(0,0,0,0.05);
+
+            /* Status */
+            --bx-success:        #1F8A3E;
+            --bx-success-bg:     #E7F4EA;
+            --bx-success-border: #BFE3C8;
+            --bx-error:          #D8232F;
+
+            /* Type */
+            --bx-font: 'Barclays Effra', 'BarclaysFontRegular', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+            /* Shape */
+            --bx-radius-card: 12px;
+            --bx-radius-input: 8px;
+            --bx-radius-pill: 999px;
+            --bx-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+
+        /* ============================================================
+           BASE
+           ============================================================ */
+        * { box-sizing: border-box; }
+
+        html, body {
             margin: 0;
             padding: 0;
-            background: #f6f6f6;
+            font-family: var(--bx-font);
+            color: var(--bx-ink-soft);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background: #E5E5E5;
             display: flex;
             justify-content: center;
         }
@@ -22,8 +75,9 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: #ffffff;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background: var(--bx-bg);
+            box-shadow: 0 0 28px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
         }
 
         .content-area {
@@ -32,15 +86,17 @@
             flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
-            background: #f6f6f6;
-            align-items: center;
+            background: var(--bx-bg);
+            align-items: stretch;
         }
 
-        /* Status Bar */
+        /* ============================================================
+           STATUS BAR (iOS-style 9:41 + Dynamic Island)
+           ============================================================ */
         .status-bar {
             position: relative;
             background: #ffffff;
-            height: 56px;
+            height: 48px;
             flex-shrink: 0;
             width: 100%;
             max-width: 375px;
@@ -67,28 +123,30 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 10.5px;
-            width: 119.275px;
-            height: 35.305px;
+            top: 10px;
+            width: 110px;
+            height: 32px;
             background: #000000;
-            border-radius: 17.176px;
+            border-radius: 16px;
         }
 
         .status-icons {
             position: absolute;
-            right: 31.18px;
-            top: calc(50% - 0.48px);
+            right: 16px;
+            top: 50%;
             transform: translateY(-50%);
             width: 74.739px;
             height: 13.041px;
         }
 
-        /* Search Bar */
+        /* ============================================================
+           SAFARI-STYLE SEARCH PILL
+           ============================================================ */
         .search-bar {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-bottom: 10px;
+            padding: 4px 10px 8px;
             background: #ffffff;
             flex-shrink: 0;
             width: 100%;
@@ -98,27 +156,25 @@
 
         .search-pill {
             position: relative;
-            width: 353px;
-            height: 34px;
-            background: rgba(0, 0, 0, 0.08);
-            border-radius: 9.542px;
+            width: 100%;
+            max-width: 353px;
+            height: 36px;
+            background: var(--bx-pill-bg);
+            border-radius: 10px;
             flex-shrink: 0;
         }
 
-        .refresh-icon {
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* Header */
+        /* ============================================================
+           HEADER (Barclays eagle + SECURE pill)
+           ============================================================ */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 12px 20px;
             background: #ffffff;
             flex-shrink: 0;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             width: 100%;
             max-width: 375px;
             box-sizing: border-box;
@@ -148,8 +204,13 @@
             height: 32px;
         }
 
+        /* SECURE badge — Figma component 1:101643
+           Badge bg : #eeeeee (Status/Light/Neutral 900 light)
+           Text     : Barclays/Mobile & Tablet/Small/Category label
+                      Effra Regular 14/18, letterSpacing 0.5% = 0.07px,
+                      uppercase, color #515151 (Gray scale/Neutral 900) */
         .secure-badge {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 4px;
             padding: 3px 8px;
@@ -159,13 +220,20 @@
             font-weight: 400;
             color: #515151;
             letter-spacing: 0.07px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 18px;
             text-transform: uppercase;
             white-space: nowrap;
         }
 
-        /* Step Tracker Section */
+        .secure-badge svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .secure-badge svg path { fill: #515151; }
+
+        /* ============================================================
+           HEADER + TRACKER — Figma component "Header & tracker" 1:101644
+           Functional Hero Header  : padding 23px 24px (white)
+           Progress Tracker        : padding 0 24px 12px, gap 4px
+           ============================================================ */
         .step-tracker-section {
             padding: 23px 24px 12px;
             background: #ffffff;
@@ -182,57 +250,90 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
 
+        .tracker-back svg path { fill: #272727; }
+
+        /* Title — Barclays/Mobile & Tablet/XX Large/Bold
+           letterSpacing in Figma = -2 (percent), = -0.64px @ 32px */
         .screen-title {
             font-size: 32px;
             font-weight: 700;
-            color: #272727;
-            margin-bottom: 16px;
+            color: #272727;                  /* Gray scale/Title */
+            margin: 0 0 23px 0;              /* matches header py-[23px] bottom */
             line-height: 38px;
             letter-spacing: -0.64px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
         }
 
         .progress-tracker {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 4px;                        /* bar -> subtitle */
+            align-items: center;
+            width: 100%;
         }
 
+        /* 16px-tall row so the 16px circular thumb is fully visible;
+           the 4px bar is centered vertically inside it. */
         .progress-bar-container {
             position: relative;
-            height: 6px;
-            background: #e2e2e2;
-            border-radius: 3px;
-            overflow: hidden;
+            width: 100%;
+            height: 16px;
+            display: flex;
+            align-items: center;
         }
 
         .progress-bar-background {
             position: absolute;
-            height: 100%;
-            width: 100%;
-            background: #e2e2e2;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e2e2e2;             /* Gray scale/Neutral 300 */
+            border-radius: 4px;
         }
 
         .progress-bar-fill {
             position: absolute;
-            height: 100%;
-            background: #006de3;
-            border-radius: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            height: 4px;
+            background: #006de3;             /* Interactive */
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
+        /* Circular thumb: 16px white core + 4px Interactive ring,
+           centered on the end of the filled portion. */
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: #ffffff;             /* Gray scale/Neutral 000 */
+            border: 4px solid #006de3;       /* Interactive ring */
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+
+        /* Subtitle — Barclays/Mobile & Tablet/Standard/Medium */
         .progress-text {
             display: flex;
             gap: 4px;
-            font-size: 14px;
-            color: #515151;
+            font-size: 16px;
+            color: #272727;                  /* Gray scale/Title */
             font-weight: 500;
-            line-height: 18px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            letter-spacing: 0;
+            font-family: var(--bx-font);
             justify-content: center;
+            text-align: center;
+            white-space: nowrap;
         }
 
         @keyframes fadeIn {
@@ -240,107 +341,164 @@
             to { opacity: 1; }
         }
 
+        /* ============================================================
+           SCREEN H2 (the section heading inside the page body)
+           ============================================================ */
+        /* Screen section title — Barclays Effra Medium, 20/24,
+           letter-spacing -1% (= -0.2px @ 20px), color #272727 (Title) */
         .screen h2 {
             font-size: 20px;
             font-weight: 500;
-            margin-bottom: 16px;
+            margin: 24px 0;
             color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 24px;
             letter-spacing: -0.2px;
         }
+        /* First section title needs no extra top space when it sits flush
+           against the content area; keep 24 below for breathing room */
+        .screen > h2:first-child { margin-top: 24px; }
 
-        /* Question Group */
-        .screen-intro {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        /* ============================================================
+           ALERT — copied verbatim from alert-test.html, locked down with
+           !important so no other rule in this file (e.g. .screen h2,
+           .screen ul) can cascade onto the alert's children.
+           Figma component 4:5881
+           ============================================================ */
+        .screen-intro,
+        .screen .screen-intro {
+            display: flex !important;
+            gap: 8px !important;
+            align-items: flex-start !important;
+            background: #e7f0fb !important;
+            border: 2px solid #006de3 !important;
+            border-radius: 8px !important;
+            padding: 16px !important;
+            margin: 0 0 16px 0 !important;
+            font-family: var(--bx-font) !important;
+            box-shadow: none !important;
         }
 
-        .screen-intro-heading {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin: 0 0 8px 0;
-            font-family: inherit;
+        .screen-intro .screen-intro-icon {
+            flex: 0 0 24px !important;
+            width: 24px !important;
+            height: 24px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+        }
+        .screen-intro .screen-intro-icon svg {
+            display: block !important;
+            width: 24px !important;
+            height: 24px !important;
         }
 
-        .screen-intro-body {
-            font-size: 15px;
-            line-height: 22px;
-            color: #515151;
-            margin: 0 0 10px 0;
-            font-family: inherit;
+        .screen-intro .screen-intro-content {
+            flex: 1 !important;
+            min-width: 0 !important;
+        }
+
+        /* Title — Barclays/Mobile & Tablet/Medium/Medium
+           Barclays Effra Medium, size 18, line-height 24,
+           letter-spacing -0.5% (= -0.09px at 18px), color #272727 */
+        .screen-intro .screen-intro-heading {
+            font-size: 18px !important;
+            font-weight: 500 !important;
+            color: #272727 !important;
+            margin: 0 0 8px 0 !important;
+            padding: 0 !important;
+            font-family: inherit !important;
+            line-height: 24px !important;
+            letter-spacing: -0.09px !important;
+        }
+
+        .screen-intro .screen-intro-body {
+            font-size: 16px !important;
+            line-height: 22px !important;
+            color: #515151 !important;
+            margin: 0 0 16px 0 !important;   /* body → list: 16 */
+            padding: 0 !important;
+            font-family: inherit !important;
         }
 
         .screen-intro ul {
-            margin: 0;
-            padding-left: 20px;
+            margin: 0 0 16px 0 !important;   /* list → footer: 16 */
+            padding: 0 0 0 20px !important;
+            list-style: disc !important;
         }
 
         .screen-intro ul li {
-            font-size: 15px;
-            line-height: 22px;
-            color: #515151;
-            margin-bottom: 4px;
-            font-family: inherit;
+            font-size: 16px !important;
+            line-height: 22px !important;
+            color: #515151 !important;
+            margin: 0 0 4px 0 !important;
+            padding: 0 !important;
+            font-family: inherit !important;
         }
 
-        .screen-intro ul li:last-child {
-            margin-bottom: 0;
+        .screen-intro ul li:last-child { margin-bottom: 0 !important; }
+
+        .screen-intro .screen-intro-footer {
+            font-size: 16px !important;
+            line-height: 22px !important;
+            color: #515151 !important;
+            margin: 0 !important;            /* list above already provides 16px */
+            padding: 0 !important;
+            font-family: inherit !important;
         }
 
-        .screen-intro-footer {
-            font-size: 15px;
-            line-height: 22px;
-            color: #515151;
-            margin: 10px 0 0 0;
-            font-family: inherit;
-        }
-
+        /* ============================================================
+           QUESTION GROUP / LABELS
+           ============================================================ */
         .question-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding-bottom: 0;
         }
 
-        .question-group:last-child {
-            margin-bottom: 0;
-        }
+        .question-group:last-child { margin-bottom: 0; }
 
+        /* Question text — Figma 1:101705
+           Barclays Effra Medium 16/22, color Gray scale/Title #272727 */
         .question-label {
             font-size: 16px;
             font-weight: 500;
             color: #272727;
-            margin-bottom: 4px;
+            margin-bottom: 12px;
             display: block;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
             letter-spacing: 0;
         }
 
+        /* Hint text — Barclays/Mobile & Tablet/Standard/Regular
+           Effra Regular 16/22, letter-spacing 0, color #515151 */
         .hint-text {
-            font-size: 14px;
+            font-size: 16px;
             color: #515151;
-            margin-bottom: 12px;
+            margin: -8px 0 12px 0;
             font-style: normal;
             font-weight: 400;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 18px;
-            letter-spacing: 0.5px;
+            font-family: var(--bx-font);
+            line-height: 22px;
+            letter-spacing: 0;
         }
 
-        /* Radio Buttons */
+        /* ============================================================
+           RADIO BUTTONS — Figma 1:101705 (Yes / No tiles, side-by-side)
+           Group gap 16; tile border 2px #8E8E8E, radius 4, padding 12,
+           gap 12, top-aligned; atom 28px white core + 2px #8E8E8E ring.
+           Selected = Interactive #006de3.
+           ============================================================ */
         .radio-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
 
-        .radio-group.full-width {
-            grid-template-columns: 1fr;
-        }
+        .radio-group.full-width { grid-template-columns: 1fr; }
 
         .radio-option {
             display: flex;
@@ -349,30 +507,64 @@
             padding: 12px;
             border-radius: 4px;
             cursor: pointer;
-            border: 2px solid #8e8e8e;
+            border: 2px solid #8E8E8E;
             background: #ffffff;
-            transition: all 0.2s;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
-        .radio-option:hover {
+        /* Hover (live Barclays): light grey fill, border unchanged */
+        .radio-option:hover { background: #E8E8E9; }
+
+        /* Focus (keyboard/click): Barclays double-ring — 2px border + 2px outline @ 2px offset */
+        .radio-option:focus-within {
             border-color: #006de3;
-            background: #ffffff;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
         }
+        .radio-option input[type="radio"]:focus { outline: none; }
+        .radio-option input[type="radio"]:focus-visible { outline: none; }
 
         .radio-option input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             cursor: pointer;
             width: 28px;
             height: 28px;
             min-width: 28px;
-            border-radius: 14px;
-            accent-color: #006de3;
-            margin-top: 3px;
+            border-radius: 50%;
+            border: 2px solid #8E8E8E;
+            background: #ffffff;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+            transition: border-color 0.15s ease;
         }
 
+        .radio-option input[type="radio"]:checked {
+            border-color: #006de3;
+        }
+
+        .radio-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #006de3;
+        }
+
+        /* Selected: keep white background, just shift border to Interactive */
         .radio-option:has(input[type="radio"]:checked) {
             border-color: #006de3;
             background: #ffffff;
         }
+        /* Hover takes precedence over selected on the bg (live behaviour) */
+        .radio-option:has(input[type="radio"]:checked):hover { background: #E8E8E9; }
 
         .radio-option label {
             cursor: pointer;
@@ -380,91 +572,130 @@
             font-weight: 400;
             margin: 0;
             color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
-            padding-top: 3px;
+            padding: 3px 0;
             flex: 1;
         }
 
-        /* Input Fields */
+        /* ============================================================
+           INPUT FIELDS  (text / url / number / textarea / select)
+           ============================================================ */
+        /* Default form field — Figma 10:12669
+           border 2px #8E8E8E (Neutral 700), radius 4, Effra Regular 16/22 */
         input[type="text"],
         input[type="url"],
         input[type="number"],
         textarea,
         select {
             width: 100%;
-            padding: 12px 12px;
-            border: 1px solid #8e8e8e;
+            padding: 12px 14px;
+            border: 2px solid #8E8E8E;
             border-radius: 4px;
             font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             font-weight: 400;
-            margin-top: 8px;
-            transition: border-color 0.2s;
+            margin-top: 0;
+            transition: border-color 0.15s ease, background 0.15s ease;
             color: #272727;
             line-height: 22px;
             box-sizing: border-box;
             letter-spacing: 0;
+            background: #ffffff;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="url"]::placeholder,
+        input[type="number"]::placeholder,
+        textarea::placeholder { color: #8E8E8E; }
+
+        /* Error state — Figma "State=Error" red border + red message below */
+        input.has-error,
+        textarea.has-error,
+        select.has-error,
+        .custom-select-trigger.has-error,
+        .multi-select-trigger.has-error {
+            border-color: #e3000f !important;
+        }
+        .field-error {
+            display: block;
+            margin-top: 4px;
+            color: #e3000f;
+            font-size: 14px;
+            line-height: 18px;
+            font-family: var(--bx-font);
+            font-weight: 400;
+        }
+
+        /* Disabled — Figma "State=Disabled" muted greys */
+        input:disabled,
+        textarea:disabled,
+        select:disabled,
+        .custom-select-trigger.disabled,
+        .multi-select-trigger.disabled {
+            background: #f6f6f6;
+            color: #8E8E8E;
+            border-color: #8E8E8E;
+            cursor: not-allowed;
+            opacity: 1;
         }
 
         .address-field input[type="text"] {
-            height: 48px;
-            border: 2px solid #8e8e8e;
-            margin-top: 12px;
+            height: 52px;
+            border: 2px solid #8E8E8E;
+            margin-top: 8px;
         }
 
+        /* Inputs have no visual hover on live site, just cursor */
+        /* Focus: live Barclays double-ring (2px border + 2px outline @ 2px offset) */
         input[type="text"]:focus,
         input[type="url"]:focus,
         input[type="number"]:focus,
         textarea:focus,
         select:focus {
-            outline: none;
-            border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+            border: 2px solid #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            box-shadow: none;
         }
 
-        .address-field {
-            margin-bottom: 24px;
-        }
-
-        .address-field:last-child {
-            margin-bottom: 0;
-        }
-
+        .address-field { margin-bottom: 16px; }
+        .address-field:last-child { margin-bottom: 0; }
         .address-field .question-label {
             margin-bottom: 0;
             display: block;
-            font-weight: 500;
+            font-weight: 400;
             font-size: 16px;
         }
 
         select {
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             font-size: 16px;
             font-weight: 400;
-            color: #272727;
+            color: var(--bx-ink);
         }
-
         select option {
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             font-size: 14px;
             font-weight: 400;
-            color: #272727;
+            color: var(--bx-ink);
         }
 
-        /* Custom Select Dropdown */
-        .custom-select-container {
-            position: relative;
-            width: 100%;
-        }
+        /* ============================================================
+           CUSTOM SELECT (Documents we accept, etc.)
+           ============================================================ */
+        .custom-select-container { position: relative; width: 100%; }
 
+        /* Trigger — Figma 10:12669 Default state
+           2px #8E8E8E border, 4px radius, white bg, Effra Regular 16/22 */
         .custom-select-trigger {
             width: 100%;
-            padding: 12px 12px;
-            border: 1px solid #8e8e8e;
+            padding: 12px 14px;
+            border: 2px solid #8E8E8E;
             border-radius: 4px;
             font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 22px;
+            font-family: var(--bx-font);
             font-weight: 400;
             background: #ffffff;
             color: #272727;
@@ -472,26 +703,32 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            margin-top: 8px;
-            transition: border-color 0.2s;
+            margin-top: 0;
+            transition: border-color 0.15s ease, background 0.15s ease;
             box-sizing: border-box;
             letter-spacing: 0;
-        }
-
-        .custom-select-trigger:hover {
-            border-color: #006de3;
-        }
-
-        .custom-select-trigger:focus {
-            outline: none;
-            border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
-        }
-
-        .custom-select-placeholder {
-            flex: 1;
             text-align: left;
         }
+
+        /* Hover — light grey fill, border unchanged */
+        .custom-select-trigger:hover { background: #E8E8E9; }
+
+        /* Focus (keyboard) — Barclays double-ring */
+        .custom-select-trigger:focus {
+            border-color: #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            background: #ffffff;
+        }
+
+        /* Active (open) — clean 2px Interactive border, no outline (Figma Active state) */
+        .custom-select-trigger.active {
+            border-color: #006de3;
+            outline: none;
+            background: #ffffff;
+        }
+
+        .custom-select-placeholder { flex: 1; text-align: left; }
 
         .custom-select-arrow {
             margin-left: auto;
@@ -502,77 +739,67 @@
             width: 24px;
             height: 24px;
             flex-shrink: 0;
+            color: var(--bx-ink);
         }
+        .custom-select-arrow svg { width: 20px; height: 20px; }
+        .custom-select-trigger.active .custom-select-arrow { transform: rotate(180deg); }
 
-        .custom-select-arrow svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .custom-select-trigger.active .custom-select-arrow {
-            transform: rotate(180deg);
-        }
-
+        /* Dropdown panel — Figma "Drop Shadow Large Blur" #0000001F radius 20,
+           no border, white bg, 4px radius matching trigger */
         .custom-select-dropdown {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
             background: #ffffff;
-            border: 1px solid #8e8e8e;
-            border-top: none;
-            border-radius: 0 0 4px 4px;
+            border: none;
+            border-radius: 4px;
             display: none;
             max-height: 300px;
             overflow-y: auto;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.12);
         }
+        .custom-select-dropdown.open { display: block; }
 
-        .custom-select-dropdown.open {
-            display: block;
-        }
-
+        /* Option — Effra Regular 16/22 #272727 default */
         .custom-select-option {
-            padding: 12px 12px;
+            padding: 12px 14px;
             cursor: pointer;
-            transition: background 0.2s;
-            font-size: 14px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            transition: background 0.15s ease, color 0.15s ease;
+            font-size: 16px;
+            font-family: var(--bx-font);
             font-weight: 400;
             color: #272727;
             line-height: 22px;
-            border-bottom: 1px solid #f0f0f0;
+            border: none;
         }
-
-        .custom-select-option:last-child {
-            border-bottom: none;
-        }
-
-        .custom-select-option:hover {
-            background: #f6f6f6;
-        }
-
+        /* Hover — light grey fill (matches tile hover) */
+        .custom-select-option:hover { background: #E8E8E9; }
+        /* Selected option — Interactive bg + white text (Figma Active+Selected) */
         .custom-select-option.selected {
-            background: #e8f1ff;
-            color: #006de3;
+            background: #006de3;
+            color: #ffffff;
             font-weight: 500;
         }
-
-        /* Custom Multi-select Dropdown */
-        .multi-select-container {
-            position: relative;
-            width: 100%;
+        .custom-select-option.selected:hover {
+            background: #006de3;
+            color: #ffffff;
         }
+
+        /* ============================================================
+           CUSTOM MULTI-SELECT
+           ============================================================ */
+        .multi-select-container { position: relative; width: 100%; }
 
         .multi-select-trigger {
             width: 100%;
-            padding: 12px 12px;
-            border: 1px solid #8e8e8e;
+            padding: 12px 14px;
+            border: 2px solid #8E8E8E;
             border-radius: 4px;
             font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            margin-top: 8px;
+            font-family: var(--bx-font);
+            margin-top: 0;
             background: #ffffff;
             color: #272727;
             display: flex;
@@ -581,24 +808,23 @@
             cursor: pointer;
             line-height: 22px;
             text-align: left;
-            transition: border-color 0.2s;
+            transition: border-color 0.15s ease, background 0.15s ease;
             box-sizing: border-box;
         }
-
-        .multi-select-trigger:hover {
-            border-color: #006de3;
-        }
-
+        .multi-select-trigger:hover { background: #E8E8E9; }
         .multi-select-trigger:focus {
-            outline: none;
             border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            background: #ffffff;
+        }
+        .multi-select-trigger.active {
+            border-color: #006de3;
+            outline: none;
+            background: #ffffff;
         }
 
-        .multi-select-placeholder {
-            flex: 1;
-            text-align: left;
-        }
+        .multi-select-placeholder { flex: 1; text-align: left; }
 
         .multi-select-arrow {
             margin-left: auto;
@@ -609,53 +835,41 @@
             width: 24px;
             height: 24px;
             flex-shrink: 0;
+            color: var(--bx-ink);
         }
-
-        .multi-select-arrow svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .multi-select-trigger.active .multi-select-arrow {
-            transform: rotate(180deg);
-        }
+        .multi-select-arrow svg { width: 20px; height: 20px; }
+        .multi-select-trigger.active .multi-select-arrow { transform: rotate(180deg); }
 
         .multi-select-dropdown {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
             background: #ffffff;
-            border: 1px solid #8e8e8e;
-            border-top: none;
-            border-radius: 0 0 4px 4px;
+            border: none;
+            border-radius: 4px;
             display: none;
             overflow: hidden;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.12);
         }
-
-        .multi-select-dropdown.open {
-            display: block;
-        }
+        .multi-select-dropdown.open { display: block; }
 
         .multi-select-option {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
+            padding: 12px 14px;
             cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s ease;
+            border: none;
         }
-
-        .multi-select-option:last-child {
-            border-bottom: none;
+        .multi-select-option:hover { background: #E8E8E9; }
+        .multi-select-option.selected {
+            background: #006de3;
         }
-
-        .multi-select-option:hover {
-            background: #f6f6f6;
-        }
+        .multi-select-option.selected label,
+        .multi-select-option.selected { color: #ffffff; }
 
         .multi-select-option input[type="checkbox"] {
             cursor: pointer;
@@ -665,12 +879,11 @@
             accent-color: #006de3;
             margin: 0;
         }
-
         .multi-select-option label {
             flex: 1;
             font-size: 16px;
             color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
             cursor: pointer;
             margin: 0;
@@ -678,36 +891,32 @@
 
         .multi-select-search {
             padding: 12px;
-            border-bottom: 1px solid #e2e2e2;
+            border-bottom: 1px solid var(--bx-line-soft);
             position: sticky;
             top: 0;
             background: #ffffff;
             z-index: 10;
         }
-
         .multi-select-search-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
-
         .multi-select-search-input {
             width: 100%;
-            padding: 8px 12px;
-            padding-right: 36px;
-            border: 1px solid #8e8e8e;
-            border-radius: 4px;
+            padding: 8px 36px 8px 12px;
+            border: 1.5px solid #6F6F6F;
+            border-radius: var(--bx-radius-input);
             font-size: 14px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             box-sizing: border-box;
         }
-
         .multi-select-search-input:focus {
-            outline: none;
-            border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+            border: 2px solid #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            box-shadow: none;
         }
-
         .multi-select-search-clear {
             position: absolute;
             right: 10px;
@@ -718,138 +927,157 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #515151;
-            transition: opacity 0.2s;
+            color: var(--bx-ink-muted);
+            transition: opacity 0.15s ease;
         }
-
-        .multi-select-search-clear:hover {
-            opacity: 0.7;
-        }
-
-        .multi-select-search-clear svg {
-            width: 16px;
-            height: 16px;
-        }
-
+        .multi-select-search-clear:hover { opacity: 0.7; }
+        .multi-select-search-clear svg { width: 16px; height: 16px; }
         .multi-select-options-list {
             max-height: 240px;
             overflow-y: auto;
         }
-
-        .multi-select-option.hidden {
-            display: none;
-        }
-
+        .multi-select-option.hidden { display: none; }
         .multi-select-option.no-results {
             padding: 16px 12px;
             text-align: center;
-            color: #515151;
-            background: #f6f6f6;
+            color: var(--bx-ink-muted);
+            background: #F6F6F6;
             cursor: default;
             border-bottom: none;
         }
-
-        .multi-select-option.no-results:hover {
-            background: #f6f6f6;
-        }
+        .multi-select-option.no-results:hover { background: #F6F6F6; }
 
         textarea {
-            min-height: 80px;
+            min-height: 96px;
             resize: vertical;
         }
 
-        /* Character Counter */
+        /* ============================================================
+           CHARACTER COUNTER
+           ============================================================ */
         .textarea-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 8px;
         }
-
         .char-counter {
-            font-size: 14px;
-            color: #515151;
+            font-size: 13px;
+            color: var(--bx-ink-muted);
             text-align: right;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             font-weight: 400;
             line-height: 18px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
+        .char-counter.over-limit { color: var(--bx-error); font-weight: 500; }
 
-        .char-counter.over-limit {
-            color: #d32f2f;
-            font-weight: 400;
-        }
-
-        /* Progressive Disclosure */
+        /* ============================================================
+           PROGRESSIVE DISCLOSURE
+           ============================================================ */
         .follow-up-group {
             display: none;
             padding: 16px 0 0 0;
-            background: #f6f6f6;
+            background: transparent;
             margin-top: 12px;
             width: 100%;
             box-sizing: border-box;
         }
-
         .follow-up-group.visible {
             display: block;
             animation: slideDown 0.3s ease-out;
         }
-
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Multi-select */
+        /* ============================================================
+           CHECKBOX TILES (multi-select industries)
+           ============================================================ */
         .checkbox-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .checkbox-option {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 12px;
-            padding: 12px;
-            border-radius: 4px;
+            padding: 14px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
-            border: 2px solid #8e8e8e;
+            transition: all 0.15s ease;
+            border: 1.5px solid #B5B5B5;
+            background: var(--bx-surface);
+            min-height: 52px;
+        }
+        /* Hover (live Barclays): light grey fill, border unchanged */
+        .checkbox-option:hover { background: #E8E8E9; }
+
+        /* Focus (keyboard/click): Barclays double-ring */
+        .checkbox-option:focus-within {
+            border-color: #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+        }
+        .checkbox-option input[type="checkbox"]:focus { outline: none; }
+        .checkbox-option input[type="checkbox"]:focus-visible { outline: none; }
+
+        /* Selected: keep white background, just shift border to Interactive */
+        .checkbox-option:has(input[type="checkbox"]:checked) {
+            border-color: #006de3;
             background: #ffffff;
         }
-
-        .checkbox-option:hover {
-            border-color: #006de3;
-        }
+        .checkbox-option:has(input[type="checkbox"]:checked):hover { background: #E8E8E9; }
 
         .checkbox-option input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             cursor: pointer;
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            accent-color: #006de3;
-            margin-top: 3px;
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border: 2px solid #6F6F6F;
+            border-radius: 4px;
+            background: #ffffff;
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+            margin: 0;
+            transition: all 0.15s ease;
+        }
+        .checkbox-option input[type="checkbox"]:checked {
+            background: var(--bx-blue);
+            border-color: var(--bx-blue);
+        }
+        .checkbox-option input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 8px;
+            height: 13px;
+            border: solid #ffffff;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
         }
 
         .checkbox-option label {
             font-size: 16px;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             line-height: 22px;
             cursor: pointer;
             margin: 0;
             flex: 1;
         }
 
-        /* List View for selected items */
+        /* ============================================================
+           SELECTED ITEMS LIST / COUNTRY TABLES
+           ============================================================ */
         .selected-items-list {
             margin-top: 12px;
             display: flex;
@@ -858,79 +1086,64 @@
             box-sizing: border-box;
         }
 
-        /* Country table header */
         .country-table-header {
             display: flex;
-            background: #f6f6f6;
-            border: 1px solid #e2e2e2;
-            padding: 12px;
+            background: #F4F4F4;
+            border: 1px solid var(--bx-line-soft);
+            padding: 10px 12px;
             gap: 12px;
-            border-radius: 4px 4px 0 0;
+            border-radius: 8px 8px 0 0;
         }
-
         .country-table-header-cell {
-            font-size: 14px;
-            font-weight: 500;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 18px;
-            letter-spacing: 0.5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--bx-ink-muted);
+            font-family: var(--bx-font);
+            line-height: 16px;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
         }
-
-        .country-table-header-cell.country {
-            flex: 1;
-        }
-
+        .country-table-header-cell.country { flex: 1; }
         .country-table-header-cell.amount {
             flex: 0 0 160px;
             text-align: right;
             white-space: nowrap;
         }
-
-        /* Country table rows */
         .country-table-row {
             display: flex;
             gap: 12px;
             padding: 12px;
-            border-left: 1px solid #e2e2e2;
-            border-right: 1px solid #e2e2e2;
-            border-bottom: 1px solid #e2e2e2;
+            border-left: 1px solid var(--bx-line-soft);
+            border-right: 1px solid var(--bx-line-soft);
+            border-bottom: 1px solid var(--bx-line-soft);
             align-items: center;
+            background: #ffffff;
         }
-
         .country-table-row:last-child {
-            border-bottom: 1px solid #e2e2e2;
-            border-radius: 0 0 4px 4px;
+            border-bottom: 1px solid var(--bx-line-soft);
+            border-radius: 0 0 8px 8px;
         }
-
         #revenue-split-revenueSources .country-table-row:last-of-type {
-            border-bottom: 1px solid #e2e2e2 !important;
-            border-radius: 0 0 4px 4px;
+            border-bottom: 1px solid var(--bx-line-soft) !important;
+            border-radius: 0 0 8px 8px;
         }
-
-        .country-table-cell {
-            display: flex;
-            align-items: center;
-        }
-
-        .country-table-cell.country {
-            flex: 1;
-        }
-
+        .country-table-cell { display: flex; align-items: center; }
+        .country-table-cell.country { flex: 1; }
         .country-table-cell.amount {
             flex: 0 0 160px;
             justify-content: flex-end;
         }
-
         .country-name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 400;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             line-height: 22px;
         }
 
+        /* ============================================================
+           CURRENCY / PERCENTAGE INPUTS
+           ============================================================ */
         .currency-input-wrapper {
             display: flex;
             align-items: baseline;
@@ -938,34 +1151,33 @@
             position: relative;
             width: 100%;
         }
-
         .currency-symbol {
             font-size: 16px;
             font-weight: 400;
-            color: #272727;
+            color: var(--bx-ink);
             flex-shrink: 0;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
         }
-
         .currency-input {
             flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #8e8e8e;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border: 1.5px solid #6F6F6F;
+            border-radius: var(--bx-radius-input);
             font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            color: #272727;
+            font-family: var(--bx-font);
+            color: var(--bx-ink);
             line-height: 22px;
-            transition: border-color 0.2s;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
             width: 100%;
             font-weight: 400;
+            background: #ffffff;
         }
-
         .currency-input:focus {
-            outline: none;
-            border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+            border: 2px solid #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            box-shadow: none;
         }
 
         .percent-input-wrapper {
@@ -975,80 +1187,50 @@
             position: relative;
             width: auto;
         }
-
         .percent-symbol {
             font-size: 16px;
             font-weight: 400;
-            color: #272727;
+            color: var(--bx-ink);
             flex-shrink: 0;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
         }
-
         .percent-input {
-            flex: 0 0 60px;
-            padding: 8px 8px;
-            border: 1px solid #8e8e8e;
-            border-radius: 4px;
+            flex: 0 0 64px;
+            padding: 10px 8px;
+            border: 1.5px solid #6F6F6F;
+            border-radius: var(--bx-radius-input);
             font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            color: #272727;
+            font-family: var(--bx-font);
+            color: var(--bx-ink);
             line-height: 22px;
-            transition: border-color 0.2s;
-            width: 60px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            width: 64px;
             font-weight: 400;
+            background: #ffffff;
             text-align: left;
         }
-
-        .percent-input::placeholder {
-            text-align: left;
-        }
-
+        .percent-input::placeholder { text-align: left; }
         .percent-input:focus {
-            outline: none;
-            border-color: #006de3;
-            box-shadow: 0 0 0 3px rgba(0, 109, 227, 0.1);
+            border: 2px solid #006de3;
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+            box-shadow: none;
         }
 
-        /* Currency country tables — sized so "United Arab Emirates" doesn't wrap and 999,999,999 fits */
-        .country-amounts-group[data-percentage-required="false"] .country-table-header {
-            gap: 8px;
-        }
+        .country-amounts-group[data-percentage-required="false"] .country-table-header { gap: 8px; }
+        .country-amounts-group[data-percentage-required="false"] .country-table-row { gap: 8px; align-items: baseline; }
+        .country-amounts-group[data-percentage-required="false"] .country-table-header-cell.amount { flex: 0 0 115px; }
+        .country-amounts-group[data-percentage-required="false"] .country-table-cell.amount { flex: 0 0 115px; }
+        .country-amounts-group[data-percentage-required="false"] .currency-input { padding: 8px 4px; }
 
-        .country-amounts-group[data-percentage-required="false"] .country-table-row {
-            gap: 8px;
-            align-items: baseline;
-        }
-
-        .country-amounts-group[data-percentage-required="false"] .country-table-header-cell.amount {
-            flex: 0 0 115px;
-        }
-
-        .country-amounts-group[data-percentage-required="false"] .country-table-cell.amount {
-            flex: 0 0 115px;
-        }
-
-        .country-amounts-group[data-percentage-required="false"] .currency-input {
-            padding: 8px 4px;
-        }
-
-        /* Revenue sources table specific styles */
-        #revenue-split-revenueSources .country-table-header-cell.country {
-            flex: 1 1 100%;
-        }
-
+        #revenue-split-revenueSources .country-table-header-cell.country { flex: 1 1 100%; }
         #revenue-split-revenueSources .country-table-header-cell.amount {
             flex: 0 0 100px;
             text-align: left;
         }
-
-        #revenue-split-revenueSources .country-table-cell.country {
-            flex: 1 1 auto;
-        }
-
-        #revenue-split-revenueSources .country-table-cell.amount {
-            flex: 0 0 100px;
-        }
+        #revenue-split-revenueSources .country-table-cell.country { flex: 1 1 auto; }
+        #revenue-split-revenueSources .country-table-cell.amount { flex: 0 0 100px; }
 
         .country-amounts-group {
             margin-top: 12px;
@@ -1057,141 +1239,114 @@
             padding: 16px 0;
             display: none;
             animation: slideDown 0.3s ease-out;
-            background: #f6f6f6;
+            background: transparent;
             width: 100%;
             box-sizing: border-box;
         }
+        .country-amounts-group.visible { display: block; }
 
-        .country-amounts-group.visible {
-            display: block;
-        }
+        .sticky-summary { display: none; }
 
-        /* Sticky Summary Bar - Hidden */
-        .sticky-summary {
-            display: none;
-        }
-
-        /* Revenue Split Summary Bar */
+        /* ============================================================
+           REVENUE-SPLIT SUMMARY CARD
+           ============================================================ */
         .revenue-split-summary {
-            background: #ffffff;
-            padding-top: 16px;
-            padding-bottom: 16px;
-            padding-left: 20px;
-            padding-right: 20px;
+            background: var(--bx-surface);
+            padding: 16px 20px;
             margin-top: 16px;
-            margin-bottom: 0px;
-            border-radius: 8px;
+            border-radius: var(--bx-radius-card);
+            box-shadow: var(--bx-shadow-card);
         }
-
-        .summary-progress-container {
-            margin-bottom: 0px;
-        }
-
+        .summary-progress-container { margin-bottom: 0; }
         .summary-progress-bar {
             width: 100%;
             height: 8px;
-            background: #f0f0f0;
+            background: #F0F0F0;
             border-radius: 4px;
             overflow: hidden;
             margin-bottom: 12px;
         }
-
         .summary-progress-fill {
             height: 100%;
-            background: #006de3;
+            background: var(--bx-blue);
             width: 0%;
             transition: width 0.2s ease;
         }
-
         .summary-progress-text {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 400;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
         }
-
         .revenue-split-error {
-            color: #d32f2f;
+            color: var(--bx-error);
             font-size: 14px;
             margin-top: 12px;
             padding: 0 20px;
             display: none;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 22px;
         }
-
-        .revenue-split-error.visible {
-            display: block;
-        }
-
+        .revenue-split-error.visible { display: block; }
         .summary-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-            color: #515151;
+            color: var(--bx-ink-muted);
             line-height: 22px;
         }
-
         .summary-total {
             display: flex;
             justify-content: space-between;
-            padding-top: 0px;
-            margin-top: 0px;
-            font-weight: 500;
-            color: #006de3;
+            font-weight: 600;
+            color: var(--bx-blue);
         }
-
-        .summary-total.invalid {
-            color: #d32f2f;
-        }
+        .summary-total.invalid { color: var(--bx-error); }
 
         .country-total-summary {
-            background: #ffffff;
-            padding: 16px;
+            background: var(--bx-surface);
+            padding: 14px 16px;
             margin-top: 16px;
-            border-radius: 8px;
+            border-radius: var(--bx-radius-card);
             display: none;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--bx-shadow-card);
         }
-
-        .country-total-summary.visible {
-            display: flex;
-        }
-
-        .country-total-summary-label {
-            font-size: 16px;
-            font-weight: 400;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 22px;
-        }
-
+        .country-total-summary.visible { display: flex; }
+        .country-total-summary-label,
         .country-total-summary-amount {
-            font-size: 16px;
-            font-weight: 400;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             line-height: 22px;
         }
 
-        /* Buttons */
+        /* ============================================================
+           BUTTONS (Primary blue, Secondary outline)
+           ============================================================ */
+        /* Button Group — Figma 13:2883 (Mobile, Two Buttons)
+           Background switched to #F6F6F6 (Neutral 100) to match the page bg.
+           40px top spacing above the group, 16px gap between buttons,
+           horizontal padding 24, bottom padding 16. */
         .button-group {
-            background: #f6f6f6;
-            padding: 16px 20px;
+            background: #F6F6F6;
+            padding: 16px 24px;
+            margin-top: 40px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             width: 100%;
             max-width: 375px;
-            align-items: center;
+            align-items: stretch;
             box-sizing: border-box;
         }
+        .button-group button { width: 100%; max-width: 312px; margin: 0 auto; }
 
-        .button-group button {
-            width: 335px;
-        }
-
+        /* CTA Buttons — Figma Button (4:4847) / Button Group (13:2883)
+           Padding 12/32 + 24px line-height = 48px total height,
+           24px pill radius, Effra Medium 16/24. Live Barclays states. */
         button {
             padding: 12px 32px;
             border: none;
@@ -1199,59 +1354,100 @@
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 22px;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            font-family: var(--bx-font);
+            line-height: 24px;
             letter-spacing: 0;
+            box-sizing: border-box;
         }
 
+        /* Primary — solid Interactive blue */
         .btn-primary {
             background: #006de3;
-            color: #f6f6f6;
+            color: #ffffff;
+            border: none;
         }
-
+        /* Hover: slightly darker (live Barclays --primary-btn-hover-background-color) */
         .btn-primary:hover:not(:disabled) {
-            background: #0052a3;
-            box-shadow: 0 2px 8px rgba(0, 109, 227, 0.3);
+            background: #0064d1;
         }
-
+        /* Pressed: deeper still */
+        .btn-primary:active:not(:disabled) {
+            background: #0057b8;
+        }
+        /* Focus-visible: 2px solid neutral-dark outline @ 2px offset (live) */
+        .btn-primary:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+        }
+        /* Disabled: 0.3 opacity, no pointer events */
         .btn-primary:disabled {
-            background: #cccccc;
+            opacity: 0.3;
+            pointer-events: none;
             cursor: not-allowed;
         }
 
+        /* Secondary — outlined Interactive, white fill */
         .btn-secondary {
             background: #ffffff;
             color: #006de3;
             border: 2px solid #006de3;
+            padding: 10px 30px;            /* compensate for the 2px border to keep 48px height */
         }
-
-        .btn-secondary:hover {
+        /* Hover inverts to Primary fill (per live Barclays CSS) */
+        .btn-secondary:hover:not(:disabled) {
+            background: #006de3;
+            color: #ffffff;
             border-color: #006de3;
-            color: #006de3;
-            background: #ffffff;
+        }
+        .btn-secondary:active:not(:disabled) {
+            background: #0057b8;
+            color: #ffffff;
+            border-color: #0057b8;
+        }
+        .btn-secondary:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+        }
+        .btn-secondary:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: not-allowed;
         }
 
+        /* .btn-danger reused as a secondary variant for "Exit" — same as secondary */
         .btn-danger {
             background: #ffffff;
             color: #006de3;
             border: 2px solid #006de3;
+            padding: 10px 30px;
         }
-
-        .btn-danger:hover {
+        .btn-danger:hover:not(:disabled) {
+            background: #006de3;
+            color: #ffffff;
             border-color: #006de3;
-            background: #ffffff;
+        }
+        .btn-danger:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+        }
+        .btn-danger:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: not-allowed;
         }
 
-        /* Footer */
+        /* ============================================================
+           FOOTER (legal text + cert logos)
+           ============================================================ */
         .footer {
-            background: #f6f6f6;
-            padding: 40px 24px;
-            font-size: 16px;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bx-bg);
+            padding: 24px 20px 32px;
+            font-size: 13px;
+            color: var(--bx-ink-muted);
+            font-family: var(--bx-font);
             font-weight: 400;
-            line-height: 24px;
+            line-height: 20px;
             letter-spacing: 0;
             width: 100%;
             max-width: 375px;
@@ -1259,56 +1455,53 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
-
         .footer-divider {
-            width: 100%;
-            height: 1px;
-            background: #e2e2e2;
-            flex-shrink: 0;
-            margin-bottom: 0;
+            display: none;
         }
-
         .footer-text {
-            font-size: 16px;
-            color: #515151;
-            line-height: 24px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 13px;
+            color: var(--bx-ink-muted);
+            line-height: 20px;
+            font-family: var(--bx-font);
             font-weight: 400;
             letter-spacing: 0;
             margin: 0;
         }
-
         .footer-logos {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
         }
-
+        .footer-logos img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
         .footer-logos-row {
             display: flex;
             gap: 16px;
             align-items: center;
         }
-
         .footer-logo {
             font-size: 12px;
-            color: #515151;
+            color: var(--bx-ink-muted);
             text-align: center;
             min-width: 50px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             line-height: 16px;
             font-weight: 400;
         }
-
         .footer-logo-spacer {
             width: 1px;
             height: 40px;
-            background: #e2e2e2;
+            background: var(--bx-line-soft);
         }
 
-        /* Drawer Sheet */
+        /* ============================================================
+           DRAWER (bottom sheet)
+           ============================================================ */
         .drawer-overlay {
             display: none;
             position: fixed;
@@ -1316,54 +1509,43 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.55);
             z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
         }
-
         .drawer-overlay.open {
             display: flex;
             align-items: flex-end;
             justify-content: center;
         }
-
         .drawer-sheet {
-            background: #ffffff;
-            border-radius: 12px 12px 0 0;
+            background: var(--bx-surface);
+            border-radius: 16px 16px 0 0;
             width: 100%;
             max-width: 375px;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
             animation: slideUp 0.3s ease-out;
         }
-
         @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(100%); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
         }
-
         .drawer-header {
             background: #ffffff;
-            padding: 16px 24px;
+            padding: 20px 24px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e2e2e2;
-            border-radius: 12px 12px 0 0;
+            border-bottom: 1px solid var(--bx-line-soft);
+            border-radius: 16px 16px 0 0;
         }
-
         .drawer-title {
-            font-size: 18px;
-            font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
         }
-
         .drawer-close {
             background: none;
             border: none;
@@ -1374,131 +1556,112 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.2s;
+            transition: opacity 0.15s ease;
         }
-
-        .drawer-close:hover {
-            opacity: 0.7;
-        }
-
-        .drawer-close svg {
-            width: 24px;
-            height: 24px;
-        }
+        .drawer-close:hover { opacity: 0.7; }
+        .drawer-close svg { width: 24px; height: 24px; }
 
         .drawer-content {
-            padding: 24px;
-            background: #f6f6f6;
+            padding: 20px 24px 32px;
+            background: var(--bx-surface);
         }
-
         .drawer-intro {
-            font-size: 16px;
-            color: #515151;
-            margin-bottom: 24px;
-            line-height: 22px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        .drawer-example {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
+            font-size: 15px;
+            color: var(--bx-ink-soft);
             margin-bottom: 16px;
-            font-size: 16px;
-            color: #515151;
             line-height: 22px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
         }
-
-        .drawer-example:last-child {
-            margin-bottom: 0;
+        .drawer-example {
+            background: var(--bx-bg);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: var(--bx-ink-soft);
+            line-height: 22px;
+            font-family: var(--bx-font);
         }
-
+        .drawer-example:last-child { margin-bottom: 0; }
         .drawer-bullets {
             list-style: disc;
             padding-left: 24px;
             margin-bottom: 16px;
-            font-size: 16px;
-            color: #515151;
+            font-size: 15px;
+            color: var(--bx-ink-soft);
             line-height: 22px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
         }
-
-        .drawer-bullets li {
-            margin-bottom: 0;
-        }
-
+        .drawer-bullets li { margin-bottom: 4px; }
         .drawer-outro {
-            font-size: 16px;
-            color: #515151;
+            font-size: 15px;
+            color: var(--bx-ink-soft);
             line-height: 22px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
         }
 
-        /* Help link */
+        /* ============================================================
+           HELP LINK ("Need additional support or information?")
+           ============================================================ */
         .help-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: #006de3;
-            font-size: 16px;
+            color: var(--bx-blue);
+            font-size: 15px;
             font-weight: 500;
             cursor: pointer;
             background: none;
             border: none;
-            padding: 0;
+            padding: 12px 0;
             text-decoration: none;
             margin: 0;
             white-space: nowrap;
         }
-
-        .help-link:hover {
-            text-decoration: underline;
-        }
+        .help-link:hover { text-decoration: underline; }
 
         .help-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             flex-shrink: 0;
-            margin-left: 4px;
+            margin-right: 4px;
+            margin-left: 0;
+            order: -1;
         }
+        .help-icon svg { width: 18px; height: 18px; }
 
-        .help-icon svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Percentage validation */
+        /* ============================================================
+           PERCENT INPUT GROUP
+           ============================================================ */
         .percentage-input {
             display: flex;
             gap: 8px;
             align-items: center;
         }
-
-        .percentage-input input {
-            flex: 1;
-        }
-
+        .percentage-input input { flex: 1; }
         .percentage-input span {
             font-size: 16px;
-            color: #515151;
+            color: var(--bx-ink-muted);
             min-width: 20px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             font-weight: 400;
             line-height: 22px;
         }
 
-        /* Data card (read-only) */
+        /* ============================================================
+           PREFILL ALERT (inline green/blue banner)
+           Repurposed to match Figma's green dismissible banner.
+           ============================================================ */
         .prefill-alert {
-            background-color: #e7f0fb;
-            border: 2px solid #006de3;
+            background: var(--bx-success-bg);
+            border: 1px solid var(--bx-success-border);
             border-radius: 8px;
-            padding: 16px;
+            padding: 12px 14px;
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: flex-start;
             margin-bottom: 16px;
         }
@@ -1507,140 +1670,146 @@
             height: 20px;
             flex-shrink: 0;
             margin-top: 1px;
+            color: var(--bx-success);
         }
         .prefill-alert-text {
-            font-size: 16px;
-            line-height: 22px;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--bx-ink-soft);
+            font-family: var(--bx-font);
             font-weight: 400;
             margin: 0;
             flex: 1;
         }
 
+        /* ============================================================
+           DATA CARD (read-only address card)
+           ============================================================ */
         .data-card {
-            background: #ffffff;
+            background: var(--bx-surface);
             padding: 16px;
-            border-radius: 8px;
-            margin-top: 16px;
-            font-size: 14px;
+            border-radius: var(--bx-radius-card);
+            margin-top: 8px;
+            font-size: 15px;
+            box-shadow: var(--bx-shadow-card);
         }
-
         .data-card-label {
-            font-size: 12px;
-            color: #515151;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            font-weight: 500;
-            line-height: 16px;
-        }
-
-        .data-card-value {
+            font-size: 13px;
+            color: var(--bx-ink-muted);
+            margin-bottom: 6px;
+            letter-spacing: 0;
+            font-family: var(--bx-font);
             font-weight: 400;
-            color: #272727;
-            font-size: 16px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 18px;
+            text-transform: none;
+        }
+        .data-card-value {
+            font-weight: 500;
+            color: var(--bx-ink);
+            font-size: 15px;
+            font-family: var(--bx-font);
             line-height: 22px;
         }
 
-        /* Document upload section */
+        /* ============================================================
+           DOCUMENT UPLOAD (drag-and-drop zone)
+           ============================================================ */
         .document-upload-container {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             width: 100%;
         }
-
         .upload-intro {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 8px;
             width: 100%;
         }
-
         .upload-intro-title {
-            font-size: 24px;
-            font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 28px;
-            letter-spacing: -0.36px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
+            line-height: 24px;
+            letter-spacing: -0.2px;
             margin: 0;
         }
-
         .upload-intro-hint {
-            font-size: 16px;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 15px;
+            color: var(--bx-ink-muted);
+            font-family: var(--bx-font);
             line-height: 22px;
             margin: 0;
         }
 
         .review-card {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
-            width: 312px;
+            background: var(--bx-surface);
+            padding: 14px 16px;
+            border-radius: var(--bx-radius-card);
+            width: 100%;
             box-sizing: border-box;
+            box-shadow: var(--bx-shadow-card);
         }
-
         .review-card-label {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 400;
-            color: #515151;
-            margin-bottom: 8px;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 22px;
+            color: var(--bx-ink-muted);
+            margin-bottom: 4px;
+            font-family: var(--bx-font);
+            line-height: 18px;
         }
-
         .review-card-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             line-height: 22px;
+            white-space: pre-line;
         }
 
+        /* ============================================================
+           ACCORDION ("Documents we accept" type sections)
+           ============================================================ */
         .accordion-group {
             display: flex;
             flex-direction: column;
             gap: 2px;
-            width: 312px;
+            width: 100%;
         }
-
         .accordion-section {
-            background: #ffffff;
+            background: var(--bx-surface);
             overflow: hidden;
+            border: 1.5px solid #6F6F6F;
         }
-
         .accordion-section:first-child {
-            border-radius: 8px 8px 0 0;
+            border-radius: var(--bx-radius-input) var(--bx-radius-input) 0 0;
         }
-
         .accordion-section:last-child {
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 var(--bx-radius-input) var(--bx-radius-input);
+            border-top: none;
         }
-
+        .accordion-section:only-child {
+            border-radius: var(--bx-radius-input);
+            border-top: 1.5px solid #6F6F6F;
+        }
         .accordion-section:first-child .accordion-button {
-            border-radius: 8px 8px 0 0;
+            border-radius: var(--bx-radius-input) var(--bx-radius-input) 0 0;
         }
-
         .accordion-section:last-child .accordion-button {
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 var(--bx-radius-input) var(--bx-radius-input);
         }
 
         .accordion-button {
             width: 100%;
-            padding: 16px;
+            padding: 14px 16px;
             background: #ffffff;
             border: none;
             text-align: left;
-            font-size: 16px;
-            font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1649,232 +1818,224 @@
             line-height: 22px;
             box-sizing: border-box;
         }
-
-        /* No hover background — Barclays DS Accordion stays white in both Closed and Open states */
-
         .accordion-chevron {
             transition: transform 0.2s ease;
             flex-shrink: 0;
+            color: var(--bx-ink);
         }
-
-        .accordion-button.expanded .accordion-chevron {
-            transform: rotate(180deg);
-        }
+        .accordion-button.expanded .accordion-chevron { transform: rotate(180deg); }
 
         .accordion-content {
             display: none;
             padding: 0 16px 16px 16px;
             background: #ffffff;
-            border-radius: 0 0 8px 8px;
-            margin-top: -8px; /* visually compress so the gap with the trigger row is 16px (balanced with internal 16px) */
+            margin-top: -8px;
         }
-
-        .accordion-content.open {
-            display: block;
-        }
-
+        .accordion-content.open { display: block; }
         .accordion-content p {
-            font-size: 16px;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 22px;
-            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: var(--bx-ink-soft);
+            font-family: var(--bx-font);
+            line-height: 20px;
+            margin: 0 0 12px 0;
         }
-
-        .accordion-content p:last-child {
-            margin-bottom: 0;
-        }
-
+        .accordion-content p:last-child { margin-bottom: 0; }
         .accordion-list {
             margin: 0;
-            padding-left: 24px;
+            padding-left: 22px;
             list-style-type: disc;
         }
-
         .accordion-list li {
-            font-size: 16px;
-            color: #515151;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 22px;
+            font-size: 14px;
+            color: var(--bx-ink-soft);
+            font-family: var(--bx-font);
+            line-height: 20px;
             font-weight: 400;
-            margin: 0;
+            margin: 0 0 6px 0;
             padding: 0;
         }
-
         .accordion-list li strong {
             font-weight: 700;
-            color: #515151;
+            color: var(--bx-ink);
         }
 
+        /* ============================================================
+           REQUIREMENTS LIST ("Please make sure your documents are:")
+           ============================================================ */
         .requirements-heading {
-            font-size: 20px;
-            font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 24px;
-            letter-spacing: -0.2px;
-            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
+            line-height: 22px;
+            letter-spacing: 0;
+            margin: 0 0 4px 0;
         }
-
         .requirements-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            width: 312px;
+            width: 100%;
         }
-
         .requirement-item {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
+            background: var(--bx-surface);
+            padding: 14px 16px;
+            border-radius: var(--bx-radius-card);
             display: flex;
-            gap: 16px;
+            gap: 12px;
             align-items: center;
-            min-height: 56px;
+            min-height: 48px;
             box-sizing: border-box;
+            box-shadow: var(--bx-shadow-card);
         }
-
-        .requirement-item:last-child {
-            align-items: flex-start;
-        }
-
+        .requirement-item:last-child { align-items: flex-start; }
         .requirement-checkmark {
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #000000;
+            color: var(--bx-ink);
             margin-top: 0;
         }
-
-        .requirement-checkmark svg {
-            width: 100%;
-            height: 100%;
-        }
-
+        .requirement-checkmark svg { width: 100%; height: 100%; }
         .requirement-text {
-            font-size: 16px;
-            font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
             line-height: 22px;
             margin: 0;
             flex: 1;
         }
 
+        /* ============================================================
+           UPLOAD AREA (dashed cloud zone)
+           ============================================================ */
         .upload-area {
-            border: 2px dashed #006de3;
-            border-radius: 8px;
-            padding: 40px 16px;
-            background: #f2f8fe;
+            border: 2px dashed var(--bx-blue);
+            border-radius: var(--bx-radius-card);
+            padding: 28px 16px 28px;
+            background: var(--bx-blue-50);
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s;
-            width: 312px;
-            height: 224px;
+            transition: background-color 0.15s ease;
+            width: 100%;
+            min-height: 196px;
             box-sizing: border-box;
         }
-
-        .upload-area:hover {
-            background: #e8f4fd;
-        }
+        .upload-area:hover { background: #E5F0FB; }
 
         .upload-icon-wrapper {
-            width: 72px;
-            height: 72px;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
         .upload-text {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 500;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 24px;
-            letter-spacing: -0.2px;
+            color: var(--bx-ink);
+            font-family: var(--bx-font);
+            line-height: 22px;
+            letter-spacing: -0.1px;
             margin: 0;
             white-space: nowrap;
         }
-
         .browse-button {
             background: #ffffff;
-            border: 2px solid #006de3;
-            color: #006de3;
-            padding: 4px 16px;
-            border-radius: 24px;
-            font-size: 16px;
+            border: 1.5px solid var(--bx-blue);
+            color: var(--bx-blue);
+            padding: 6px 22px;
+            border-radius: var(--bx-radius-pill);
+            font-size: 15px;
             font-weight: 500;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--bx-font);
             cursor: pointer;
-            transition: background-color 0.2s;
-            line-height: 24px;
+            transition: background-color 0.15s ease;
+            line-height: 22px;
+            margin-top: 4px;
         }
+        .browse-button:hover { background: var(--bx-blue-50); }
 
-        .browse-button:hover {
-            background: #f2f8fe;
-        }
-
-        .file-input-hidden {
-            display: none;
-        }
+        .file-input-hidden { display: none; }
 
         .confirmation-checkbox {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
-            width: 312px;
+            background: var(--bx-surface);
+            padding: 14px 16px;
+            border-radius: var(--bx-radius-card);
+            width: 100%;
             display: flex;
             gap: 12px;
             align-items: flex-start;
             box-sizing: border-box;
+            box-shadow: var(--bx-shadow-card);
         }
-
         .confirmation-checkbox input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border: 2px solid #8e8e8e;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border: 2px solid #6F6F6F;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 0;
+            background: #ffffff;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.15s ease;
         }
-
+        .confirmation-checkbox input[type="checkbox"]:checked {
+            background: var(--bx-blue);
+            border-color: var(--bx-blue);
+        }
+        .confirmation-checkbox input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 8px;
+            height: 13px;
+            border: solid #ffffff;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
         .confirmation-text {
-            font-size: 16px;
-            color: #272727;
-            font-family: 'Barclays Effra', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 15px;
+            color: var(--bx-ink-soft);
+            font-family: var(--bx-font);
             line-height: 22px;
             margin: 0;
             flex: 1;
         }
 
-        /* Screen styling */
+        /* ============================================================
+           SCREEN SHELL
+           ============================================================ */
         .screen {
             display: none;
             width: 100%;
             max-width: 375px;
-            padding: 0 20px;
-            margin-top: 24px;
-            margin-bottom: 24px;
+            padding: 20px 20px 8px;
+            margin: 0 auto;
             animation: fadeIn 0.3s ease-in;
             box-sizing: border-box;
         }
-
-        .screen.active {
-            display: block;
-        }
+        .screen.active { display: block; }
 
         #screenContainer {
             width: 100%;
             box-sizing: border-box;
+            background: var(--bx-bg);
         }
     </style>
 </head>
@@ -1939,7 +2100,7 @@
                     </div>
                     <div class="progress-text">
                         <span id="stepDisplay">Step 1 of 7</span>
-                        <span>- Your business</span>
+                        <span>- Business Borrowing</span>
                     </div>
                 </div>
             </div>
@@ -2074,7 +2235,7 @@
                 introBlock: {
                     heading: 'Before we get started',
                     body: 'We need some more information to process your loan application.\nThis helps us:',
-                    bullets: ['<strong>Verify</strong> your business details', '<strong>Meet</strong> legal requirements', '<strong>Prevent</strong> fraud and financial crime'],
+                    bullets: ['Verify your business details', 'Meet legal requirements', 'Prevent fraud and financial crime'],
                     footer: 'We only ask for information we really need.'
                 },
                 questions: [
@@ -2681,13 +2842,22 @@
 
             if (screenDef.introBlock) {
                 const ib = screenDef.introBlock;
-                const bodyLines = ib.body.split('\n').map(l => `<p class="screen-intro-body">${l}</p>`).join('');
+                // Body is a SINGLE paragraph in Figma — collapse \n to space so the
+                // text wraps naturally instead of forming two separate paragraphs.
+                const bodyText = ib.body.replace(/\n/g, ' ');
                 const bullets = ib.bullets.map(b => `<li>${b}</li>`).join('');
-                html += `<div class="screen-intro">
-                    <h2 class="screen-intro-heading">${ib.heading}</h2>
-                    ${bodyLines}
-                    <ul>${bullets}</ul>
-                    ${ib.footer ? `<p class="screen-intro-footer">${ib.footer}</p>` : ''}
+                // Figma Alert 4:5881 — Status Information icon
+                // Blue filled disc (20px Ø inside 24px box, matches Figma's 8.33% inset)
+                // White "i" with 2.5px stem and dot above
+                const infoIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#006de3"/><circle cx="12" cy="7.75" r="1.4" fill="#ffffff"/><rect x="10.75" y="10.5" width="2.5" height="7" rx="1.25" fill="#ffffff"/></svg>`;
+                html += `<div class="screen-intro" role="status">
+                    <div class="screen-intro-icon">${infoIcon}</div>
+                    <div class="screen-intro-content">
+                        <h2 class="screen-intro-heading">${ib.heading}</h2>
+                        <p class="screen-intro-body">${bodyText}</p>
+                        <ul>${bullets}</ul>
+                        ${ib.footer ? `<p class="screen-intro-footer">${ib.footer}</p>` : ''}
+                    </div>
                 </div>`;
             }
 
@@ -2848,7 +3018,7 @@
                 html += `<div class="textarea-footer">`;
                 if (question.helpText) {
                     html += `<button class="help-link" onclick="openDrawer('${question.id}')">
-                        View examples <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                        View examples <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#0050C8" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#0050C8"/><path d="M12 11v6" stroke="#0050C8" stroke-width="2" stroke-linecap="round"/></svg></span>
                     </button>`;
                 }
                 html += `<div class="char-counter" id="counter-${question.id}">0/${maxLength}</div>`;
@@ -2859,7 +3029,7 @@
                 if (question.helpText) {
                     const linkLabel = question.helpText.linkText || 'View examples';
                     html += `<button class="help-link" onclick="openDrawer('${question.id}')">
-                        ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                        ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#0050C8" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#0050C8"/><path d="M12 11v6" stroke="#0050C8" stroke-width="2" stroke-linecap="round"/></svg></span>
                     </button>`;
                 }
             } else if (question.type === 'country-multi') {
