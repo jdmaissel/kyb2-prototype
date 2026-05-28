@@ -355,9 +355,10 @@
             line-height: 24px;
             letter-spacing: -0.2px;
         }
-        /* First section title needs no extra top space when it sits flush
-           against the content area; keep 24 below for breathing room */
-        .screen > h2:first-child { margin-top: 24px; }
+        /* When the section title is the first element on a screen, its 24px
+           top margin would stack on top of .screen's 24px top padding —
+           collapse it to 0 so the gap stays exactly 24px. */
+        .screen > h2:first-child { margin-top: 0; }
 
         /* ============================================================
            ALERT — copied verbatim from alert-test.html, locked down with
@@ -512,8 +513,11 @@
             transition: border-color 0.15s ease, background 0.15s ease;
         }
 
-        /* Hover (live Barclays): light grey fill, border unchanged */
+        /* Hover (live Barclays): light grey fill, border unchanged.
+           The radio atom also picks up the grey fill so it visually merges
+           with the tile instead of "popping out" as a white disc. */
         .radio-option:hover { background: #E8E8E9; }
+        .radio-option:hover input[type="radio"] { background: #E8E8E9; }
 
         /* Focus (keyboard/click): Barclays double-ring — 2px border + 2px outline @ 2px offset */
         .radio-option:focus-within {
@@ -762,14 +766,19 @@
         }
         .custom-select-dropdown.open { display: block; }
 
-        /* Option — Effra Regular 16/22 #272727 default */
+        /* Option — Effra Medium 16/22 #272727. Each cell is 56px tall, contents
+           vertically centered (flex). Flag (when present) renders at 24×24. */
         .custom-select-option {
-            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 56px;
+            padding: 0 16px;
             cursor: pointer;
             transition: background 0.15s ease, color 0.15s ease;
             font-size: 16px;
             font-family: var(--bx-font);
-            font-weight: 400;
+            font-weight: 500;
             color: #272727;
             line-height: 22px;
             border: none;
@@ -780,11 +789,23 @@
         .custom-select-option.selected {
             background: #006de3;
             color: #ffffff;
-            font-weight: 500;
         }
         .custom-select-option.selected:hover {
             background: #006de3;
             color: #ffffff;
+        }
+
+        /* Flag emoji wrapper — renders at 24×24 visual size */
+        .country-flag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
         }
 
         /* ============================================================
@@ -855,33 +876,82 @@
         }
         .multi-select-dropdown.open { display: block; }
 
+        /* Multi-select option — 56px tall cell, Effra Medium 16/22 label,
+           custom 28×28 checkbox (Blueprint pattern) on the left. */
         .multi-select-option {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 14px;
+            min-height: 56px;
+            padding: 0 16px;
             cursor: pointer;
             transition: background 0.15s ease;
             border: none;
         }
         .multi-select-option:hover { background: #E8E8E9; }
-        .multi-select-option.selected {
-            background: #006de3;
-        }
+        .multi-select-option.selected { background: #006de3; }
         .multi-select-option.selected label,
         .multi-select-option.selected { color: #ffffff; }
+        .multi-select-option.selected:hover { background: #006de3; }
 
+        /* Custom 28×28 checkbox — Blueprint style.
+           Default: white core, 2px #8E8E8E border, 4px radius.
+           Checked: #006de3 fill, white ✓ (inline SVG mask). */
         .multi-select-option input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             cursor: pointer;
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            accent-color: #006de3;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid #8E8E8E;
+            border-radius: 4px;
+            background: #ffffff;
             margin: 0;
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+            transition: background 0.15s ease, border-color 0.15s ease;
         }
+        .multi-select-option:hover input[type="checkbox"] { background: #E8E8E9; }
+        .multi-select-option input[type="checkbox"]:checked {
+            background: #006de3;
+            border-color: #006de3;
+        }
+        /* White checkmark — two CSS borders rotated 45° into a tick.
+           Centered with translate(-55%, -60%): the rotated L-shape carries
+           more visual weight in the bottom-right, so we nudge up & left
+           to bring the optical centre to the box centre. */
+        .multi-select-option input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 6px;
+            height: 12px;
+            border: solid #ffffff;
+            border-width: 0 2.5px 2.5px 0;
+            transform: translate(-55%, -60%) rotate(45deg);
+        }
+        .multi-select-option input[type="checkbox"]:focus,
+        .multi-select-option input[type="checkbox"]:focus-visible {
+            outline: none;
+        }
+        /* Selected row keeps the checkbox visually distinct on the blue cell:
+           white inner box would clash, so the checkbox stays #006de3 fill +
+           border, but the white tick remains readable. */
+        .multi-select-option.selected input[type="checkbox"]:checked {
+            border-color: #ffffff;
+        }
+
         .multi-select-option label {
             flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 16px;
+            font-weight: 500;
             color: #272727;
             font-family: var(--bx-font);
             line-height: 22px;
@@ -947,30 +1017,60 @@
         }
         .multi-select-option.no-results:hover { background: #F6F6F6; }
 
+        /* TextAreaInput — Figma 17:3411
+           Inherits the base input spec (2px #8E8E8E border, 4 radius, Effra
+           Regular 16/22, #272727 text, 12/14 padding, double-ring focus,
+           #e3000f error border, #f6f6f6 disabled fill). Specific to textarea:
+           generous min-height for ~4 lines and vertical-only resize. */
         textarea {
             min-height: 96px;
             resize: vertical;
+            line-height: 22px;
+            color: #272727;
         }
+        textarea::placeholder { color: #8E8E8E; }
 
-        /* ============================================================
-           CHARACTER COUNTER
-           ============================================================ */
-        .textarea-footer {
+        /* Character counter — Effra Regular 16/22 #515151.
+           Sits on the hint line ABOVE the textarea, right-aligned, so
+           it's visible before the user starts typing and doesn't compete
+           with the help link area below the field. */
+        /* align-items: flex-end so when the hint wraps to multiple lines
+           the counter sits on the LAST line, not the first. */
+        .textarea-hint-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 8px;
+            align-items: flex-end;
+            gap: 12px;
+            margin: -8px 0 12px 0;        /* match standard .hint-text spacing */
+        }
+        .textarea-hint-row .hint-text {
+            margin: 0;                    /* overrides the standalone hint margins */
+            flex: 1;
+            min-width: 0;
         }
         .char-counter {
-            font-size: 13px;
-            color: var(--bx-ink-muted);
+            font-size: 16px;
+            line-height: 22px;
+            color: #515151;
             text-align: right;
             font-family: var(--bx-font);
             font-weight: 400;
-            line-height: 18px;
             letter-spacing: 0;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
-        .char-counter.over-limit { color: var(--bx-error); font-weight: 500; }
+        .char-counter.over-limit { color: #e3000f; font-weight: 500; }
+
+        /* Footer below the textarea — only shown when there's a "View examples"
+           link to display. Link sits LEFT with 24px spacing from the field
+           above and 24px below before the next form element. */
+        .textarea-footer {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 24px;
+            margin-bottom: 24px;
+        }
 
         /* ============================================================
            PROGRESSIVE DISCLOSURE
@@ -1015,6 +1115,7 @@
         }
         /* Hover (live Barclays): light grey fill, border unchanged */
         .checkbox-option:hover { background: #E8E8E9; }
+        .checkbox-option:hover input[type="checkbox"] { background: #E8E8E9; }
 
         /* Focus (keyboard/click): Barclays double-ring */
         .checkbox-option:focus-within {
@@ -1327,12 +1428,14 @@
            BUTTONS (Primary blue, Secondary outline)
            ============================================================ */
         /* Button Group — Figma 13:2883 (Mobile, Two Buttons)
-           Background switched to #F6F6F6 (Neutral 100) to match the page bg.
-           40px top spacing above the group, 16px gap between buttons,
-           horizontal padding 24, bottom padding 16. */
+           Background #F6F6F6 (Neutral 100) to match the page bg.
+           40px gap from the last content element to the first button
+           (achieved by 40px margin-top here + 0 bottom padding on .screen).
+           16px between the two buttons, 16px bottom for the footer area,
+           20px horizontal so buttons align with .screen content (335px). */
         .button-group {
             background: #F6F6F6;
-            padding: 16px 24px;
+            padding: 0 20px 16px;
             margin-top: 40px;
             display: flex;
             flex-direction: column;
@@ -1342,7 +1445,7 @@
             align-items: stretch;
             box-sizing: border-box;
         }
-        .button-group button { width: 100%; max-width: 312px; margin: 0 auto; }
+        .button-group button { width: 100%; max-width: none; margin: 0; }
 
         /* CTA Buttons — Figma Button (4:4847) / Button Group (13:2883)
            Padding 12/32 + 24px line-height = 48px total height,
@@ -1603,35 +1706,49 @@
         /* ============================================================
            HELP LINK ("Need additional support or information?")
            ============================================================ */
+        /* Link — Figma 1:100707
+           Barclays Effra Medium 16/24, color #006de3 (Interactive), NO underline.
+           Icon sits BEFORE the text (order: -1), inherits #006de3. */
         .help-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: var(--bx-blue);
-            font-size: 15px;
+            color: #006de3;
+            font-size: 16px;
+            line-height: 24px;
             font-weight: 500;
+            font-family: var(--bx-font);
+            letter-spacing: 0;
             cursor: pointer;
             background: none;
             border: none;
-            padding: 12px 0;
+            padding: 0;
             text-decoration: none;
             margin: 0;
             white-space: nowrap;
         }
-        .help-link:hover { text-decoration: underline; }
+        .help-link:hover { opacity: 0.85; }
+        .help-link:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
 
         .help-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             flex-shrink: 0;
-            margin-right: 4px;
-            margin-left: 0;
+            margin: 0;
             order: -1;
         }
-        .help-icon svg { width: 18px; height: 18px; }
+        .help-icon svg { width: 20px; height: 20px; }
+        .help-icon svg circle[stroke],
+        .help-icon svg path[stroke] { stroke: #006de3; }
+        .help-icon svg circle[fill],
+        .help-icon svg path[fill] { fill: #006de3; }
 
         /* ============================================================
            PERCENT INPUT GROUP
@@ -2025,7 +2142,7 @@
             display: none;
             width: 100%;
             max-width: 375px;
-            padding: 20px 20px 8px;
+            padding: 24px 20px 0;          /* top 24 (gap below tracker), bottom 0 (CTAs provide gap) */
             margin: 0 auto;
             animation: fadeIn 0.3s ease-in;
             box-sizing: border-box;
@@ -2922,7 +3039,10 @@
             // Main question (skip default label/hint for document-upload — it provides its own intro section)
             if (question.type !== 'document-upload') {
                 html += `<label class="question-label">${question.label}</label>`;
-                if (question.hint) html += `<div class="hint-text">${question.hint}</div>`;
+                // Textarea has its own hint+counter row rendered alongside the field — skip the standard hint here.
+                if (question.hint && question.type !== 'textarea') {
+                    html += `<div class="hint-text">${question.hint}</div>`;
+                }
             }
 
             // Input based on type
@@ -3013,23 +3133,28 @@
                 }
             } else if (question.type === 'textarea') {
                 const maxLength = question.maxLength || 250;
-                html += `<textarea id="${question.id}" maxlength="${maxLength}"
-                    oninput="updateCharCounter('${question.id}', ${maxLength}); handleInputChange('${question.id}', null, ${screenIndex}, false)"></textarea>`;
-                html += `<div class="textarea-footer">`;
-                if (question.helpText) {
-                    html += `<button class="help-link" onclick="openDrawer('${question.id}')">
-                        View examples <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#0050C8" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#0050C8"/><path d="M12 11v6" stroke="#0050C8" stroke-width="2" stroke-linecap="round"/></svg></span>
-                    </button>`;
-                }
+                // Hint + counter on ONE row above the textarea (hint left, counter right).
+                html += `<div class="textarea-hint-row">`;
+                html += `<div class="hint-text">${question.hint || ''}</div>`;
                 html += `<div class="char-counter" id="counter-${question.id}">0/${maxLength}</div>`;
                 html += `</div>`;
+                html += `<textarea id="${question.id}" maxlength="${maxLength}"
+                    oninput="updateCharCounter('${question.id}', ${maxLength}); handleInputChange('${question.id}', null, ${screenIndex}, false)"></textarea>`;
+                // Optional helper link (View examples) below the textarea
+                if (question.helpText) {
+                    html += `<div class="textarea-footer">`;
+                    html += `<button class="help-link" onclick="openDrawer('${question.id}')">
+                        View examples <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    </button>`;
+                    html += `</div>`;
+                }
             } else if (question.type === 'text' || question.type === 'url') {
                 html += `<input type="${question.type}" id="${question.id}"
                     oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">`;
                 if (question.helpText) {
                     const linkLabel = question.helpText.linkText || 'View examples';
                     html += `<button class="help-link" onclick="openDrawer('${question.id}')">
-                        ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#0050C8" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#0050C8"/><path d="M12 11v6" stroke="#0050C8" stroke-width="2" stroke-linecap="round"/></svg></span>
+                        ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
                     </button>`;
                 }
             } else if (question.type === 'country-multi') {
@@ -3235,7 +3360,7 @@
                 html += `<div class="multi-select-option" data-country-name="${country.name.toLowerCase()}">
                     <input type="checkbox" id="${inputId}" name="${question.id}-checkbox" value="${country.code}" data-country="${country.name}"
                         onchange="handleCountryMultiSelectChange('${question.id}')">
-                    <label for="${inputId}">${country.flag} ${country.name}</label>
+                    <label for="${inputId}"><span class="country-flag">${country.flag}</span>${country.name}</label>
                 </div>`;
             });
             html += `</div></div>`;
