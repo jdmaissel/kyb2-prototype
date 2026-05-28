@@ -582,6 +582,17 @@
             flex: 1;
         }
 
+        /* Radio button error state */
+        .radio-group.has-error .radio-option {
+            border-color: #e3000f;
+        }
+        .radio-group.has-error .radio-option input[type="radio"] {
+            border-color: #e3000f;
+        }
+        .radio-group.has-error .radio-option:hover {
+            background: #ffffff;
+        }
+
         /* ============================================================
            INPUT FIELDS  (text / url / number / textarea / select)
            ============================================================ */
@@ -624,6 +635,16 @@
         .field-error {
             display: block;
             margin-top: 4px;
+            color: #e3000f;
+            font-size: 14px;
+            line-height: 18px;
+            font-family: var(--bx-font);
+            font-weight: 400;
+        }
+
+        .validation-error {
+            display: block;
+            margin-top: 8px;
             color: #e3000f;
             font-size: 14px;
             line-height: 18px;
@@ -2388,6 +2409,9 @@
                                     id: 'tradingNameValue',
                                     type: 'text',
                                     label: 'Your trading name',
+                                    validationRules: [
+                                        { test: v => v.length < 2, message: 'Error: please enter at least 2 characters.' }
+                                    ]
                                 },
                                 {
                                     id: 'abbreviations',
@@ -2401,7 +2425,14 @@
                                             type: 'textarea',
                                             label: 'Explain initials, abbreviations and non-English words',
                                             hint: 'E.g. \'JB\' = Joe Bloggs, \'Uno\' = one in Spanish',
-                                            maxLength: 250
+                                            maxLength: 250,
+                                            validationMessage: 'Error: please explain your trading name',
+                                            validationRules: [
+                                                { test: v => v.length < 5, message: 'Error: please enter a clear explanation.' },
+                                                { test: v => /^[0-9\s]+$/.test(v), message: 'Error: please enter a clear explanation.' },
+                                                { test: v => { const tn = document.getElementById('tradingNameValue'); return tn && v.toLowerCase() === tn.value.trim().toLowerCase(); }, message: 'Error: please enter a clear explanation.' },
+                                                { test: v => /^(.)\1+$/.test(v) || /^(.{1,2})\1{2,}/.test(v), message: 'Error: please enter a clear explanation.' }
+                                            ]
                                         }
                                     }
                                 }
@@ -2429,6 +2460,11 @@
                         label: 'Describe your business and customers',
                         hint: 'List your products or services and who you serve.',
                         maxLength: 250,
+                        validationRules: [
+                            { test: v => v.length < 20, message: 'Error: please provide more detail.' },
+                            { test: v => /^[0-9\s]+$/.test(v), message: 'Error: please enter a meaningful description.' },
+                            { test: v => /^(.)\1+$/.test(v) || /^(.{1,2})\1{2,}/.test(v), message: 'Error: please enter a meaningful description.' }
+                        ],
                         helpText: {
                             title: 'Describing your business',
                             intro: 'Make sure you include key products or services offered, target markets and any specialisation.',
@@ -2442,7 +2478,8 @@
                         id: 'employees',
                         type: 'select',
                         label: 'Number of employees, including directors',
-                        options: ['1 to 9', '10 to 24', '25 to 49', '50-99', '100-149', '150-199', '200-249', '250-499', '500-999', '1000+']
+                        options: ['1 to 9', '10 to 24', '25 to 49', '50-99', '100-149', '150-199', '200-249', '250-499', '500-999', '1000+'],
+                        validationMessage: 'Error: please select your number of employees.'
                     }
                 ]
             },
@@ -3058,10 +3095,10 @@
 
             // Main question (skip default label/hint for document-upload — it provides its own intro section)
             if (question.type !== 'document-upload') {
-                html += `<label class="question-label">${question.label}</label>`;
+                html += `<label class="question-label" id="label-${question.id}">${question.label}</label>`;
                 // Textarea has its own hint+counter row rendered alongside the field — skip the standard hint here.
                 if (question.hint && question.type !== 'textarea') {
-                    html += `<div class="hint-text">${question.hint}</div>`;
+                    html += `<div class="hint-text" id="hint-${question.id}">${question.hint}</div>`;
                 }
             }
 
@@ -3069,7 +3106,8 @@
             if (question.type === 'radio') {
                 const isBinaryYesNo = question.options.length === 2 &&
                     (question.options.includes('Yes') || question.options.includes('No'));
-                html += `<div class="radio-group ${isBinaryYesNo ? '' : 'full-width'}">`;
+                const ariaDesc = question.hint ? `label-${question.id} hint-${question.id}` : `label-${question.id}`;
+                html += `<div class="radio-group ${isBinaryYesNo ? '' : 'full-width'}" role="group" aria-labelledby="${ariaDesc}">`;
                 question.options.forEach(opt => {
                     const inputId = `${question.id}-${opt}`;
                     html += `<div class="radio-option">
@@ -3404,6 +3442,33 @@
 
             if (!element && !radioElement) return;
 
+            // Clear validation error for this question when user answers it
+            const questionGroup = document.getElementById(`q-${questionId}`);
+            if (questionGroup) {
+                const errorMsg = questionGroup.querySelector('.validation-error');
+                if (errorMsg) errorMsg.remove();
+                const radioGroup = questionGroup.querySelector('.radio-group');
+                if (radioGroup) {
+                    radioGroup.classList.remove('has-error');
+                    radioGroup.removeAttribute('aria-invalid');
+                    radioGroup.removeAttribute('aria-describedby');
+                }
+            }
+            if (element) {
+                element.classList.remove('has-error');
+                element.removeAttribute('aria-invalid');
+                element.removeAttribute('aria-describedby');
+            }
+            // Also clear custom select trigger errors
+            const trigger = document.getElementById(`${questionId}-trigger`);
+            if (trigger) {
+                trigger.classList.remove('has-error');
+                trigger.removeAttribute('aria-invalid');
+                trigger.removeAttribute('aria-describedby');
+                const triggerError = trigger.parentElement.querySelector('.validation-error');
+                if (triggerError) triggerError.remove();
+            }
+
             // Store value
             if (radioElement) {
                 // Handle radio buttons
@@ -3704,6 +3769,13 @@
             const trigger = document.getElementById(`${questionId}-trigger`);
             dropdown.classList.remove('open');
             trigger.classList.remove('active');
+
+            // Clear validation error
+            trigger.classList.remove('has-error');
+            trigger.removeAttribute('aria-invalid');
+            trigger.removeAttribute('aria-describedby');
+            const errorEl = document.getElementById(`error-${questionId}`);
+            if (errorEl) errorEl.remove();
 
             // Update selected state styling
             document.querySelectorAll(`#${questionId}-dropdown .custom-select-option`).forEach(el => {
@@ -4337,8 +4409,146 @@
             return total;
         }
 
+        // Show a validation error on a field and return false
+        function showValidationError(targetEl, errorId, message, insertAfterTarget) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'validation-error';
+            errorMsg.id = errorId;
+            errorMsg.setAttribute('role', 'alert');
+            errorMsg.textContent = message;
+
+            targetEl.classList.add('has-error');
+            targetEl.setAttribute('aria-invalid', 'true');
+            targetEl.setAttribute('aria-describedby', errorId);
+
+            if (insertAfterTarget) {
+                targetEl.parentElement.insertBefore(errorMsg, targetEl.nextSibling);
+            } else {
+                targetEl.closest('.question-group').appendChild(errorMsg);
+            }
+            return false;
+        }
+
+        // Validate a single question and its visible follow-ups (recursive)
+        function validateQuestion(question) {
+            const group = document.getElementById(`q-${question.id}`);
+            if (!group) return true;
+
+            if (question.type === 'radio') {
+                const checked = document.querySelector(`input[name="${question.id}"]:checked`);
+                if (!checked) {
+                    const radioGroup = group.querySelector('.radio-group');
+                    if (radioGroup) {
+                        showValidationError(radioGroup, `error-${question.id}`, 'Error: please answer this question', false);
+                        const firstRadio = radioGroup.querySelector('input[type="radio"]');
+                        if (firstRadio) firstRadio.focus();
+                    }
+                    return false;
+                }
+                // Validate visible follow-ups for the selected value
+                if (question.followUp && question.followUp[checked.value]) {
+                    const followUps = question.followUp[checked.value];
+                    const followUpArray = Array.isArray(followUps) ? followUps : [followUps];
+                    for (const fu of followUpArray) {
+                        if (!validateQuestion(fu)) return false;
+                    }
+                }
+            } else if (question.type === 'text' || question.type === 'url') {
+                const element = document.getElementById(question.id);
+                if (element && element.value.trim().length === 0) {
+                    const label = question.label.charAt(0).toLowerCase() + question.label.slice(1);
+                    showValidationError(element, `error-${question.id}`, `Error: please enter ${label}`, true);
+                    element.focus();
+                    return false;
+                }
+                if (question.validationRules && element && element.value.trim().length > 0) {
+                    const val = element.value.trim();
+                    for (const rule of question.validationRules) {
+                        if (rule.test(val)) {
+                            showValidationError(element, `error-${question.id}`, rule.message, true);
+                            element.focus();
+                            return false;
+                        }
+                    }
+                }
+                if (question.type === 'url' && element && element.value.trim().length > 0) {
+                    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+                    if (!urlPattern.test(element.value.trim())) {
+                        showValidationError(element, `error-${question.id}`, 'Error: please enter a valid website address', true);
+                        element.focus();
+                        return false;
+                    }
+                }
+            } else if (question.type === 'textarea') {
+                const element = document.getElementById(question.id);
+                if (element && element.value.trim().length === 0) {
+                    const msg = question.validationMessage || `Error: please ${question.label.charAt(0).toLowerCase() + question.label.slice(1)}`;
+                    showValidationError(element, `error-${question.id}`, msg, true);
+                    element.focus();
+                    return false;
+                }
+                if (question.validationRules && element && element.value.trim().length > 0) {
+                    const val = element.value.trim();
+                    for (const rule of question.validationRules) {
+                        if (rule.test(val)) {
+                            showValidationError(element, `error-${question.id}`, rule.message, true);
+                            element.focus();
+                            return false;
+                        }
+                    }
+                }
+            } else if (question.type === 'select') {
+                const placeholder = document.getElementById(`${question.id}-placeholder`);
+                if (placeholder && placeholder.textContent === (question.placeholder || 'Select an option')) {
+                    const trigger = document.getElementById(`${question.id}-trigger`);
+                    if (trigger) {
+                        const msg = question.validationMessage || 'Error: please answer this question';
+                        showValidationError(trigger, `error-${question.id}`, msg, false);
+                        trigger.focus();
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Validate current screen — show first error only
+        function validateCurrentScreen() {
+            const screenDef = screenDefinitions[currentScreen];
+            if (!screenDef) return true;
+
+            // Only validate the Business identity screen (index 1)
+            if (currentScreen !== 1) return true;
+
+            // Clear all previous error states and ARIA attributes
+            document.querySelectorAll('.validation-error').forEach(el => el.remove());
+            document.querySelectorAll('.has-error').forEach(el => {
+                el.classList.remove('has-error');
+                el.removeAttribute('aria-invalid');
+                el.removeAttribute('aria-describedby');
+            });
+
+            // Check each question and its follow-ups in order
+            for (const question of screenDef.questions) {
+                if (!validateQuestion(question)) return false;
+            }
+
+            return true;
+        }
+
         // Navigate to next screen
         function nextScreen() {
+            if (!validateCurrentScreen()) {
+                const errorEl = document.querySelector('.validation-error');
+                if (errorEl) {
+                    const contentArea = document.getElementById('contentArea');
+                    const errorRect = errorEl.getBoundingClientRect();
+                    const containerRect = contentArea.getBoundingClientRect();
+                    const scrollTarget = errorRect.top - containerRect.top + contentArea.scrollTop - (containerRect.height / 3);
+                    contentArea.scrollTop = Math.max(0, scrollTarget);
+                }
+                return;
+            }
             if (currentScreen < screenDefinitions.length - 1) {
                 renderScreen(currentScreen + 1);
                 document.getElementById('contentArea').scrollTop = 0;
