@@ -887,6 +887,8 @@
             cursor: pointer;
             transition: background 0.15s ease;
             border: none;
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
         }
         .multi-select-option:hover { background: #E8E8E9; }
         .multi-select-option.selected { background: #006de3; }
@@ -1027,6 +1029,8 @@
             resize: vertical;
             line-height: 22px;
             color: #272727;
+            display: block;            /* default inline-block leaves ~5px descender gap below */
+            vertical-align: top;
         }
         textarea::placeholder { color: #8E8E8E; }
 
@@ -1062,13 +1066,13 @@
         .char-counter.over-limit { color: #e3000f; font-weight: 500; }
 
         /* Footer below the textarea — only shown when there's a "View examples"
-           link to display. Link sits LEFT with 24px spacing from the field
+           link to display. Link sits LEFT with 16px spacing from the field
            above and 24px below before the next form element. */
         .textarea-footer {
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            margin-top: 24px;
+            margin-top: 16px;
             margin-bottom: 24px;
         }
 
@@ -1802,31 +1806,51 @@
         /* ============================================================
            DATA CARD (read-only address card)
            ============================================================ */
+        /* Preview / data card — Figma Phase 2.0 node 20985:43474
+           White surface, no shadow, padding 16. Label in Medium, value in
+           Regular, both Effra 16/22 #272727 (Functional/Black). */
         .data-card {
-            background: var(--bx-surface);
+            background: #ffffff;
             padding: 16px;
-            border-radius: var(--bx-radius-card);
+            border-radius: 8px;
             margin-top: 8px;
-            font-size: 15px;
-            box-shadow: var(--bx-shadow-card);
+            box-shadow: none;
+            font-family: var(--bx-font);
         }
         .data-card-label {
-            font-size: 13px;
-            color: var(--bx-ink-muted);
-            margin-bottom: 6px;
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
+            margin-bottom: 4px;
             letter-spacing: 0;
-            font-family: var(--bx-font);
-            font-weight: 400;
-            line-height: 18px;
             text-transform: none;
         }
         .data-card-value {
-            font-weight: 500;
-            color: var(--bx-ink);
-            font-size: 15px;
-            font-family: var(--bx-font);
-            line-height: 22px;
+            font: 400 16px/22px var(--bx-font);
+            color: #272727;
+            letter-spacing: 0;
+            white-space: pre-line;
         }
+        /* Cards that show a list of selected items (no label, just chosen
+           values like the funding-source summary) use Medium weight — they
+           represent confirmed selections, not prefilled neutral content. */
+        #fundingSource-summary-text {
+            font-weight: 500;
+        }
+        #fundingSource-summary-text > div { margin-bottom: 4px; }
+        #fundingSource-summary-text > div:last-child { margin-bottom: 0; }
+        /* Secondary row inside the preview — label + value inline.
+           Use this for "Date you started living here  01/08/2023" style rows.
+           Both halves are Medium-weight, value sits at end of line. */
+        .data-card-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 16px;
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
+        }
+        .data-card-row .data-card-row-value { font-weight: 500; margin-left: auto; }
 
         /* ============================================================
            DOCUMENT UPLOAD (drag-and-drop zone)
@@ -1860,28 +1884,24 @@
             margin: 0;
         }
 
+        /* Review card — same Phase 2.0 preview spec as .data-card */
         .review-card {
-            background: var(--bx-surface);
-            padding: 14px 16px;
-            border-radius: var(--bx-radius-card);
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: var(--bx-shadow-card);
+            box-shadow: none;
+            font-family: var(--bx-font);
         }
         .review-card-label {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--bx-ink-muted);
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
             margin-bottom: 4px;
-            font-family: var(--bx-font);
-            line-height: 18px;
         }
         .review-card-value {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
-            line-height: 22px;
+            font: 400 16px/22px var(--bx-font);
+            color: #272727;
             white-space: pre-line;
         }
 
