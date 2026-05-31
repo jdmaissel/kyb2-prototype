@@ -1873,6 +1873,28 @@
         }
         .data-card-row .data-card-row-value { font-weight: 500; margin-left: auto; }
 
+        /* BIC code list inside the sector data card */
+        .bic-code-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .bic-code-row {
+            display: flex;
+            gap: 12px;
+            font: 400 14px/20px var(--bx-font);
+            color: #272727;
+        }
+        .bic-code-row .bic-code {
+            font-weight: 500;
+            min-width: 44px;
+            flex-shrink: 0;
+        }
+        .bic-code-row .bic-desc { flex: 1; }
+
         /* ============================================================
            DOCUMENT UPLOAD (drag-and-drop zone)
            ============================================================ */
@@ -2326,59 +2348,63 @@
                         placeholder: 'Select sector',
                         options: [
                             'Not applicable',
-                            'Accountants / accounting professionals',
+                            'Accountants',
                             'Alcohol wholesalers',
+                            'Allied health professionals',
+                            'Ambulance services',
                             'Architects',
                             'Armed security',
-                            'Art market participants',
                             'Barristers',
-                            'Bookkeepers',
                             'Charities',
                             'Chartered IT professionals',
                             'Chartered surveyors',
-                            'Chiropodists',
-                            'Chiropractors',
-                            'Construction / trade / mechanics',
+                            'Colleges',
+                            'Construction & trades',
                             'Conveyancers',
                             'Dentists',
-                            'Dieticians',
                             'Doctors / GPs',
                             'Electricians',
-                            'Estate agents',
                             'Estate / letting agents',
                             'Farming',
-                            'Financial advisors',
+                            'Financial / investment services',
                             'Gambling businesses',
                             'Gas installation engineers',
-                            'Health and social care',
                             'High value dealers',
-                            'Insolvency practitioners',
-                            'Investment managers',
-                            'Lawyers / solicitors',
-                            'Legal executives',
-                            'Midwives',
+                            'Hospices',
+                            'Hospitals',
                             'Mutual societies',
-                            'Notaries',
-                            'Nurses',
                             'Nurseries',
-                            'Occupational therapists',
+                            'Nursing homes',
                             'Opticians',
-                            'Osteopaths',
-                            'Paramedics',
                             'Pharmacists',
-                            'Physiotherapists',
-                            'Psychologists',
-                            'Radiographers',
-                            'Restaurants / takeaways / cafés / food businesses',
+                            'Residential care (elderly)',
+                            'Restaurants / food businesses',
                             'Schools',
                             'Social workers',
                             'Solicitors / law firms',
-                            'Speech & language therapists',
-                            'Tax professionals',
+                            'Specialist care homes',
                             'Travel agents / tour operators',
                             'Universities',
                             'Vets'
                         ]
+                    },
+                    {
+                        id: 'regulatorRegion',
+                        type: 'select',
+                        label: 'Region (accountants, care professions, charities and law firms)',
+                        placeholder: 'Select region',
+                        // Prototype-only field. In the real system the region is derived from the
+                        // business address. Shown here only when the selected profession has a
+                        // regulator that differs by UK jurisdiction (see professionNeedsRegion).
+                        regionSelector: true,
+                        options: ['England', 'Wales', 'Scotland', 'Northern Ireland']
+                    },
+                    {
+                        id: 'bicCodes',
+                        type: 'bic-card',
+                        // Shows the BIC codes & descriptions for the selected sector.
+                        // Hidden when the sector is 'Not applicable'.
+                        bicCard: true
                     },
                     {
                         id: 'protoPrefilling',
@@ -2676,26 +2702,16 @@
                 title: 'Industry regulation',
                 questions: [
                     {
-                        id: 'travelRegulator',
+                        id: 'industryRegulator',
                         type: 'multi-select',
                         label: 'Who are you regulated by?',
                         placeholder: 'Select regulators',
                         selectedLabel: 'regulators',
-                        options: ['ABTA', 'ATOL'],
-                        conditionalFollowUps: {
-                            'ABTA': {
-                                id: 'abtaNumber',
-                                type: 'text',
-                                label: 'ABTA membership number',
-                                hint: 'Usually 5 digits'
-                            },
-                            'ATOL': {
-                                id: 'atolNumber',
-                                type: 'text',
-                                label: 'ATOL licence number',
-                                hint: 'Usually starts with "T" followed by 4 or 5 digits'
-                            }
-                        }
+                        // Options and per-regulator reference follow-ups are populated dynamically
+                        // from the selected 'Regulated business sector' profession (see applyDynamicRegulators).
+                        dynamicRegulators: true,
+                        options: [],
+                        conditionalFollowUps: {}
                     },
                     {
                         id: 'financialServices',
@@ -2972,11 +2988,186 @@
             }
         ];
 
+        // Regulator / verification scheme mapping by profession (source: BIC_Regulator_Mapping_v13.xlsx, column C)
+        const professionRegulators = {
+            "Farming": [{"name": "Farm Subsidies — Defra", "field": "Single Business Identifier (SBI)", "hint": "9 digits, e.g. 123456789"}],
+            "Alcohol wholesalers": [{"name": "AWRS — Alcohol Wholesalers", "field": "AWRS Reference (URN)", "hint": "4 letters + 11 digits, e.g. XXAW00000123456"}],
+            "Construction & trades": [{"name": "Buy With Confidence", "field": "Buy With Confidence Number", "hint": ""}, {"name": "Trading Standards (CCAS)", "field": "CCAS Membership Number", "hint": ""}, {"name": "Trustmark", "field": "TrustMark Licence Number (TMLN)", "hint": ""}, {"name": "Which? Trusted Traders", "field": "Which? Traders Number", "hint": ""}],
+            "Electricians": [{"name": "Buy With Confidence", "field": "Buy With Confidence Number", "hint": ""}, {"name": "Competent Person Register", "field": "Competent Person Number", "hint": ""}, {"name": "NICEIC — Electrical Council", "field": "NICEIC Registration Number", "hint": ""}, {"name": "Trading Standards (CCAS)", "field": "CCAS Membership Number", "hint": ""}, {"name": "Trustmark", "field": "TrustMark Licence Number (TMLN)", "hint": ""}, {"name": "Which? Trusted Traders", "field": "Which? Traders Number", "hint": ""}],
+            "Gas installation engineers": [{"name": "Buy With Confidence", "field": "Buy With Confidence Number", "hint": ""}, {"name": "Gas Safe Register", "field": "Gas Safe Register Number", "hint": "1–7 digits, e.g. 1234567"}, {"name": "Trading Standards (CCAS)", "field": "CCAS Membership Number", "hint": ""}, {"name": "Trustmark", "field": "TrustMark Licence Number (TMLN)", "hint": ""}, {"name": "Which? Trusted Traders", "field": "Which? Traders Number", "hint": ""}],
+            "Pharmacists": [{"name": "General Pharmaceutical Council", "field": "GPhC Registration Number", "hint": "7 digits, e.g. 1234567"}],
+            "Restaurants / food businesses": [{"name": "Food Standards Agency", "field": "Food Hygiene Rating", "hint": "Rating 1–5, e.g. 4"}],
+            "Opticians": [{"name": "General Optical Council", "field": "GOC Registration Number", "hint": "2-letter code + hyphen + digits, e.g. CO-1234"}],
+            "High value dealers": [{"name": "HMRC Supervised Business Register", "field": "HMRC AML Registration Number", "hint": "4 letters + 11 digits, e.g. XXML00000140310"}],
+            "Schools": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
+            "Travel agents / tour operators": [{"name": "ABTA", "field": "ABTA Membership Number", "hint": "1 letter + 4 digits, e.g. Y1234"}, {"name": "ATOL (Civil Aviation Authority)", "field": "ATOL Licence Number", "hint": "1 letter + 4–5 digits, e.g. T12345"}],
+            "Financial / investment services": [{"name": "FCA — Financial Conduct", "field": "FCA Firm Reference Number (FRN)", "hint": "6 or 7 digits, e.g. 1234567"}],
+            "Mutual societies": [{"name": "Mutuals Public Register (FCA)", "field": "Mutuals Public Register Number", "hint": ""}],
+            "Estate / letting agents": [{"name": "Estate Agents Register", "field": "HMRC Estate Agency Number", "hint": ""}, {"name": "HMRC Supervised Business Register", "field": "HMRC AML Registration Number", "hint": "4 letters + 11 digits, e.g. XXML00000140310"}],
+            "Charities": [{"name": "Charity Commission (E&W)", "field": "Registered Charity Number", "hint": "6 or 7 digits, e.g. 1234567"}, {"name": "Charity Commission (NI)", "field": "Registered Charity Number", "hint": "3 letters + 5–6 digits, e.g. NIC101234"}, {"name": "OSCR (Scottish Charity Register)", "field": "Scottish Charity Number", "hint": "2 letters + 6 digits, e.g. SC123456"}],
+            "Chartered IT professionals": [{"name": "Chartered Institute for IT (BCS)", "field": "BCS Membership Number", "hint": ""}],
+            "Solicitors / law firms": [{"name": "Faculty Office (Notaries)", "field": "Faculty Office Number", "hint": ""}, {"name": "Law Society (E&W)", "field": "Law Society Membership Number", "hint": "6 digits, e.g. 123456"}, {"name": "Law Society (NI)", "field": "Law Society (NI) Membership No.", "hint": ""}, {"name": "Law Society (Scot)", "field": "Law Society (Scot) Member No.", "hint": ""}, {"name": "SRA — Solicitors Authority", "field": "SRA Registration Number", "hint": "6 digits, e.g. 123456"}],
+            "Accountants": [{"name": "AAT — Accounting Technicians", "field": "AAT Membership Number", "hint": ""}, {"name": "ACCA — Certified Accountants", "field": "ACCA Membership Number", "hint": ""}, {"name": "ATT — Tax Technicians", "field": "ATT Membership Number", "hint": ""}, {"name": "CIMA — Management Accountants", "field": "CIMA Membership Number", "hint": ""}, {"name": "CIOT — Taxation", "field": "CIOT Membership Number", "hint": ""}, {"name": "CIPFA — Public Finance", "field": "CIPFA Membership Number", "hint": ""}, {"name": "ICAEW — Accountants (E&W)", "field": "ICAEW Membership Number", "hint": ""}, {"name": "ICAS — Accountants (Scot)", "field": "ICAS Membership Number", "hint": ""}],
+            "Barristers": [{"name": "Bar Standards Board", "field": "BSB Registration Number", "hint": ""}],
+            "Conveyancers": [{"name": "Council for Licensed Conveyancers", "field": "CLC Registration Number", "hint": ""}],
+            "Architects": [{"name": "ARB — Architects Board", "field": "ARB Registration Number", "hint": ""}],
+            "Chartered surveyors": [{"name": "RICS — Chartered Surveyors", "field": "RICS Registration Number", "hint": ""}],
+            "Armed security": [{"name": "Security Industry Authority (SIA)", "field": "SIA Licence Number", "hint": "16 digits, e.g. 1234567890123456"}],
+            "Nurseries": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
+            "Colleges": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
+            "Universities": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
+            "Hospitals": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "General Medical Council", "field": "GMC Registration Number", "hint": "7 digits, e.g. 1234567"}, {"name": "Nursing & Midwifery Council", "field": "NMC PIN", "hint": "8 characters, e.g. 12A3456B"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Nursing homes": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "Nursing & Midwifery Council", "field": "NMC PIN", "hint": "8 characters, e.g. 12A3456B"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Hospices": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Dentists": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "General Dental Council", "field": "GDC Registration Number", "hint": "5–6 digits, e.g. 123456"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Allied health professionals": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "General Chiropractic Council", "field": "GCC Registration Number", "hint": ""}, {"name": "General Dental Council", "field": "GDC Registration Number", "hint": "5–6 digits, e.g. 123456"}, {"name": "General Medical Council", "field": "GMC Registration Number", "hint": "7 digits, e.g. 1234567"}, {"name": "General Optical Council", "field": "GOC Registration Number", "hint": "2-letter code + hyphen + digits, e.g. CO-1234"}, {"name": "General Osteopathic Council", "field": "GOsC Registration Number", "hint": "1–4 digits, e.g. 1234"}, {"name": "General Pharmaceutical Council", "field": "GPhC Registration Number", "hint": "7 digits, e.g. 1234567"}, {"name": "HCPC — Care Professions", "field": "HCPC Registration Number", "hint": "2–3 letter code + up to 6 digits, e.g. PH123456"}, {"name": "Nursing & Midwifery Council", "field": "NMC PIN", "hint": "8 characters, e.g. 12A3456B"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Ambulance services": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "HCPC — Care Professions", "field": "HCPC Registration Number", "hint": "2–3 letter code + up to 6 digits, e.g. PH123456"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Doctors / GPs": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "General Medical Council", "field": "GMC Registration Number", "hint": "7 digits, e.g. 1234567"}, {"name": "NHS GP Search", "field": "NHS ODS Code", "hint": "1 letter + 5 digits, e.g. A12345"}, {"name": "Nursing & Midwifery Council", "field": "NMC PIN", "hint": "8 characters, e.g. 12A3456B"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Vets": [{"name": "RCVS — Veterinary Surgeons", "field": "RCVS Registration Number", "hint": "6 digits, e.g. 123456"}],
+            "Residential care (elderly)": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Social workers": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "HCPC — Care Professions", "field": "HCPC Registration Number", "hint": "2–3 letter code + up to 6 digits, e.g. PH123456"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Specialist care homes": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
+            "Gambling businesses": [{"name": "Gambling Commission", "field": "Gambling Commission Number", "hint": "Digit groups separated by hyphens, e.g. 000-012345-N-987654-001"}]
+        };
+
+        // BIC codes & descriptions per profession (source: BIC_Regulator_Mapping_v13.xlsx, columns A & B)
+        const professionBicCodes = {
+            "Farming": [{"code": "111", "desc": "Growing of Cereals & other Crops"}, {"code": "112", "desc": "Growing of Vegetables, Fruit, Horticulture & Nursery Products"}, {"code": "123", "desc": "Pig Farming"}, {"code": "124", "desc": "Poultry Farming"}, {"code": "125", "desc": "Other/misc Animal Farming"}, {"code": "126", "desc": "Lowland Cattle & Sheep"}, {"code": "127", "desc": "Hill & Upland Cattle & Sheep Farming"}, {"code": "128", "desc": "Dairy Farming"}, {"code": "130", "desc": "Mixed Farming"}, {"code": "140", "desc": "Agricultural Services (excl. veterinary activities)"}, {"code": "150", "desc": "Hunting, Trapping and Game propagation"}, {"code": "200", "desc": "Forestry, Logging and Related Services"}, {"code": "501", "desc": "Fishing & Related Service Activities"}, {"code": "502", "desc": "Fish Farming & Related Service Activities"}],
+            "Alcohol wholesalers": [{"code": "1591", "desc": "Spirit Distilling & Compounding"}, {"code": "1593", "desc": "Mfg. Wines, Cider & Perry"}, {"code": "1596", "desc": "Brewing & Malting"}, {"code": "5130", "desc": "Food, Beverages & Tobacco Wholesalers"}, {"code": "5228", "desc": "Off Licenses & Wine Merchants"}],
+            "Construction & trades": [{"code": "3670", "desc": "Repair of Fabricated metal Products, machinery and equipment"}, {"code": "4501", "desc": "Development Of Building Projects"}, {"code": "4510", "desc": "Site Preparation inc. Demolition & Testing"}, {"code": "4525", "desc": "Specialist Const. (inc. Pile driving, Steel Erectors, Bricklayers)"}, {"code": "4527", "desc": "Speculative Housebuilders"}, {"code": "4528", "desc": "Building Construction/Repair: Commercial"}, {"code": "4529", "desc": "Residential Building Contractors"}, {"code": "4532", "desc": "Insulation Work Activities"}, {"code": "4541", "desc": "Plastering"}, {"code": "4542", "desc": "Joinery Installation"}, {"code": "4543", "desc": "Floor & Wall Covering Installation (incl. Tiling, Carpet Fitting)"}, {"code": "4544", "desc": "Painting, Decorating & Glazing"}, {"code": "5020", "desc": "Maintenance & Repair of Motor Vehicles"}],
+            "Electricians": [{"code": "4531", "desc": "Electricians"}],
+            "Gas installation engineers": [{"code": "4533", "desc": "Plumbing"}, {"code": "4534", "desc": "Other Building Installations (incl. Sign Erection, Fencing etc)"}, {"code": "4545", "desc": "Other Building Completion & Maintenance (incl. Pools, Sandblasting)"}],
+            "Pharmacists": [{"code": "5148", "desc": "Other Pharmaceutical Activities"}, {"code": "5149", "desc": "Pharmaceutical [Licensing]"}, {"code": "5152", "desc": "Pharmaceutical Wholesale"}],
+            "Restaurants / food businesses": [{"code": "5210", "desc": "Confectioners, Tobacconists & Newsagents"}, {"code": "5211", "desc": "Supermarkets, Grocers & Convenience Stores"}, {"code": "5220", "desc": "Retail Sale of Food (including Tobacco) in Specialist Stores"}, {"code": "5501", "desc": "B&B Accommodation"}, {"code": "5503", "desc": "International clientele hotel &/or part of a chain, with restaurant"}, {"code": "5504", "desc": "Summer holiday seaside hotels with Restaurants"}, {"code": "5505", "desc": "Other Hotels & Restaurants"}, {"code": "5530", "desc": "Licensed & Unlicensed Restaurants & Cafes"}, {"code": "5531", "desc": "Take-away Food Shops & Stalls"}, {"code": "5541", "desc": "Licensed Clubs with Entertainment"}, {"code": "5543", "desc": "Public Houses and Bars (excludes Nightclubs and Discotheques) - drink only"}, {"code": "5544", "desc": "Public Houses and Bars (excludes Nightclubs and Discotheques) - food and drink"}, {"code": "5550", "desc": "Canteens & Catering"}],
+            "Opticians": [{"code": "5230", "desc": "Retail: Pharmaceutical & Medical Goods, Cosmetics & Toilet Articles"}],
+            "High value dealers": [{"code": "5240", "desc": "Retail Sale of Jewellery"}, {"code": "5250", "desc": "Secondhand & Antique Shops"}, {"code": "6310", "desc": "Cargo Handling, Storage & Warehousing"}, {"code": "9232", "desc": "Operation of Arts Facilities (Theatres, Concert Halls etc.)"}, {"code": "9239", "desc": "Non-performance Artists (incl. Authors, Painters, Art Restorers)"}, {"code": "9251", "desc": "Library, Archives, Museums & other Cultural Activities (for profit)"}],
+            "Schools": [{"code": "5521", "desc": "Student Accommodation"}, {"code": "8011", "desc": "Primary Education - Independent"}, {"code": "8012", "desc": "Primary Education - State"}, {"code": "8013", "desc": "Secondary Education - State"}, {"code": "8020", "desc": "Secondary Education - Independent"}],
+            "Travel agents / tour operators": [{"code": "6331", "desc": "Travel Agencies"}, {"code": "6332", "desc": "Tour Operators & Guides"}],
+            "Financial / investment services": [{"code": "6501", "desc": "Non-Banking Payment Service Providers"}, {"code": "6502", "desc": "Pure Payment Initiation or Registered Account Information Service Provider"}, {"code": "6509", "desc": "Other Money Service Businesses"}, {"code": "6517", "desc": "Investment Banks (underwriting or originating issues of securities)"}, {"code": "6561", "desc": "Non Deposit Taking Finance Houses, Specialist Consumer Credit"}, {"code": "6562", "desc": "Credit Factoring"}, {"code": "6563", "desc": "Specialist Mortgage Finance Companies"}, {"code": "6571", "desc": "Investment Trusts excluding Money Market Mutual Funds"}, {"code": "6572", "desc": "Unit Trusts excluding Money Market Mutual Funds"}, {"code": "6573", "desc": "Closed-Ended Money Market Funds"}, {"code": "6574", "desc": "Open-Ended Money Market Funds"}, {"code": "6575", "desc": "Hedge Fund"}, {"code": "6577", "desc": "Open Ended Investment Company (OEIC) excluding Money Market Mutual Funds"}, {"code": "6578", "desc": "Commingled Fund"}, {"code": "6580", "desc": "Private Equity Fund"}, {"code": "6581", "desc": "Securities Dealers"}, {"code": "6582", "desc": "GEMMs Gilts Market Makers"}, {"code": "6583", "desc": "SEMBs Stock Exchange Money Brokers"}, {"code": "6584", "desc": "Inter-Dealer Brokers"}, {"code": "6585", "desc": "Futures, Options & Derivatives Dealers"}, {"code": "6586", "desc": "Capital Requirements Directive Equivalent Securities Dealers"}, {"code": "6592", "desc": "Venture/development Capital Companies"}, {"code": "6593", "desc": "Other Financial Intermediation"}, {"code": "6597", "desc": "Personal Investment Company"}, {"code": "6601", "desc": "Life Insurance"}, {"code": "6603", "desc": "Non-Life Insurance"}, {"code": "6604", "desc": "Company Pension Fund (Defined Benefits Schemes)"}, {"code": "6605", "desc": "Company Pension Fund (Defined Contribution Schemes)"}, {"code": "6606", "desc": "Pension Insurance Company"}, {"code": "6607", "desc": "Private Company Pension Investments - SIPP & SSAS"}, {"code": "6711", "desc": "Administration of Financial Markets"}, {"code": "6712", "desc": "Clearing Activities"}, {"code": "6713", "desc": "Other Auxiliary Activities"}, {"code": "6718", "desc": "Fund Managers"}, {"code": "6719", "desc": "Security Broking/Stock Broking"}, {"code": "6720", "desc": "Activities Auxiliary to Insurance & Pension Funding"}, {"code": "6721", "desc": "Hedge Fund Manager"}, {"code": "6723", "desc": "Non Fund Mandates managed by Asset Managers"}, {"code": "6724", "desc": "Private Equity Sponsor"}, {"code": "6726", "desc": "Broker Dealer"}, {"code": "6727", "desc": "Specialist Mortgage Company Funds"}, {"code": "6728", "desc": "Specialist Mortgage Company REITs"}, {"code": "9274", "desc": "Contracts for Difference (inc. Financial Spread Betting)"}],
+            "Mutual societies": [{"code": "6519", "desc": "Mutual and Cooperative Banks, Building Societies and Credit Unions"}, {"code": "6560", "desc": "Credit unions within Non-deposit Taking Finance Houses, Specialist Con"}, {"code": "9111", "desc": "Business and employers membership organisations"}, {"code": "9112", "desc": "Professional membership organisations"}, {"code": "9120", "desc": "Trade Unions"}],
+            "Estate / letting agents": [{"code": "7012", "desc": "Property Trading Companies"}, {"code": "7030", "desc": "Real Estate Activities on fee/contract basis, inc. Estate Agencies"}],
+            "Charities": [{"code": "7019", "desc": "Housing Associations"}, {"code": "9140", "desc": "Religious organisations"}, {"code": "9160", "desc": "Civic and Social Membership Organisations"}, {"code": "9170", "desc": "Grantmaking and Philanthropic Services"}, {"code": "9181", "desc": "Human Rights Advocacy Organisations"}, {"code": "9182", "desc": "Environment, Conservation and Wildlife Advocacy Organisations"}, {"code": "9189", "desc": "Other Social Advocacy Organisations (except Human Rights or Environment)"}, {"code": "9199", "desc": "Membership organisations not elsewhere classified"}, {"code": "9252", "desc": "Library Archives Museums and other Cultural Activities (Not for Profit)"}, {"code": "9254", "desc": "Botanical and Zoological Gardens (Not for Profit)"}],
+            "Chartered IT professionals": [{"code": "7210", "desc": "Computer Hardware Consultancy"}, {"code": "7220", "desc": "Computer Software Consultancy & Supply"}, {"code": "7221", "desc": "Software - Internet"}, {"code": "7230", "desc": "Data Processing"}, {"code": "7240", "desc": "Database Activities"}, {"code": "7260", "desc": "Other Computer Related Activities"}],
+            "Solicitors / law firms": [{"code": "7411", "desc": "Other misc. Legal Services not classified in 7416-18"}, {"code": "7417", "desc": "Solicitors"}],
+            "Accountants": [{"code": "7412", "desc": "Accounting Services (inc. Auditing & Tax Advice)"}, {"code": "7414", "desc": "Management & Business Consultancy (excl. Public Relations)"}],
+            "Barristers": [{"code": "7416", "desc": "Barristers"}],
+            "Conveyancers": [{"code": "7418", "desc": "Licensed Conveyors"}],
+            "Architects": [{"code": "7421", "desc": "Architects"}],
+            "Chartered surveyors": [{"code": "7422", "desc": "Consulting Engineers"}, {"code": "7423", "desc": "Property Surveyors (other than Quantity Surveyors)"}, {"code": "7424", "desc": "Quantity Surveyors"}, {"code": "7425", "desc": "Other Architectural, Engineering & Technical Activities"}],
+            "Armed security": [{"code": "7460", "desc": "Investigation & Security Activities"}, {"code": "7522", "desc": "Defence Activities"}],
+            "Nurseries": [{"code": "8007", "desc": "Pre-primary education (incl. nursery schools)"}],
+            "Colleges": [{"code": "8023", "desc": "Colleges of Further Education - Independent"}, {"code": "8024", "desc": "Colleges of Further Education - State"}, {"code": "8042", "desc": "Professional and Skills Training not elsewhere classified"}],
+            "Universities": [{"code": "8031", "desc": "Higher Education - Independent"}, {"code": "8032", "desc": "Higher Education - State"}],
+            "Hospitals": [{"code": "8501", "desc": "Hospitals - Public"}, {"code": "8502", "desc": "Hospitals - Private (for profit)"}, {"code": "8503", "desc": "Hospitals - Private (Not for Profit)"}],
+            "Nursing homes": [{"code": "8504", "desc": "Medical Nursing Homes - Public"}, {"code": "8505", "desc": "Medical Nursing Homes - Private (for profit)"}, {"code": "8506", "desc": "Medical Nursing Homes - Private (Not for Profit)"}, {"code": "8524", "desc": "Residential Nursing Homes - Public"}, {"code": "8525", "desc": "Residential Nursing Homes - Private (for profit)"}, {"code": "8526", "desc": "Residential Nursing Homes - Private (Not for Profit)"}],
+            "Hospices": [{"code": "8510", "desc": "Hospice"}],
+            "Dentists": [{"code": "8513", "desc": "Dental Practices"}],
+            "Allied health professionals": [{"code": "8514", "desc": "Other Human Health Activities"}, {"code": "8517", "desc": "Other Medical Practices"}],
+            "Ambulance services": [{"code": "8515", "desc": "Ambulance Services"}],
+            "Doctors / GPs": [{"code": "8516", "desc": "General Practitioners"}],
+            "Vets": [{"code": "8520", "desc": "Veterinary Activities"}],
+            "Residential care (elderly)": [{"code": "8527", "desc": "Residential Accommodation for the Elderly - Public"}, {"code": "8528", "desc": "Residential Accommodation for the Elderly - Private (for profit)"}, {"code": "8536", "desc": "Residential Accommodation for the Elderly - Private (Not for Profit)"}],
+            "Social workers": [{"code": "8530", "desc": "Social Work"}, {"code": "8532", "desc": "Social Work Activities Without Accommodation"}],
+            "Specialist care homes": [{"code": "8533", "desc": "Specialist Care Homes - Private (for profit)"}, {"code": "8534", "desc": "Specialist Care Homes - Private (Not for Profit)"}, {"code": "8535", "desc": "Specialist Care Homes - Public"}],
+            "Gambling businesses": [{"code": "9233", "desc": "Fair & Amusement Park Activities (inc. Leisure & Theme Parks)"}, {"code": "9269", "desc": "Betting Shops & Bookmakers"}, {"code": "9270", "desc": "Amusement Arcades"}, {"code": "9271", "desc": "Gambling & Betting"}, {"code": "9273", "desc": "Internet Gaming"}]
+        };
+
+        // Jurisdiction-specific regulators. A regulator listed here is only shown when the
+        // selected Region matches; regulators NOT listed here are UK-wide and always shown.
+        const regulatorRegions = {
+            // Care regulation
+            "Care Quality Commission (Eng)": ["England"],
+            "Care Inspectorate (Scot)": ["Scotland"],
+            "Care Inspectorate (Wales)": ["Wales"],
+            "RQIA — Quality Authority (NI)": ["Northern Ireland"],
+            // Charity regulation
+            "Charity Commission (E&W)": ["England", "Wales"],
+            "OSCR (Scottish Charity Register)": ["Scotland"],
+            "Charity Commission (NI)": ["Northern Ireland"],
+            // Legal regulation (solicitors)
+            "SRA — Solicitors Authority": ["England", "Wales"],
+            "Law Society (E&W)": ["England", "Wales"],
+            "Law Society (Scot)": ["Scotland"],
+            "Law Society (NI)": ["Northern Ireland"],
+            "Faculty Office (Notaries)": ["England", "Wales"],
+            // Chartered accountancy (UK-wide bodies omitted so they always show)
+            "ICAEW — Accountants (E&W)": ["England", "Wales"],
+            "ICAS — Accountants (Scot)": ["Scotland"]
+        };
+
+        // Validation rules for regulator reference fields, derived from columns I & J.
+        // pattern is a RegExp source (tested case-insensitively); maxLength caps entry length.
+        const regulatorFormats = {
+            "Farm Subsidies — Defra": {"pattern": "^\\d{9}$", "maxLength": 9},
+            "AWRS — Alcohol Wholesalers": {"pattern": "^[A-Za-z]{4}\\d{11}$", "maxLength": 15},
+            "Gas Safe Register": {"pattern": "^\\d{1,7}$", "maxLength": 7},
+            "General Pharmaceutical Council": {"pattern": "^\\d{7}$", "maxLength": 7},
+            "Food Standards Agency": {"pattern": "^[1-5]$", "maxLength": 1},
+            "General Optical Council": {"pattern": "^[A-Za-z]{1,3}-\\d{1,6}$", "maxLength": 10},
+            "HMRC Supervised Business Register": {"pattern": "^[A-Za-z]{4}\\d{11}$", "maxLength": 15},
+            "Ofsted": {"pattern": "^(\\d{6,7}|[A-Za-z]{2}\\d{6})$", "maxLength": 8},
+            "ABTA": {"pattern": "^[A-Za-z]\\d{4}$", "maxLength": 5},
+            "ATOL (Civil Aviation Authority)": {"pattern": "^[A-Za-z]\\d{4,5}$", "maxLength": 6},
+            "FCA — Financial Conduct": {"pattern": "^\\d{6,7}$", "maxLength": 7},
+            "Charity Commission (E&W)": {"pattern": "^\\d{6,7}$", "maxLength": 7},
+            "Charity Commission (NI)": {"pattern": "^[A-Za-z]{3}\\d{5,6}$", "maxLength": 9},
+            "OSCR (Scottish Charity Register)": {"pattern": "^[A-Za-z]{2}\\d{6}$", "maxLength": 8},
+            "Law Society (E&W)": {"pattern": "^\\d{6}$", "maxLength": 6},
+            "SRA — Solicitors Authority": {"pattern": "^\\d{6}$", "maxLength": 6},
+            "Security Industry Authority (SIA)": {"pattern": "^\\d{16}$", "maxLength": 16},
+            "Care Inspectorate (Wales)": {"pattern": "^([A-Za-z]{3}\\d{8}|[A-Za-z]\\d{1,10})$", "maxLength": 11},
+            "Care Quality Commission (Eng)": {"pattern": "^1-\\d{9,10}$", "maxLength": 12},
+            "General Medical Council": {"pattern": "^\\d{7}$", "maxLength": 7},
+            "Nursing & Midwifery Council": {"pattern": "^\\d{2}[A-Za-z]\\d{4}[A-Za-z]$", "maxLength": 8},
+            "General Dental Council": {"pattern": "^\\d{5,6}$", "maxLength": 6},
+            "General Osteopathic Council": {"pattern": "^\\d{1,4}$", "maxLength": 4},
+            "HCPC — Care Professions": {"pattern": "^[A-Za-z]{2,3}\\d{1,6}$", "maxLength": 9},
+            "NHS GP Search": {"pattern": "^[A-Za-z]\\d{5}$", "maxLength": 6},
+            "RCVS — Veterinary Surgeons": {"pattern": "^\\d{6}$", "maxLength": 6},
+            "Gambling Commission": {"pattern": "^\\d{3}-\\d{6}-[A-Za-z]-\\d{6}-\\d{3}$", "maxLength": 23}
+        };
+
+        // Is the Region question relevant? Only when the selected profession has at least one
+        // regulator that differs by UK jurisdiction (care, charity, legal, accountancy).
+        function professionNeedsRegion() {
+            return (professionRegulators[formData['protoRegulatedSector']] || [])
+                .some(r => regulatorRegions[r.name]);
+        }
+
+        // Build the regulator multi-select options (and per-regulator reference follow-ups) from
+        // the selected 'Regulated business sector' profession, filtered by the selected Region.
+        // Source: column C of the mapping; jurisdiction split per regulatorRegions.
+        function applyDynamicRegulators(question) {
+            const profession = formData['protoRegulatedSector'];
+            const region = formData['regulatorRegion'] || 'England';
+            const regulators = (professionRegulators[profession] || []).filter(r => {
+                const regions = regulatorRegions[r.name];
+                return !regions || regions.includes(region);
+            });
+            question.options = regulators.map(r => r.name);
+            question.conditionalFollowUps = {};
+            regulators.forEach(r => {
+                const slug = 'reg-' + r.name.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                const fmt = regulatorFormats[r.name];
+                question.conditionalFollowUps[r.name] = {
+                    id: slug,
+                    type: 'text',
+                    label: r.field || 'Registration / membership number',
+                    hint: r.hint || '',
+                    // Validation (only where a format is defined in columns I & J).
+                    pattern: fmt ? fmt.pattern : null,
+                    maxLength: fmt ? fmt.maxLength : null
+                };
+            });
+            return question;
+        }
+
         // Initialize app
         function initApp() {
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['regulatorRegion'] = 'England';
             renderScreen(0);
             window.addEventListener('beforeunload', saveFormData);
         }
@@ -3084,6 +3275,24 @@
 
         // Render a single question
         function renderQuestion(question, screenIndex, parentId = null) {
+            // Populate regulator options from the selected profession before rendering.
+            // If the profession has no associated regulators (e.g. 'Not applicable'),
+            // hide the whole "Who are you regulated by?" question.
+            let groupStyle = '';
+            if (question.dynamicRegulators) {
+                applyDynamicRegulators(question);
+                if (!question.options.length) {
+                    groupStyle = ' style="display:none;"';
+                }
+            }
+            // Region selector only shows for professions whose regulator differs by jurisdiction.
+            if (question.regionSelector && !professionNeedsRegion()) {
+                groupStyle = ' style="display:none;"';
+            }
+            // BIC code card hides when the sector is 'Not applicable' (no codes mapped).
+            if (question.bicCard && !(professionBicCodes[formData['protoRegulatedSector']] || []).length) {
+                groupStyle = ' style="display:none;"';
+            }
             let prefix = '';
             if (formData['protoPrefilling'] === 'Yes' && (question.id === 'tradingName' || question.id === 'website' || question.id === 'revenueSources' || question.id === 'operationLocation' || question.id === 'correspondenceAddress')) {
                 prefix = `<div class="prefill-alert">
@@ -3091,10 +3300,10 @@
                     <p class="prefill-alert-text">We prefilled this answer based on public sources. If this isn't right, please update it.</p>
                 </div>`;
             }
-            let html = prefix + `<div class="question-group" id="q-${question.id}">`;
+            let html = prefix + `<div class="question-group" id="q-${question.id}"${groupStyle}>`;
 
-            // Main question (skip default label/hint for document-upload — it provides its own intro section)
-            if (question.type !== 'document-upload') {
+            // Main question (skip default label/hint for document-upload and bic-card — they provide their own headings)
+            if (question.type !== 'document-upload' && question.type !== 'bic-card') {
                 html += `<label class="question-label" id="label-${question.id}">${question.label}</label>`;
                 // Textarea has its own hint+counter row rendered alongside the field — skip the standard hint here.
                 if (question.hint && question.type !== 'textarea') {
@@ -3207,7 +3416,11 @@
                     html += `</div>`;
                 }
             } else if (question.type === 'text' || question.type === 'url') {
-                html += `<input type="${question.type}" id="${question.id}"
+                // Optional format validation (used by regulator reference fields, from columns I & J).
+                const maxLenAttr = question.maxLength ? ` maxlength="${question.maxLength}"` : '';
+                const patternAttr = question.pattern ? ` data-pattern="${question.pattern}"` : '';
+                const blurAttr = question.pattern ? ` onblur="validateFormattedField('${question.id}')"` : '';
+                html += `<input type="${question.type}" id="${question.id}"${maxLenAttr}${patternAttr}${blurAttr}
                     oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">`;
                 if (question.helpText) {
                     const linkLabel = question.helpText.linkText || 'View examples';
@@ -3217,6 +3430,16 @@
                 }
             } else if (question.type === 'country-multi') {
                 html += renderCountryMultiSelect(question);
+            } else if (question.type === 'bic-card') {
+                const codes = professionBicCodes[formData['protoRegulatedSector']] || [];
+                const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html += `<div class="data-card" id="bicCodes-card">`;
+                html += `<div class="data-card-label">BIC codes for ${esc(formData['protoRegulatedSector'])}</div>`;
+                html += `<div class="bic-code-list">`;
+                codes.forEach(c => {
+                    html += `<div class="bic-code-row"><span class="bic-code">${esc(c.code)}</span><span class="bic-desc">${esc(c.desc)}</span></div>`;
+                });
+                html += `</div></div>`;
             } else if (question.type === 'address') {
                 html += `
                     <input type="text" id="${question.id}-line1" placeholder="Address line 1"
@@ -3759,6 +3982,25 @@
         function selectCustomOption(questionId, value, screenIndex) {
             // Update form data
             formData[questionId] = value;
+
+            // Changing the profession can change whether the Region question is relevant.
+            // Reset any stale region/regulator selection and re-render the settings screen.
+            if (questionId === 'protoRegulatedSector') {
+                formData['industryRegulator'] = [];
+                if (!professionNeedsRegion()) {
+                    formData['regulatorRegion'] = 'England';
+                }
+                renderScreen(screenIndex);
+                return;
+            }
+
+            // Changing the Region re-filters the regulator list (surfaced on a later screen).
+            // Clear any now-irrelevant regulator selection and re-render.
+            if (questionId === 'regulatorRegion') {
+                formData['industryRegulator'] = [];
+                renderScreen(screenIndex);
+                return;
+            }
 
             // Update placeholder
             const placeholder = document.getElementById(`${questionId}-placeholder`);
@@ -4429,6 +4671,31 @@
             return false;
         }
 
+        // Validate a text field against its data-pattern (regulator reference fields).
+        // Empty input is treated as valid here (required-ness is handled separately).
+        function validateFormattedField(id) {
+            const el = document.getElementById(id);
+            if (!el) return true;
+            const patternStr = el.getAttribute('data-pattern');
+            // Clear any existing error first.
+            const group = el.closest('.question-group');
+            const existing = group && group.querySelector('.validation-error');
+            if (existing) existing.remove();
+            el.classList.remove('has-error');
+            el.removeAttribute('aria-invalid');
+            el.removeAttribute('aria-describedby');
+
+            const value = el.value.trim();
+            if (!patternStr || value === '') return true;
+            let valid = false;
+            try { valid = new RegExp(patternStr, 'i').test(value); } catch (e) { valid = true; }
+            if (!valid) {
+                showValidationError(el, `error-${id}`, 'Error: please check your entry is valid', true);
+                return false;
+            }
+            return true;
+        }
+
         // Validate a single question and its visible follow-ups (recursive)
         function validateQuestion(question) {
             const group = document.getElementById(`q-${question.id}`);
@@ -4574,6 +4841,7 @@
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['regulatorRegion'] = 'England';
             renderScreen(0);
             document.getElementById('contentArea').scrollTop = 0;
         }
