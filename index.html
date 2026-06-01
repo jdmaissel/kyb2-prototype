@@ -1214,20 +1214,20 @@
 
         .country-table-header {
             display: flex;
-            background: #F4F4F4;
-            border: 1px solid var(--bx-line-soft);
-            padding: 10px 12px;
+            background: #f6f6f6;
+            border: 2px solid #e2e2e2;
+            padding: 14px 16px;
             gap: 12px;
             border-radius: 8px 8px 0 0;
         }
         .country-table-header-cell {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--bx-ink-muted);
+            font-size: 14px;
+            font-weight: 500;
+            color: #272727;
             font-family: var(--bx-font);
-            line-height: 16px;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
+            line-height: 18px;
+            letter-spacing: 0;
+            text-transform: none;
         }
         .country-table-header-cell.country { flex: 1; }
         .country-table-header-cell.amount {
@@ -1238,33 +1238,49 @@
         .country-table-row {
             display: flex;
             gap: 12px;
-            padding: 12px;
-            border-left: 1px solid var(--bx-line-soft);
-            border-right: 1px solid var(--bx-line-soft);
-            border-bottom: 1px solid var(--bx-line-soft);
+            padding: 16px;
+            border-left: 2px solid #e2e2e2;
+            border-right: 2px solid #e2e2e2;
+            border-bottom: 2px solid #e2e2e2;
             align-items: center;
             background: #ffffff;
         }
         .country-table-row:last-child {
-            border-bottom: 1px solid var(--bx-line-soft);
+            border-bottom: 2px solid #e2e2e2;
             border-radius: 0 0 8px 8px;
         }
         #revenue-split-revenueSources .country-table-row:last-of-type {
-            border-bottom: 1px solid var(--bx-line-soft) !important;
+            border-bottom: 2px solid #e2e2e2 !important;
+            border-radius: 0 0 8px 8px;
+        }
+        .country-table-row:has(+ .revenue-split-summary),
+        .country-table-row:has(+ .country-total-summary),
+        .country-table-row:has(+ .sticky-summary) {
+            border-bottom: 2px solid #e2e2e2;
             border-radius: 0 0 8px 8px;
         }
         .country-table-cell { display: flex; align-items: center; }
-        .country-table-cell.country { flex: 1; }
+        .country-table-cell.country { flex: 1; gap: 8px; }
         .country-table-cell.amount {
             flex: 0 0 160px;
             justify-content: flex-end;
         }
         .country-name {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 400;
-            color: var(--bx-ink);
+            color: #272727;
             font-family: var(--bx-font);
             line-height: 22px;
+        }
+        .country-flag-icon {
+            width: 24px;
+            height: 17px;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-right: 0;
+            flex-shrink: 0;
+            display: block;
+            overflow: hidden;
         }
 
         /* ============================================================
@@ -1280,7 +1296,7 @@
         .currency-symbol {
             font-size: 16px;
             font-weight: 400;
-            color: var(--bx-ink);
+            color: #272727;
             flex-shrink: 0;
             font-family: var(--bx-font);
             line-height: 22px;
@@ -1288,11 +1304,11 @@
         .currency-input {
             flex: 1;
             padding: 10px 12px;
-            border: 1.5px solid #6F6F6F;
-            border-radius: var(--bx-radius-input);
+            border: 2px solid #8E8E8E;
+            border-radius: 4px;
             font-size: 16px;
             font-family: var(--bx-font);
-            color: var(--bx-ink);
+            color: #272727;
             line-height: 22px;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
             width: 100%;
@@ -1316,19 +1332,19 @@
         .percent-symbol {
             font-size: 16px;
             font-weight: 400;
-            color: var(--bx-ink);
+            color: #272727;
             flex-shrink: 0;
             font-family: var(--bx-font);
             line-height: 22px;
         }
         .percent-input {
             flex: 0 0 64px;
-            padding: 10px 8px;
-            border: 1.5px solid #6F6F6F;
-            border-radius: var(--bx-radius-input);
+            padding: 10px 12px;
+            border: 2px solid #8E8E8E;
+            border-radius: 4px;
             font-size: 16px;
             font-family: var(--bx-font);
-            color: var(--bx-ink);
+            color: #272727;
             line-height: 22px;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
             width: 64px;
@@ -1378,31 +1394,37 @@
            ============================================================ */
         .revenue-split-summary {
             background: var(--bx-surface);
-            padding: 16px 20px;
+            padding: 16px;
             margin-top: 16px;
-            border-radius: var(--bx-radius-card);
+            border-radius: 8px;
             box-shadow: var(--bx-shadow-card);
         }
         .summary-progress-container { margin-bottom: 0; }
+        .summary-progress-text {
+            font: 400 16px/24px var(--bx-font);
+            color: #272727;
+            margin: 0 0 4px 0;
+        }
+        .summary-progress-text .progress-label { text-transform: capitalize; }
+        .summary-progress-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+        }
         .summary-progress-bar {
-            width: 100%;
+            flex: 1;
             height: 8px;
-            background: #F0F0F0;
+            background: #e2e2e2;
             border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin: 0;
         }
         .summary-progress-fill {
             height: 100%;
-            background: var(--bx-blue);
+            background: #006de3;
             width: 0%;
             transition: width 0.2s ease;
-        }
-        .summary-progress-text {
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
         }
         .revenue-split-error {
             color: var(--bx-error);
@@ -3641,7 +3663,7 @@
                 html += `<div class="multi-select-option" data-country-name="${country.name.toLowerCase()}">
                     <input type="checkbox" id="${inputId}" name="${question.id}-checkbox" value="${country.code}" data-country="${country.name}"
                         onchange="handleCountryMultiSelectChange('${question.id}')">
-                    <label for="${inputId}"><span class="country-flag">${country.flag}</span>${country.name}</label>
+                    <label for="${inputId}">${buildCountryFlag(country.code)}${country.name}</label>
                 </div>`;
             });
             html += `</div></div>`;
@@ -4130,6 +4152,77 @@
             filterCountries(questionId);
         }
 
+        // Inline, self-contained SVG country flags (no network) keyed by ISO-2 code.
+        // Rendered at 24x17 via the .country-flag-icon CSS rule.
+        function buildCountryFlag(code) {
+            const c = (code || '').toUpperCase();
+            const star = (cx, cy, R, fill, rot) => {
+                rot = rot || 0;
+                const ri = R * 0.382;
+                let p = '';
+                for (let i = 0; i < 5; i++) {
+                    const ao = (-90 + rot + i * 72) * Math.PI / 180;
+                    const ai = (-90 + rot + 36 + i * 72) * Math.PI / 180;
+                    p += `${(cx + R * Math.cos(ao)).toFixed(2)},${(cy + R * Math.sin(ao)).toFixed(2)} `;
+                    p += `${(cx + ri * Math.cos(ai)).toFixed(2)},${(cy + ri * Math.sin(ai)).toFixed(2)} `;
+                }
+                return `<polygon points="${p.trim()}" fill="${fill}"/>`;
+            };
+            const unionJack = (w, h) => `
+                <rect width="${w}" height="${h}" fill="#012169"/>
+                <path d="M0 0L${w} ${h}M${w} 0L0 ${h}" stroke="#fff" stroke-width="${h * 0.28}"/>
+                <path d="M0 0L${w} ${h}M${w} 0L0 ${h}" stroke="#C8102E" stroke-width="${h * 0.12}"/>
+                <rect x="${w / 2 - h * 0.17}" width="${h * 0.34}" height="${h}" fill="#fff"/>
+                <rect y="${h / 2 - h * 0.17}" width="${w}" height="${h * 0.34}" fill="#fff"/>
+                <rect x="${w / 2 - h * 0.085}" width="${h * 0.17}" height="${h}" fill="#C8102E"/>
+                <rect y="${h / 2 - h * 0.085}" width="${w}" height="${h * 0.17}" fill="#C8102E"/>`;
+            let spokes = '';
+            for (let i = 0; i < 12; i++) {
+                const a = i * 30 * Math.PI / 180;
+                spokes += `<line x1="18" y1="12" x2="${(18 + 3 * Math.cos(a)).toFixed(2)}" y2="${(12 + 3 * Math.sin(a)).toFixed(2)}" stroke="#000080" stroke-width="0.3"/>`;
+            }
+            let sgStars = '';
+            for (let i = 0; i < 5; i++) {
+                const a = (-90 + i * 72) * Math.PI / 180;
+                sgStars += star(12.5 + 2.2 * Math.cos(a), 5.5 + 2.2 * Math.sin(a), 0.85, '#fff');
+            }
+            const usFlag = () => {
+                let s = '<rect width="36" height="24" fill="#fff"/>';
+                const sh = 24 / 13;
+                for (let i = 0; i < 13; i += 2) s += `<rect y="${(i * sh).toFixed(2)}" width="36" height="${sh.toFixed(2)}" fill="#B22234"/>`;
+                s += `<rect width="15" height="${(7 * sh).toFixed(2)}" fill="#3C3B6E"/>`;
+                for (let r = 0; r < 5; r++) for (let col = 0; col < 5; col++) {
+                    const x = 1.6 + col * 2.9 + (r % 2 ? 1.45 : 0);
+                    const y = 1.4 + r * 2.4;
+                    if (x < 14 && y < 7 * sh - 0.8) s += star(x, y, 0.8, '#fff');
+                }
+                return s;
+            };
+            const mapleLeaf = '<polygon fill="#FF0000" points="18,4 18.9,7.2 21.6,6.7 20.6,9 23.7,9.2 22.4,10.4 24,12.6 20.4,12.2 20.9,13.2 19.2,18 19.2,20 16.8,20 16.8,18 15.1,13.2 15.6,12.2 12,12.6 13.6,10.4 12.3,9.2 15.4,9 14.4,6.7 17.1,7.2"/>';
+            const hkFlag = () => {
+                let s = '<rect width="36" height="24" fill="#DE2910"/>';
+                for (let i = 0; i < 5; i++) s += `<g transform="translate(18,12) rotate(${i * 72})"><ellipse cy="-4.2" rx="1.7" ry="3.6" fill="#fff"/></g>`;
+                s += '<circle cx="18" cy="12" r="1.5" fill="#DE2910"/>';
+                return s;
+            };
+            const flags = {
+                FR: '<rect width="36" height="24" fill="#fff"/><rect width="12" height="24" fill="#002395"/><rect x="24" width="12" height="24" fill="#ED2939"/>',
+                DE: '<rect width="36" height="24" fill="#000"/><rect y="8" width="36" height="8" fill="#D00"/><rect y="16" width="36" height="8" fill="#FFCE00"/>',
+                JP: '<rect width="36" height="24" fill="#fff"/><circle cx="18" cy="12" r="7" fill="#BC002D"/>',
+                AE: '<rect width="36" height="24" fill="#fff"/><rect x="9" width="27" height="8" fill="#00732F"/><rect x="9" y="16" width="27" height="8" fill="#000"/><rect width="9" height="24" fill="#FF0000"/>',
+                IN: '<rect width="36" height="24" fill="#fff"/><rect width="36" height="8" fill="#FF9933"/><rect y="16" width="36" height="8" fill="#138808"/><circle cx="18" cy="12" r="3" fill="none" stroke="#000080" stroke-width="0.6"/>' + spokes + '<circle cx="18" cy="12" r="0.8" fill="#000080"/>',
+                CN: '<rect width="36" height="24" fill="#DE2910"/>' + star(7, 6, 3.4, '#FFDE00') + star(13, 3, 1.3, '#FFDE00', 20) + star(15.5, 6, 1.3, '#FFDE00', 40) + star(15.5, 10, 1.3, '#FFDE00', -10) + star(13, 12.5, 1.3, '#FFDE00', -25),
+                SG: '<rect width="36" height="24" fill="#fff"/><rect width="36" height="12" fill="#EF3340"/><circle cx="8" cy="6" r="3.6" fill="#fff"/><circle cx="10" cy="6" r="3" fill="#EF3340"/>' + sgStars,
+                US: usFlag(),
+                AU: '<rect width="36" height="24" fill="#00247D"/>' + unionJack(18, 12) + star(9, 18, 1.8, '#fff') + star(27, 5, 1.2, '#fff') + star(31, 11, 1.2, '#fff') + star(28, 17, 1.2, '#fff') + star(24, 13, 1.2, '#fff') + star(30, 20, 0.9, '#fff'),
+                NZ: '<rect width="36" height="24" fill="#00247D"/>' + unionJack(18, 12) + star(29, 6, 1.3, '#CC142B') + star(32, 13, 1.3, '#CC142B') + star(28, 18, 1.3, '#CC142B') + star(25, 12, 1.3, '#CC142B'),
+                CA: '<rect width="36" height="24" fill="#fff"/><rect width="9" height="24" fill="#FF0000"/><rect x="27" width="9" height="24" fill="#FF0000"/>' + mapleLeaf,
+                HK: hkFlag()
+            };
+            const inner = flags[c] || '<rect width="36" height="24" fill="#e2e2e2"/>';
+            return `<svg class="country-flag-icon" viewBox="0 0 36 24" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+        }
+
         // Handle country multi-select change
         function handleCountryMultiSelectChange(questionId) {
             const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
@@ -4172,7 +4265,7 @@
             const headerRow = document.createElement('div');
             headerRow.className = 'country-table-header';
             const customHeaderLabel = countryAmountsGroup.getAttribute('data-percentage-header-label');
-            const headerColumnText = customHeaderLabel || (percentageRequired ? '% OF TURNOVER' : 'AMOUNT IN £');
+            const headerColumnText = customHeaderLabel || (percentageRequired ? '% of turnover' : 'Amount in £');
             headerRow.innerHTML = `
                 <div class="country-table-header-cell country">Country</div>
                 <div class="country-table-header-cell amount">${headerColumnText}</div>
@@ -4183,19 +4276,15 @@
             selected.forEach((country, index) => {
                 const row = document.createElement('div');
                 row.className = 'country-table-row';
-                // Convert country code to flag emoji
-                const countryCode = country.code.toUpperCase();
-                const flag = countryCode
-                  .split('')
-                  .map(char => String.fromCodePoint(127397 + char.charCodeAt()))
-                  .join('');
+                // Country flag icon (inline SVG, 24x17, self-contained — no network)
+                const flag = buildCountryFlag(country.code);
 
                 let cellHTML;
                 if (percentageRequired) {
                     // Render percentage input
                     cellHTML = `
                         <div class="country-table-cell country">
-                            <span class="country-name">${flag} ${country.name}</span>
+                            ${flag}<span class="country-name">${country.name}</span>
                         </div>
                         <div class="country-table-cell amount">
                             <div class="percent-input-wrapper">
@@ -4211,7 +4300,7 @@
                     // Render plain text input for tax ID (no currency symbol)
                     cellHTML = `
                         <div class="country-table-cell country">
-                            <span class="country-name">${flag} ${country.name}</span>
+                            ${flag}<span class="country-name">${country.name}</span>
                         </div>
                         <div class="country-table-cell amount">
                             <div class="currency-input-wrapper">
@@ -4226,7 +4315,7 @@
                     // Render currency input (£ prefix, no % symbol)
                     cellHTML = `
                         <div class="country-table-cell country">
-                            <span class="country-name">${flag} ${country.name}</span>
+                            ${flag}<span class="country-name">${country.name}</span>
                         </div>
                         <div class="country-table-cell amount">
                             <div class="currency-input-wrapper">
@@ -4251,10 +4340,12 @@
                 summaryBar.id = `summary-${questionId}`;
                 summaryBar.innerHTML = `
                     <div class="summary-progress-container">
-                        <div class="summary-progress-bar">
-                            <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                        <div class="summary-progress-text"><span class="progress-label" id="percent-label-${questionId}">remaining</span> <span id="percent-total-${questionId}">0</span>%</div>
+                        <div class="summary-progress-row">
+                            <div class="summary-progress-bar">
+                                <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                            </div>
                         </div>
-                        <div class="summary-progress-text"><span id="percent-total-${questionId}">0</span>% <span id="percent-label-${questionId}">remaining</span></div>
                     </div>
                 `;
                 listElement.appendChild(summaryBar);
@@ -4310,7 +4401,7 @@
             headerRow.className = 'country-table-header';
             headerRow.innerHTML = `
                 <div class="country-table-header-cell country">Source</div>
-                <div class="country-table-header-cell amount">% OF REVENUE</div>
+                <div class="country-table-header-cell amount">% of revenue</div>
             `;
             listElement.appendChild(headerRow);
 
@@ -4341,10 +4432,12 @@
             summaryBar.id = `summary-${questionId}`;
             summaryBar.innerHTML = `
                 <div class="summary-progress-container">
-                    <div class="summary-progress-bar">
-                        <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                    <div class="summary-progress-text"><span class="progress-label" id="revenue-label-${questionId}">remaining</span> <span id="revenue-total-${questionId}">100</span>%</div>
+                    <div class="summary-progress-row">
+                        <div class="summary-progress-bar">
+                            <div class="summary-progress-fill" id="progress-fill-${questionId}"></div>
+                        </div>
                     </div>
-                    <div class="summary-progress-text"><span id="revenue-total-${questionId}">100</span>% <span id="revenue-label-${questionId}">remaining</span></div>
                 </div>
             `;
             listElement.appendChild(summaryBar);
@@ -4395,19 +4488,21 @@
             // Update remaining/allocated/over percentage text and label
             const totalText = document.getElementById(`revenue-total-${questionId}`);
             const labelText = document.getElementById(`revenue-label-${questionId}`);
+            const readoutText = document.getElementById(`revenue-readout-${questionId}`);
             if (totalText && labelText) {
+                let displayNum;
                 if (total > 100) {
-                    const over = total - 100;
-                    totalText.textContent = over;
+                    displayNum = total - 100;
                     labelText.textContent = 'over';
                 } else if (total === 100) {
-                    totalText.textContent = '100';
+                    displayNum = 100;
                     labelText.textContent = 'allocated';
                 } else {
-                    const remaining = 100 - total;
-                    totalText.textContent = remaining;
+                    displayNum = 100 - total;
                     labelText.textContent = 'remaining';
                 }
+                totalText.textContent = displayNum;
+                if (readoutText) readoutText.textContent = displayNum;
             }
 
             // Show/hide error message:
@@ -4452,19 +4547,21 @@
                 // Update total percentage text with three-state logic
                 const totalText = document.getElementById(`percent-total-${questionId}`);
                 const labelText = document.getElementById(`percent-label-${questionId}`);
+                const readoutText = document.getElementById(`percent-readout-${questionId}`);
                 if (totalText && labelText) {
+                    let displayNum;
                     if (total > 100) {
-                        const over = total - 100;
-                        totalText.textContent = over;
+                        displayNum = total - 100;
                         labelText.textContent = 'over';
                     } else if (total === 100) {
-                        totalText.textContent = '100';
+                        displayNum = 100;
                         labelText.textContent = 'allocated';
                     } else {
-                        const remaining = 100 - total;
-                        totalText.textContent = remaining;
+                        displayNum = 100 - total;
                         labelText.textContent = 'remaining';
                     }
+                    totalText.textContent = displayNum;
+                    if (readoutText) readoutText.textContent = displayNum;
                 }
 
                 // Show/hide error: only if over 100% or all filled but under 100%
