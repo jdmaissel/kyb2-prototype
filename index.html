@@ -451,6 +451,109 @@
             font-family: inherit !important;
         }
 
+        /* Card Tile variant — Figma 31:11146 (.Card Tile)
+           White card, no border, radius 12, icon stacked on top, gap 24 */
+        .screen .screen-intro.screen-intro--card {
+            flex-direction: column !important;
+            gap: 24px !important;
+            align-items: flex-start !important;
+            background: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 16px !important;
+            box-shadow: none !important;
+        }
+        .screen-intro.screen-intro--card .screen-intro-icon {
+            flex: 0 0 auto !important;
+            width: 48px !important;
+            height: 48px !important;
+            justify-content: flex-start !important;
+        }
+        .screen-intro.screen-intro--card .screen-intro-icon svg {
+            width: auto !important;
+            height: 40px !important;
+        }
+        .screen-intro.screen-intro--card .screen-intro-content {
+            width: 100% !important;
+        }
+        /* Card body acts as the lead line — Medium 20/24, letter-spacing -0.2px (-1% of 20) */
+        .screen-intro.screen-intro--card .screen-intro-body {
+            font-size: 20px !important;
+            font-weight: 500 !important;
+            line-height: 24px !important;
+            letter-spacing: -0.2px !important;
+            color: #272727 !important;
+        }
+
+        /* ============================================================
+           OPEN BANKING INTRO SCREEN — Figma 38:12038
+           ============================================================ */
+        .ob-illustration {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 0 0 24px 0;
+        }
+        .ob-illustration svg { width: 104px; height: 88px; display: block; }
+        .ob-intro-title {
+            font: 500 20px/22px var(--bx-font);
+            letter-spacing: -0.2px;
+            color: #272727;
+            text-align: center;
+            margin: 0 0 8px 0;
+        }
+        .ob-intro-body {
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+            margin: 0 0 24px 0;
+        }
+        .step-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .step-card:last-of-type { margin-bottom: 0; }
+        .step-card-number {
+            flex: 0 0 32px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #001276;
+            color: #ffffff;
+            font: 400 16px/22px var(--bx-font);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-card-label {
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
+            margin: 0;
+        }
+        .simple-alert {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            background: #e7f0fb;
+            border: 2px solid #006de3;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0 0 0;
+        }
+        .simple-alert-icon { flex: 0 0 24px; width: 24px; height: 24px; }
+        .simple-alert-icon svg { display: block; width: 24px; height: 24px; }
+        .simple-alert-text {
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+            margin: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
         /* ============================================================
            QUESTION GROUP / LABELS
            ============================================================ */
@@ -715,7 +818,9 @@
            2px #8E8E8E border, 4px radius, white bg, Effra Regular 16/22 */
         .custom-select-trigger {
             width: 100%;
-            padding: 12px 14px;
+            height: 48px;
+            padding: 0 12px;
+            gap: 10px;
             border: 2px solid #8E8E8E;
             border-radius: 4px;
             font-size: 16px;
@@ -766,7 +871,7 @@
             flex-shrink: 0;
             color: var(--bx-ink);
         }
-        .custom-select-arrow svg { width: 20px; height: 20px; }
+        .custom-select-arrow svg { width: 13px; height: auto; display: block; }
         .custom-select-trigger.active .custom-select-arrow { transform: rotate(180deg); }
 
         /* Dropdown panel — Figma "Drop Shadow Large Blur" #0000001F radius 20,
@@ -836,10 +941,13 @@
 
         .multi-select-trigger {
             width: 100%;
-            padding: 12px 14px;
+            min-height: 48px;
+            padding: 0 12px;
+            gap: 10px;
             border: 2px solid #8E8E8E;
             border-radius: 4px;
             font-size: 16px;
+            font-weight: 400;
             font-family: var(--bx-font);
             margin-top: 0;
             background: #ffffff;
@@ -879,7 +987,7 @@
             flex-shrink: 0;
             color: var(--bx-ink);
         }
-        .multi-select-arrow svg { width: 20px; height: 20px; }
+        .multi-select-arrow svg { width: 13px; height: auto; display: block; }
         .multi-select-trigger.active .multi-select-arrow { transform: rotate(180deg); }
 
         .multi-select-dropdown {
@@ -942,20 +1050,20 @@
             background: #006de3;
             border-color: #006de3;
         }
-        /* White checkmark — two CSS borders rotated 45° into a tick.
-           Centered with translate(-55%, -60%): the rotated L-shape carries
-           more visual weight in the bottom-right, so we nudge up & left
-           to bring the optical centre to the box centre. */
+        /* White checkmark — the exact Blueprint "Tick" glyph (Figma 1:100157),
+           inlined as an SVG so it matches the design system and stays crisp.
+           Placed on ::after (not the checkbox background) so the hover
+           `background` shorthand can't wipe it. Centred in the 24px content box
+           (28px − 2px borders, box-sizing:border-box), matching Figma's tick. */
         .multi-select-option input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
             left: 50%;
             top: 50%;
-            width: 6px;
+            width: 16px;
             height: 12px;
-            border: solid #ffffff;
-            border-width: 0 2.5px 2.5px 0;
-            transform: translate(-55%, -60%) rotate(45deg);
+            transform: translate(-50%, -50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15.9522 12.0451'%3E%3Cpath d='M15.9522 1.41421L5.61421 11.7522C5.22369 12.1427 4.59052 12.1427 4.2 11.7522L0 7.55221L1.41421 6.138L4.90711 9.63089L14.538 0L15.9522 1.41421Z' fill='%23ffffff'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
         }
         .multi-select-option input[type="checkbox"]:focus,
         .multi-select-option input[type="checkbox"]:focus-visible {
@@ -1047,6 +1155,7 @@
            generous min-height for ~4 lines and vertical-only resize. */
         textarea {
             min-height: 96px;
+            padding: 16px 14px;
             resize: vertical;
             line-height: 22px;
             color: #272727;
@@ -1669,8 +1778,8 @@
             justify-content: center;
         }
         .drawer-sheet {
-            background: var(--bx-surface);
-            border-radius: 16px 16px 0 0;
+            background: #f6f6f6;
+            border-radius: 12px 12px 0 0;
             width: 100%;
             max-width: 375px;
             max-height: 85vh;
@@ -1683,18 +1792,18 @@
         }
         .drawer-header {
             background: #ffffff;
-            padding: 20px 24px 16px;
+            padding: 24px 24px 16px 68px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--bx-line-soft);
-            border-radius: 16px 16px 0 0;
+            gap: 20px;
+            border-radius: 12px 12px 0 0;
         }
         .drawer-title {
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
+            flex: 1;
+            font: 500 18px/24px var(--bx-font);
+            letter-spacing: -0.09px;
+            color: #272727;
+            text-align: center;
         }
         .drawer-close {
             background: none;
@@ -1712,42 +1821,50 @@
         .drawer-close svg { width: 24px; height: 24px; }
 
         .drawer-content {
-            padding: 20px 24px 32px;
-            background: var(--bx-surface);
+            padding: 16px 24px 24px;
+            background: #f6f6f6;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
         .drawer-intro {
-            font-size: 15px;
-            color: var(--bx-ink-soft);
-            margin-bottom: 16px;
-            line-height: 22px;
-            font-family: var(--bx-font);
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+            margin: 0;
         }
         .drawer-example {
-            background: var(--bx-bg);
-            padding: 14px 16px;
+            background: #ffffff;
+            padding: 16px;
             border-radius: 8px;
-            margin-bottom: 12px;
-            font-size: 15px;
-            color: var(--bx-ink-soft);
-            line-height: 22px;
-            font-family: var(--bx-font);
+            margin: 0;
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
         }
-        .drawer-example:last-child { margin-bottom: 0; }
         .drawer-bullets {
             list-style: disc;
             padding-left: 24px;
-            margin-bottom: 16px;
-            font-size: 15px;
-            color: var(--bx-ink-soft);
-            line-height: 22px;
-            font-family: var(--bx-font);
+            margin: 0;
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
         }
         .drawer-bullets li { margin-bottom: 4px; }
         .drawer-outro {
-            font-size: 15px;
-            color: var(--bx-ink-soft);
-            line-height: 22px;
-            font-family: var(--bx-font);
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+            margin: 0;
+        }
+        .drawer-home-indicator {
+            background: #f6f6f6;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .drawer-home-indicator span {
+            width: 136px;
+            height: 4px;
+            background: #272727;
+            border-radius: 13px;
         }
 
         /* ============================================================
@@ -1933,11 +2050,8 @@
             width: 100%;
         }
         .upload-intro-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
-            line-height: 24px;
+            font: 500 20px/24px var(--bx-font);
+            color: #272727;
             letter-spacing: -0.2px;
             margin: 0;
         }
@@ -1979,38 +2093,36 @@
             gap: 2px;
             width: 100%;
         }
+        /* Figma 23:6928 — white panels, NO borders, 2px gaps (page-grey shows
+           through as the divider), 8px radius only on the outer corners. */
         .accordion-section {
-            background: var(--bx-surface);
+            background: #ffffff;
             overflow: hidden;
-            border: 1.5px solid #6F6F6F;
+            border: none;
         }
-        .accordion-section:first-child {
-            border-radius: var(--bx-radius-input) var(--bx-radius-input) 0 0;
-        }
-        .accordion-section:last-child {
-            border-radius: 0 0 var(--bx-radius-input) var(--bx-radius-input);
-            border-top: none;
-        }
-        .accordion-section:only-child {
-            border-radius: var(--bx-radius-input);
-            border-top: 1.5px solid #6F6F6F;
-        }
+        .accordion-section:first-child,
         .accordion-section:first-child .accordion-button {
             border-radius: var(--bx-radius-input) var(--bx-radius-input) 0 0;
         }
+        .accordion-section:last-child,
         .accordion-section:last-child .accordion-button {
             border-radius: 0 0 var(--bx-radius-input) var(--bx-radius-input);
         }
+        .accordion-section:only-child,
+        .accordion-section:only-child .accordion-button {
+            border-radius: var(--bx-radius-input);
+        }
 
+        /* Accordion header — Effra Medium 16/22 #272727, p16, gap 12 to chevron */
         .accordion-button {
             width: 100%;
-            padding: 14px 16px;
+            padding: 16px;
             background: #ffffff;
             border: none;
             text-align: left;
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--bx-ink);
+            font-size: 16px;
+            font-weight: 500;
+            color: #272727;
             font-family: var(--bx-font);
             display: flex;
             justify-content: space-between;
@@ -2023,22 +2135,27 @@
         .accordion-chevron {
             transition: transform 0.2s ease;
             flex-shrink: 0;
-            color: var(--bx-ink);
+            width: 24px;
+            height: 24px;
+            color: #272727;
         }
         .accordion-button.expanded .accordion-chevron { transform: rotate(180deg); }
 
+        /* Body — Effra Regular 16/22 #515151, 16px gap below header (button's
+           p-bottom provides it), 16px bottom padding. */
         .accordion-content {
             display: none;
             padding: 0 16px 16px 16px;
             background: #ffffff;
-            margin-top: -8px;
+            margin-top: 0;
         }
         .accordion-content.open { display: block; }
         .accordion-content p {
-            font-size: 14px;
-            color: var(--bx-ink-soft);
+            font-size: 16px;
+            color: #515151;
             font-family: var(--bx-font);
-            line-height: 20px;
+            font-weight: 400;
+            line-height: 22px;
             margin: 0 0 12px 0;
         }
         .accordion-content p:last-child { margin-bottom: 0; }
@@ -2048,29 +2165,26 @@
             list-style-type: disc;
         }
         .accordion-list li {
-            font-size: 14px;
-            color: var(--bx-ink-soft);
+            font-size: 16px;
+            color: #515151;
             font-family: var(--bx-font);
-            line-height: 20px;
+            line-height: 22px;
             font-weight: 400;
             margin: 0 0 6px 0;
             padding: 0;
         }
         .accordion-list li strong {
-            font-weight: 700;
-            color: var(--bx-ink);
+            font-weight: 500;
+            color: #272727;
         }
 
         /* ============================================================
            REQUIREMENTS LIST ("Please make sure your documents are:")
            ============================================================ */
         .requirements-heading {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
-            line-height: 22px;
-            letter-spacing: 0;
+            font: 500 20px/24px var(--bx-font);
+            color: #272727;
+            letter-spacing: -0.2px;
             margin: 0 0 4px 0;
         }
         .requirements-list {
@@ -2080,34 +2194,29 @@
             width: 100%;
         }
         .requirement-item {
-            background: var(--bx-surface);
-            padding: 14px 16px;
-            border-radius: var(--bx-radius-card);
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
             display: flex;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
-            min-height: 48px;
+            min-height: 56px;
             box-sizing: border-box;
             box-shadow: var(--bx-shadow-card);
         }
-        .requirement-item:last-child { align-items: flex-start; }
         .requirement-checkmark {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--bx-ink);
-            margin-top: 0;
+            flex-shrink: 0;
         }
-        .requirement-checkmark svg { width: 100%; height: 100%; }
+        .requirement-checkmark svg { width: 16px; height: 12px; display: block; }
         .requirement-text {
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
-            line-height: 22px;
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
             margin: 0;
             flex: 1;
         }
@@ -2115,64 +2224,69 @@
         /* ============================================================
            UPLOAD AREA (dashed cloud zone)
            ============================================================ */
+        .upload-block {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+        .upload-area-title {
+            font: 500 20px/24px var(--bx-font);
+            color: #272727;
+            letter-spacing: -0.2px;
+            margin: 0;
+        }
         .upload-area {
-            border: 2px dashed var(--bx-blue);
-            border-radius: var(--bx-radius-card);
-            padding: 28px 16px 28px;
-            background: var(--bx-blue-50);
+            border: 2px dashed #006de3;
+            border-radius: 8px;
+            padding: 40px 16px;
+            background: #f2f8fe;
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background-color 0.15s ease;
             width: 100%;
-            min-height: 196px;
             box-sizing: border-box;
         }
-        .upload-area:hover { background: #E5F0FB; }
+        .upload-area:hover { background: #e7f0fb; }
 
         .upload-icon-wrapper {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 68px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .upload-text {
-            font-size: 17px;
-            font-weight: 500;
-            color: var(--bx-ink);
-            font-family: var(--bx-font);
-            line-height: 22px;
-            letter-spacing: -0.1px;
+            font: 500 24px/32px var(--bx-font);
+            color: #272727;
+            letter-spacing: -0.36px;
             margin: 0;
-            white-space: nowrap;
+            text-align: center;
         }
         .browse-button {
             background: #ffffff;
-            border: 1.5px solid var(--bx-blue);
-            color: var(--bx-blue);
-            padding: 6px 22px;
-            border-radius: var(--bx-radius-pill);
-            font-size: 15px;
-            font-weight: 500;
-            font-family: var(--bx-font);
+            border: 2px solid #006de3;
+            color: #006de3;
+            padding: 4px 16px;
+            border-radius: 24px;
+            font: 500 16px/24px var(--bx-font);
             cursor: pointer;
             transition: background-color 0.15s ease;
-            line-height: 22px;
-            margin-top: 4px;
+            margin-top: 0;
         }
-        .browse-button:hover { background: var(--bx-blue-50); }
+        .browse-button:hover { background: #e7f0fb; }
 
         .file-input-hidden { display: none; }
 
         .confirmation-checkbox {
-            background: var(--bx-surface);
-            padding: 14px 16px;
-            border-radius: var(--bx-radius-card);
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
             width: 100%;
             display: flex;
             gap: 12px;
@@ -2184,40 +2298,44 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            width: 22px;
-            height: 22px;
-            min-width: 22px;
-            border: 2px solid #6F6F6F;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid #8E8E8E;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 0;
+            margin: 0;
             background: #ffffff;
             position: relative;
             flex-shrink: 0;
             transition: all 0.15s ease;
         }
+        .confirmation-checkbox input[type="checkbox"]:hover { background: #E8E8E9; }
+        .confirmation-checkbox input[type="checkbox"]:focus-visible {
+            outline: 2px solid #006de3;
+            outline-offset: 2px;
+        }
         .confirmation-checkbox input[type="checkbox"]:checked {
-            background: var(--bx-blue);
-            border-color: var(--bx-blue);
+            background: #006de3;
+            border-color: #006de3;
         }
         .confirmation-checkbox input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
-            left: 5px;
-            top: 1px;
-            width: 8px;
-            height: 13px;
-            border: solid #ffffff;
-            border-width: 0 2.5px 2.5px 0;
-            transform: rotate(45deg);
+            left: 50%;
+            top: 50%;
+            width: 16px;
+            height: 12px;
+            transform: translate(-50%, -50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15.9522 12.0451'%3E%3Cpath d='M15.9522 1.41421L5.61421 11.7522C5.22369 12.1427 4.59052 12.1427 4.2 11.7522L0 7.55221L1.41421 6.138L4.90711 9.63089L14.538 0L15.9522 1.41421Z' fill='%23ffffff'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
         }
         .confirmation-text {
-            font-size: 15px;
-            color: var(--bx-ink-soft);
-            font-family: var(--bx-font);
-            line-height: 22px;
+            font: 400 16px/22px var(--bx-font);
+            color: #272727;
             margin: 0;
             flex: 1;
+            text-align: left;
+            min-width: 0;
         }
 
         /* ============================================================
@@ -2340,6 +2458,7 @@
                 <div class="drawer-content" id="drawerContent">
                     <!-- Content will be inserted here -->
                 </div>
+                <div class="drawer-home-indicator"><span></span></div>
             </div>
         </div>
     </div>
@@ -2438,12 +2557,33 @@
             },
             {
                 title: 'Business identity',
+                hideTitle: true,
+                sectionTitle: 'Before we get started',
                 introBlock: {
-                    heading: 'Before we get started',
+                    style: 'card',
                     body: 'We need some more information to process your loan application.\nThis helps us:',
-                    bullets: ['Verify your business details', 'Meet legal requirements', 'Prevent fraud and financial crime'],
-                    footer: 'We only ask for information we really need.'
+                    bullets: ['Verify your business details', 'Meet legal requirements', 'Prevent fraud and financial crime']
                 },
+                infoAlert: 'We only ask for information we really need.',
+                questions: []
+            },
+            {
+                // Open Banking intro — Figma 38:12038
+                title: 'Account history',
+                hideTitle: true,
+                illustration: 'briefcase',
+                centeredTitle: 'Before we get started',
+                introText: 'We need some more information to process your loan application. This helps us:',
+                numberedSteps: [
+                    'Verify your business details',
+                    'Meet legal requirements',
+                    'Prevent fraud and financial crime'
+                ],
+                infoAlert: 'We only ask for information we really need.',
+                questions: []
+            },
+            {
+                title: 'Business identity',
                 questions: [
                     {
                         id: 'tradingName',
@@ -3204,6 +3344,7 @@
 
             // Update header and tracker
             document.getElementById('screenTitle').textContent = screenDef.title;
+            document.getElementById('continueBtn').textContent = screenDef.continueLabel || 'Continue';
             const progressTracker = document.querySelector('.progress-tracker');
 
             if (screenDef.isPrescreen) {
@@ -3212,7 +3353,7 @@
                 document.getElementById('exitBtn').textContent = 'Reset all fields';
                 document.getElementById('exitBtn').onclick = resetAllFields;
             } else {
-                document.getElementById('exitBtn').textContent = 'Exit';
+                document.getElementById('exitBtn').textContent = screenDef.exitLabel || 'Exit';
                 document.getElementById('exitBtn').onclick = exitApplication;
                 progressTracker.style.display = '';
                 const prescreenCount = screenDefinitions.filter(s => s.isPrescreen).length;
@@ -3227,6 +3368,31 @@
             // Build screen HTML
             let html = `<div class="screen active" id="screen-${screenIndex}">`;
 
+            // Status Information icon — shared by alerts (Figma 4:5881 / 39:3507)
+            const infoIconSvg = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#006de3"/><circle cx="12" cy="7.75" r="1.4" fill="#ffffff"/><rect x="10.75" y="10.5" width="2.5" height="7" rx="1.25" fill="#ffffff"/></svg>`;
+
+            // Open Banking intro illustration — Figma 38:12325 (briefcase + folders),
+            // reconstructed exactly from the source vectors
+            if (screenDef.illustration === 'briefcase') {
+                html += `<div class="ob-illustration"><svg viewBox="0 0 104 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(51.366 0) scale(1.00434 1.00021)"><path d="M52.4066 0H0V64.8957H52.4066V0Z" fill="#CDF5E8"/></g><g transform="translate(45.87 5.227) scale(1.01223 1.00046)"><path d="M52.3002 0H0V64.97H52.3002V0Z" fill="#00AEEF"/></g><g transform="translate(0 21.901)"><path d="M0 0H85.7994V30.5586C85.7994 34.1983 82.6838 37.1552 78.8442 37.1552H6.95522C3.11759 37.1552 0 34.2002 0 30.5586V0Z" fill="#006666"/></g><g transform="translate(28.68 14.467) scale(1.00032 0.99948)"><path d="M0.447329 3.25825L0.447329 9.00467C0.447329 9.51305 0.863695 9.92518 1.37731 9.92518H2.05027C2.56388 9.92518 2.98024 9.51305 2.98024 9.00467L2.98024 3.25825C2.98024 2.74987 2.56388 2.33774 2.05027 2.33774H1.37731C0.863695 2.33774 0.447329 2.74987 0.447329 3.25825Z" fill="#8E8E8E"/><path d="M26.6555 3.25825V9.00466C26.6555 9.51305 27.0718 9.92518 27.5855 9.92518H28.2584C28.772 9.92518 29.1884 9.51305 29.1884 9.00466V3.25825C29.1884 2.74987 28.772 2.33774 28.2584 2.33774H27.5855C27.0718 2.33774 26.6555 2.74987 26.6555 3.25825Z" fill="#8E8E8E"/><path d="M27.3441 4.73804C27.3441 4.73804 21.7486 4.04862 14.6482 4.05057C7.40648 4.05251 2.03654 4.73804 2.03654 4.73804C0.91036 4.73804 0 3.835 0 2.72223C0 1.60751 0.912322 0.70642 2.03654 0.70642C2.03654 0.70642 6.73156 -0.0373704 14.2656 0.00146988C21.5229 0.0403101 27.3441 0.70642 27.3441 0.70642C28.4703 0.70642 29.3807 1.60946 29.3807 2.72223C29.3807 3.83694 28.4683 4.73804 27.3441 4.73804V4.73804Z" fill="#272727"/></g><g transform="translate(2.145 46.314)"><path d="M0 0H81.5094V32.3285C81.5094 35.5793 78.8757 38.2168 75.6341 38.2168H5.87531C2.63165 38.2168 0 35.5772 0 32.3285V0V0Z" fill="#004750"/></g><g transform="translate(1.716 53.087)"><path d="M75.6146 6.10202H6.67033C2.98613 6.10202 0 3.37031 0 0V1.53368C0 4.90399 2.98613 8.48412 6.67033 8.48412H75.6146C79.2988 8.48412 82.285 4.90399 82.285 1.53368V0C82.285 3.37031 79.2988 6.10202 75.6146 6.10202Z" fill="#003D46"/></g><g transform="translate(21.587 54.527)"><path d="M5.52985 1.33539H1.21593C0.544429 1.33539 7.15256e-05 2.12793 7.15256e-05 3.10557V7.5776C7.15256e-05 8.55524 0.544429 9.34778 1.21593 9.34778H5.52985C6.20135 9.34778 6.74571 8.55524 6.74571 7.5776V3.10557C6.74571 2.12793 6.20135 1.33539 5.52985 1.33539Z" fill="#8E8E8E"/><path d="M5.52985 0H1.21593C0.544429 0 7.15256e-05 0.792535 7.15256e-05 1.77018V6.2422C7.15256e-05 7.21984 0.544429 8.01238 1.21593 8.01238H5.52985C6.20135 8.01238 6.74571 7.21984 6.74571 6.2422V1.77018C6.74571 0.792535 6.20135 0 5.52985 0Z" fill="#E2E2E2"/></g><g transform="translate(58.01 54.527)"><path d="M5.52978 1.33539H1.21586C0.544358 1.33539 0 2.12793 0 3.10557V7.5776C0 8.55524 0.544358 9.34778 1.21586 9.34778H5.52978C6.20128 9.34778 6.74564 8.55524 6.74564 7.5776V3.10557C6.74564 2.12793 6.20128 1.33539 5.52978 1.33539Z" fill="#8E8E8E"/><path d="M5.52978 0H1.21586C0.544358 0 0 0.792535 0 1.77018V6.2422C0 7.21984 0.544358 8.01238 1.21586 8.01238H5.52978C6.20128 8.01238 6.74564 7.21984 6.74564 6.2422V1.77018C6.74564 0.792535 6.20128 0 5.52978 0Z" fill="#E2E2E2"/></g></svg></div>`;
+            }
+
+            if (screenDef.centeredTitle) {
+                html += `<p class="ob-intro-title">${screenDef.centeredTitle}</p>`;
+            }
+            if (screenDef.introText) {
+                html += `<p class="ob-intro-body">${screenDef.introText}</p>`;
+            }
+            if (screenDef.numberedSteps) {
+                html += screenDef.numberedSteps.map((s, i) =>
+                    `<div class="step-card"><div class="step-card-number">${i + 1}</div><p class="step-card-label">${s}</p></div>`
+                ).join('');
+            }
+
+            if (screenDef.sectionTitle) {
+                html += `<h2>${screenDef.sectionTitle}</h2>`;
+            }
+
             if (screenDef.introBlock) {
                 const ib = screenDef.introBlock;
                 // Body is a SINGLE paragraph in Figma — collapse \n to space so the
@@ -3237,15 +3403,23 @@
                 // Blue filled disc (20px Ø inside 24px box, matches Figma's 8.33% inset)
                 // White "i" with 2.5px stem and dot above
                 const infoIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#006de3"/><circle cx="12" cy="7.75" r="1.4" fill="#ffffff"/><rect x="10.75" y="10.5" width="2.5" height="7" rx="1.25" fill="#ffffff"/></svg>`;
-                html += `<div class="screen-intro" role="status">
-                    <div class="screen-intro-icon">${infoIcon}</div>
+                // Documents glyph — Figma 31:11146 placeholder icon (Card Tile)
+                const docIcon = `<svg viewBox="0 0 32.2222 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M30.2222 0H7.55554C7.02559 0.00158273 6.51781 0.212805 6.14307 0.587535C5.76834 0.962265 5.55712 1.47005 5.55554 2V5.55554H2C1.47005 5.55712 0.962265 5.76834 0.587535 6.14307C0.212805 6.51781 0.00158273 7.02559 0 7.55554V38C0.00158273 38.5299 0.212805 39.0377 0.587535 39.4125C0.962265 39.7872 1.47005 39.9984 2 40H24.6666C25.1966 39.9984 25.7044 39.7872 26.0791 39.4125C26.4538 39.0377 26.665 38.5299 26.6666 38V34.4445H30.2222C30.7521 34.4429 31.2599 34.2317 31.6346 33.8569C32.0094 33.4822 32.2206 32.9744 32.2222 32.4445V2C32.2206 1.47005 32.0094 0.962265 31.6346 0.587535C31.2599 0.212805 30.7521 0.00158273 30.2222 0ZM22.6666 36H4V9.55554H5.55554V32.4445C5.55712 32.9744 5.76834 33.4822 6.14307 33.8569C6.51781 34.2317 7.02559 34.4429 7.55554 34.4445H22.6666V36ZM28.2222 30.4445H9.55554V4H28.2222V30.4445Z" fill="#272727"/><path d="M23.8757 12.2268H11.5447V16.2268H23.8757V12.2268Z" fill="#272727"/><path d="M17.2361 17.9182H11.5447V21.9182H17.2361V17.9182Z" fill="#272727"/><path d="M21.03 23.6096H11.5447V27.6096H21.03V23.6096Z" fill="#272727"/></svg>`;
+                const isCard = ib.style === 'card';
+                html += `<div class="screen-intro${isCard ? ' screen-intro--card' : ''}" role="status">
+                    <div class="screen-intro-icon">${isCard ? docIcon : infoIcon}</div>
                     <div class="screen-intro-content">
-                        <h2 class="screen-intro-heading">${ib.heading}</h2>
+                        ${ib.heading ? `<h2 class="screen-intro-heading">${ib.heading}</h2>` : ''}
                         <p class="screen-intro-body">${bodyText}</p>
                         <ul>${bullets}</ul>
                         ${ib.footer ? `<p class="screen-intro-footer">${ib.footer}</p>` : ''}
                     </div>
                 </div>`;
+            }
+
+            // Info alert — renders after the card/intro block (Figma 39:3507)
+            if (screenDef.infoAlert) {
+                html += `<div class="simple-alert" role="status"><div class="simple-alert-icon">${infoIconSvg}</div><p class="simple-alert-text">${screenDef.infoAlert}</p></div>`;
             }
 
             if (!screenDef.hideTitle) {
@@ -3368,7 +3542,7 @@
                 html += `<div class="custom-select-container">`;
                 html += `<button type="button" class="custom-select-trigger" id="${question.id}-trigger" onclick="toggleCustomSelectDropdown('${question.id}')">
                     <span class="custom-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select an option'}</span>
-                    <span class="custom-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="custom-select-arrow"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
                 </button>`;
                 html += `<div class="custom-select-dropdown" id="${question.id}-dropdown">`;
                 question.options.forEach(opt => {
@@ -3385,7 +3559,7 @@
                 html += `<div class="multi-select-container">`;
                 html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')" data-placeholder="${question.placeholder || 'Select options'}" data-selected-label="${question.selectedLabel || 'options'}">
                     <span class="multi-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select options'}</span>
-                    <span class="multi-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="multi-select-arrow"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
                 </button>`;
                 html += `<div class="multi-select-dropdown" id="${question.id}-dropdown">`;
                 question.options.forEach(opt => {
@@ -3554,31 +3728,42 @@
                 // Requirements list
                 html += `<div class="requirements-list">
                     <div class="requirement-item">
-                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 15.9522 12.0451" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.9522 1.41421L5.61421 11.7522C5.22369 12.1427 4.59052 12.1427 4.2 11.7522L0 7.55221L1.41421 6.138L4.90711 9.63089L14.538 0L15.9522 1.41421Z" fill="#272727"/></svg></div>
                         <div class="requirement-text">Clearly readable</div>
                     </div>
                     <div class="requirement-item">
-                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 15.9522 12.0451" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.9522 1.41421L5.61421 11.7522C5.22369 12.1427 4.59052 12.1427 4.2 11.7522L0 7.55221L1.41421 6.138L4.90711 9.63089L14.538 0L15.9522 1.41421Z" fill="#272727"/></svg></div>
                         <div class="requirement-text">Less than 5MB file size</div>
                     </div>
                     <div class="requirement-item">
-                        <div class="requirement-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                        <div class="requirement-checkmark"><svg viewBox="0 0 15.9522 12.0451" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.9522 1.41421L5.61421 11.7522C5.22369 12.1427 4.59052 12.1427 4.2 11.7522L0 7.55221L1.41421 6.138L4.90711 9.63089L14.538 0L15.9522 1.41421Z" fill="#272727"/></svg></div>
                         <div class="requirement-text">Saved as a PDF, PNG, JPEG, DOC, TXT, BMP, XLS or TIF file.</div>
                     </div>
                 </div>`;
 
                 // Upload area
-                html += `<div class="upload-area" onclick="document.getElementById('${question.id}-file-input').click()">
+                html += `<div class="upload-block">
+                    <p class="upload-area-title">Upload your document</p>
+                    <div class="upload-area" onclick="document.getElementById('${question.id}-file-input').click()">
                     <div class="upload-icon-wrapper">
-                        <svg width="72" height="68" viewBox="0 0 72 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M58 30C58 21.7157 51.2843 15 43 15C36.5 15 30.9 19.1 28.8 24.8C27.5 24.3 26 24 24.5 24C18 24 13 29 13 35.5C13 41.7 17.7 46.8 23.8 47.4C24.6 47.5 25.4 47.5 26.2 47.5H56C61.5 47.5 66 43 66 37.5C66 32.5 62.4 28.4 57.6 27.7C57.9 28.4 58 29.2 58 30Z" fill="#FFCB05"/>
-                            <path d="M36 26L36 42M36 26L30 32M36 26L42 32" stroke="#006DE3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="36" cy="62" r="5" fill="#006DE3"/>
-                            <line x1="36" y1="50" x2="36" y2="55" stroke="#006DE3" stroke-width="2" stroke-linecap="round"/>
+                        <svg width="72" height="67.5" viewBox="0 0 72 67.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg x="0" y="0" width="72" height="45.0652" viewBox="0 0 72 45.0652" preserveAspectRatio="none">
+                                <path d="M63.8172 16.8208C60.9125 6.766 52.0562 -0.37728 41.8389 0.0154314C35.1493 0.279496 29.2721 3.71233 25.3992 8.93945H24.9591C18.1137 9.20352 12.3517 13.7129 9.73815 20.0234C4.05061 20.8697 -0.21505 26.2391 0.00838894 32.5563C0.252141 39.2933 5.50635 44.5543 11.7491 44.3173C13.259 44.2631 57.2223 45.1231 58.8474 45.0621C66.4037 44.771 72.2808 37.9324 71.9896 29.7802C71.7797 23.9505 68.4552 19.0348 63.8172 16.8208V16.8208Z" fill="#FFCB05"/>
+                            </svg>
+                            <svg x="27.9" y="19.8" width="17.0951" height="22.4898" viewBox="0 0 17.0951 22.4898" preserveAspectRatio="none">
+                                <path d="M11.2314 11.11H17.0951L8.55 0L0 11.11H5.86363V19.6995V19.8121C5.86363 19.8121 5.86856 19.8377 5.86856 19.8479C5.94742 21.3173 7.11563 22.4898 8.55 22.4898C9.98438 22.4898 11.2413 21.2405 11.2413 19.6943C11.2413 19.6329 11.2364 19.5715 11.2314 19.51V11.11Z" fill="#296DDB"/>
+                            </svg>
+                            <svg x="32.4" y="44.1" width="8.1" height="8.1" viewBox="0 0 8.1 8.1" preserveAspectRatio="none">
+                                <circle cx="4.05" cy="4.05" r="4.05" fill="#006DE3"/>
+                            </svg>
+                            <svg x="29.7" y="54" width="13.5" height="13.5" viewBox="0 0 13.5 13.5" preserveAspectRatio="none">
+                                <circle cx="6.75" cy="6.75" r="6.75" fill="#006DE3"/>
+                            </svg>
                         </svg>
                     </div>
-                    <p class="upload-text">Upload a document</p>
+                    <p class="upload-text">Drag and drop your file here</p>
                     <button class="browse-button" type="button" onclick="document.getElementById('${question.id}-file-input').click()">Browse</button>
+                    </div>
                 </div>`;
 
                 html += `<input type="file" id="${question.id}-file-input" class="file-input-hidden"
@@ -3641,7 +3826,7 @@
             let html = `<div class="multi-select-container">`;
             html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')">
                 <span class="multi-select-placeholder" id="${question.id}-placeholder">Select countries</span>
-                <span class="multi-select-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6L8 11L13 6" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="multi-select-arrow"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
             </button>`;
             html += `<div class="multi-select-dropdown" id="${question.id}-dropdown">`;
             html += `<div class="multi-select-search">
