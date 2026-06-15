@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dv-desktop">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,6 +78,7 @@
             background: var(--bx-bg);
             box-shadow: 0 0 28px rgba(0, 0, 0, 0.12);
             overflow: hidden;
+            position: relative; /* positioning context so the prototype copy-tool overlays confine to the phone frame */
         }
 
         .content-area {
@@ -556,36 +557,35 @@
         }
         .card-tile {
             display: flex;
-            flex-direction: column;
-            gap: 24px;
+            flex-direction: row;
+            gap: 12px;
             align-items: flex-start;
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 16px;
             width: 100%;
             box-sizing: border-box;
         }
         .card-tile-icon {
-            flex: 0 0 48px;
-            width: 48px;
-            height: 48px;
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
         }
         .card-tile-icon svg { display: block; }
         .card-tile-text {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            width: 100%;
+            gap: 4px;
+            flex: 1 1 0;
+            min-width: 0;
         }
         .card-tile-heading {
             margin: 0;
-            font-size: 20px;
-            font-weight: 500;
-            line-height: 24px;
-            letter-spacing: -0.2px;
+            font: 500 16px/22px var(--bx-font);
+            letter-spacing: 0;
             color: #272727;
         }
         .card-tile-body {
@@ -2138,6 +2138,22 @@
             border-radius: 2px;
         }
         button.drawer-table-title svg { flex-shrink: 0; }
+        /* Inline blue link used within drawer body text */
+        button.drawer-inline-link {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: #006de3;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        button.drawer-inline-link:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
         .drawer-table {
             width: 100%;
             table-layout: fixed;
@@ -2174,6 +2190,7 @@
         .drawer-steps li { margin-bottom: 8px; }
         .drawer-steps li:last-child { margin-bottom: 0; }
         .drawer-label { font-weight: 600; color: #272727; }
+        .drawer-subhead { font: 400 16px/22px var(--bx-font); color: #515151; }
         .drawer-table th {
             font-weight: 600;
             color: #272727;
@@ -2339,6 +2356,54 @@
         }
         .data-card-row .data-card-row-value { font-weight: 500; margin-left: auto; }
 
+        /* "What to have ready" prep card on the Before-we-begin screen */
+        .prep-card {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .prep-card-body { flex: 1 1 0; min-width: 0; }
+        .prep-card-intro {
+            margin: 4px 0 12px 0;
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+        }
+        .prep-card-subhead {
+            margin: 16px 0 4px 0;
+            font: 500 16px/22px var(--bx-font);
+            color: #272727;
+            letter-spacing: 0;
+        }
+        .prep-card-list {
+            margin: 0;
+            padding: 0 0 0 20px;
+            list-style: disc;
+        }
+        .prep-card-list li {
+            font: 400 16px/22px var(--bx-font);
+            color: #272727;
+            margin: 0 0 4px 0;
+        }
+        .prep-card-list li:last-child { margin-bottom: 0; }
+        button.prep-card-link {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: #006de3;
+            cursor: pointer;
+            text-align: left;
+            text-decoration: underline;
+        }
+        button.prep-card-link:focus-visible {
+            outline: 2px solid #3f3f3f;
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
         /* BIC code list inside the sector data card */
         .bic-code-list {
             display: flex;
@@ -2486,6 +2551,10 @@
             margin: 0 0 12px 0;
         }
         .accordion-content p:last-child { margin-bottom: 0; }
+        .accordion-subhead {
+            font: 600 16px/22px var(--bx-font);
+            color: #272727;
+        }
         .accordion-list {
             margin: 0;
             padding-left: 22px;
@@ -2890,6 +2959,170 @@
                 padding: 40px max(24px, calc((100% - 816px) / 2));
             }
         }
+
+        /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — styles; remove for production ===== */
+        .copy-changes-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 8px 16px;
+            flex-wrap: wrap;
+        }
+        .copy-changes-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #006de3;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 5px 12px;
+            font: 600 13px/1 var(--bx-font);
+            cursor: pointer;
+        }
+        .copy-changes-btn:hover { background: #0a58c2; }
+        .copy-hint {
+            font: 400 12px/1.3 var(--bx-font);
+            color: #6b6b6b;
+        }
+        .copy-intro {
+            background: #eef4fd;
+            border: 1px solid #cfe0fa;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+        }
+        .copy-intro-title { margin: 0 0 6px; font: 600 15px/20px var(--bx-font); color: #272727; }
+        .copy-intro-body { margin: 0 0 8px; font: 400 14px/20px var(--bx-font); color: #515151; }
+        .copy-intro-steps { margin: 0 0 8px; padding-left: 20px; font: 400 14px/20px var(--bx-font); color: #515151; }
+        .copy-intro-steps li { margin: 0 0 4px; }
+        .copy-intro-steps li:last-child { margin-bottom: 0; }
+        .copy-intro-demo { margin: 0; font: 400 14px/20px var(--bx-font); color: #515151; }
+        .copy-demo-text { color: #272727; }
+
+        /* Edit popup (reuses the drawer overlay backdrop pattern) */
+        .copy-editor-overlay, .copy-drawer-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            z-index: 60;
+        }
+        .copy-editor-overlay.open, .copy-drawer-overlay.open { display: flex; }
+        /* In desktop view the phone frame is full-page-tall, so anchor these overlays to
+           the viewport (like the help drawer) instead of the tall container — otherwise the
+           bottom-anchored sheet lands far below the fold. */
+        html.dv-desktop .copy-editor-overlay,
+        html.dv-desktop .copy-drawer-overlay { position: fixed; }
+        .copy-editor-overlay { align-items: center; justify-content: center; padding: 24px; }
+        .copy-editor-modal {
+            background: #fff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 360px;
+            max-height: 80%;
+            overflow-y: auto;
+            padding: 20px;
+            font-family: var(--bx-font);
+        }
+        .copy-editor-modal h3 { margin: 0 0 16px; font: 600 18px/24px var(--bx-font); color: #272727; }
+        .copy-editor-field { margin-bottom: 14px; }
+        .copy-editor-field-label { font: 600 13px/18px var(--bx-font); color: #6b6b6b; margin-bottom: 4px; }
+        .copy-editor-old {
+            font: 400 15px/21px var(--bx-font);
+            color: #515151;
+            background: #f4f4f4;
+            border-radius: 6px;
+            padding: 8px 10px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-editor-new {
+            width: 100%;
+            min-height: 84px;
+            box-sizing: border-box;
+            font: 400 15px/21px var(--bx-font);
+            color: #272727;
+            border: 1.5px solid #b3b3b3;
+            border-radius: 6px;
+            padding: 8px 10px;
+            resize: vertical;
+        }
+        .copy-editor-new:focus { outline: none; border-color: #006de3; }
+        .copy-editor-actions { display: flex; gap: 10px; margin-top: 6px; }
+        .copy-editor-actions button {
+            flex: 1;
+            border-radius: 22px;
+            padding: 10px 12px;
+            font: 600 15px/1 var(--bx-font);
+            cursor: pointer;
+        }
+        .copy-editor-apply { background: #006de3; color: #fff; border: none; }
+        .copy-editor-apply:hover { background: #0a58c2; }
+        .copy-editor-cancel { background: #fff; color: #006de3; border: 1.5px solid #006de3; }
+
+        /* Changes drawer (reuses .drawer-sheet styling via shared classes) */
+        .copy-drawer-overlay { align-items: flex-end; justify-content: center; }
+        .copy-drawer-sheet {
+            background: #fff;
+            width: 100%;
+            max-height: 80%;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--bx-font);
+        }
+        .copy-drawer-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #ececec;
+        }
+        .copy-drawer-head h3 { margin: 0; font: 600 18px/24px var(--bx-font); color: #272727; }
+        .copy-drawer-close { background: none; border: none; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+        .copy-drawer-close svg { width: 24px; height: 24px; }
+        .copy-drawer-list { overflow-y: auto; padding: 8px 16px; flex: 1; }
+        .copy-drawer-empty { color: #6b6b6b; font: 400 16px/22px var(--bx-font); padding: 16px 0; }
+        .copy-drawer-group { margin: 16px 0 6px; font: 600 16px/22px var(--bx-font); color: #272727; }
+        .copy-drawer-group:first-child { margin-top: 4px; }
+        button.copy-drawer-group-link {
+            display: block;
+            background: none;
+            border: none;
+            padding: 0;
+            color: #006de3;
+            text-align: left;
+            cursor: pointer;
+        }
+        button.copy-drawer-group-link:hover { text-decoration: underline; }
+        .copy-drawer-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .copy-drawer-texts { flex: 1; font: 400 16px/22px var(--bx-font); word-break: break-word; }
+        .copy-line { display: flex; gap: 8px; }
+        .copy-line + .copy-line { margin-top: 3px; }
+        .copy-label { flex-shrink: 0; width: 38px; white-space: nowrap; color: #9a9a9a; }
+        .copy-old { color: #8a8a8a; }
+        .copy-new { color: #272727; }
+        .copy-row-remove {
+            background: none; border: none; cursor: pointer;
+            color: #006DE3; padding: 0; flex-shrink: 0;
+            align-self: flex-end;       /* sit on the bottom (New) line */
+            display: flex; align-items: center;
+        }
+        .copy-row-remove svg { width: 18px; height: 18px; display: block; }
+        .copy-drawer-foot { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid #ececec; }
+        .copy-drawer-foot button { flex: 1; border-radius: 22px; padding: 10px 12px; font: 600 15px/1 var(--bx-font); cursor: pointer; }
+        .copy-drawer-copy { background: #006de3; color: #fff; border: none; }
+        .copy-drawer-copy:hover { background: #0a58c2; }
+        .copy-drawer-reset { background: #fff; color: #b00020; border: 1.5px solid #d9b3ba; }
+        /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
     </style>
 </head>
 <body>
@@ -2931,7 +3164,7 @@
                     </div>
                 </div>
                 <!-- Prototype-only view toggle (mobile ⇄ desktop). Sits on the same row as the step shortcuts. Not part of the real product. -->
-                <button id="viewToggle" class="view-toggle" type="button" onclick="toggleViewMode()" aria-label="Desktop view active — switch to mobile">
+                <button id="viewToggle" class="view-toggle" type="button" onclick="toggleViewMode()" aria-label="Mobile view active — switch to desktop">
                     <span class="vt-seg vt-mobile" aria-hidden="true" title="Mobile view">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="2.5" width="10" height="19" rx="2.2" stroke="currentColor" stroke-width="1.8"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
@@ -2940,6 +3173,13 @@
                     </span>
                 </button>
             </div>
+
+            <!-- ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — top bar button (remove for production) ===== -->
+            <div class="copy-ui copy-changes-bar">
+                <button id="copyChangesBtn" type="button" class="copy-changes-btn" onclick="openCopyDrawer()" style="display:none;">Copy changes · <span id="copyChangesCount">0</span></button>
+                <span class="copy-hint" id="copyHint" style="display:none;">Right-click text to change copy</span>
+            </div>
+            <!-- ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== -->
 
             <!-- Header -->
             <div class="header">
@@ -3009,6 +3249,44 @@
                 <div class="drawer-home-indicator"><span></span></div>
             </div>
         </div>
+
+        <!-- ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — edit popup + changes drawer (remove for production) ===== -->
+        <div id="copyEditorOverlay" class="copy-ui copy-editor-overlay" onclick="closeCopyEditor(event)">
+            <div class="copy-editor-modal" onclick="event.stopPropagation()">
+                <h3>Suggest new copy</h3>
+                <div class="copy-editor-field">
+                    <div class="copy-editor-field-label">Old</div>
+                    <div class="copy-editor-old" id="copyEditorOld"></div>
+                </div>
+                <div class="copy-editor-field">
+                    <div class="copy-editor-field-label">New</div>
+                    <textarea class="copy-editor-new" id="copyEditorNew" rows="3"></textarea>
+                </div>
+                <div class="copy-editor-actions">
+                    <button type="button" class="copy-editor-cancel" data-copy-cancel onclick="closeCopyEditor(event)">Cancel</button>
+                    <button type="button" class="copy-editor-apply" onclick="applyCopyEdit()">Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="copyDrawerOverlay" class="copy-ui copy-drawer-overlay" onclick="closeCopyDrawer(event)">
+            <div class="copy-drawer-sheet" onclick="event.stopPropagation()">
+                <div class="copy-drawer-head">
+                    <h3>Request copy changes</h3>
+                    <button type="button" class="copy-drawer-close" aria-label="Close" onclick="closeCopyDrawerForce()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="copy-drawer-list" id="copyDrawerList"></div>
+                <div class="copy-drawer-foot">
+                    <button type="button" class="copy-drawer-reset" onclick="resetAllCopyChanges()">Reset all</button>
+                    <button type="button" class="copy-drawer-copy" id="copyDrawerCopyBtn" onclick="copyChangesToClipboard()">Copy to clipboard</button>
+                </div>
+            </div>
+        </div>
+        <!-- ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== -->
     </div>
 
     <script>
@@ -3109,12 +3387,12 @@
                         helpText: {
                             title: 'What does this affect?',
                             linkText: 'What does this affect?',
-                            intro: '<button type="button" class="drawer-table-title" onclick="goToScreen(6)">Industry regulation</button>',
                             outro: `<p style="margin:0 0 16px;"><span class="drawer-label">Prototype:</span> selecting a profession shows its BIC codes here on the settings screen.</p>
                                 <p style="margin:0 0 8px;"><span class="drawer-label">Real system:</span></p>
                                 <ol class="drawer-steps">
                                     <li>The customer selects their BIC code early in their enquiry.</li>
-                                    <li>The BIC code sets whether the "Who are you regulated by?" question appears, and which regulators are listed.</li>
+                                    <li>If their BIC code is regulated, <button type="button" class="drawer-inline-link" onclick="goToScreen(1)">Before we begin</button> lists their regulator membership numbers as something to have ready.</li>
+                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(6)">Industry regulation</button> screen, the BIC code sets whether the "Who are you regulated by?" question appears, and which regulators are listed.</li>
                                     <li>They select their regulator(s) and enter each registration number.</li>
                                 </ol>`
                         }
@@ -3190,21 +3468,39 @@
                                     <li>Where to send communications</li>
                                 </ul>`
                         }
+                    },
+                    /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — not part of the real product; remove for production ===== */
+                    {
+                        id: 'protoCopyEditor',
+                        type: 'radio',
+                        label: 'Request copy changes',
+                        options: ['Yes', 'No']
+                        // No help-link: the blue "Copy review mode is on" box (shown when set to
+                        // Yes) is the explanation.
                     }
+                    /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
                 ]
             },
             {
-                title: 'Before we get started',
+                title: 'Before we begin',
                 hideTitle: true,
                 introBlock: {
                     style: 'card-tile',
-                    sectionTitle: 'Some title',
                     icon: 'briefcase',
-                    heading: 'We need some more information to process your loan application.',
-                    body: 'This helps us:',
-                    bullets: ['Verify your business details', 'Meet legal requirements', 'Prevent fraud and financial crime'],
+                    heading: 'We need more information about your business so we can:',
+                    bullets: ['Confirm your details', 'Meet legal requirements', 'Prevent fraud and financial crime'],
+                    prepCard: {
+                        label: 'Please have ready:',
+                        always: [{ label: 'Proof of your trading address', linkText: 'see accepted documents', drawer: 'proofOfAddress' }],
+                        // Added to the primary list only when the selected profession is regulated.
+                        regulatorItem: 'Regulator membership numbers (e.g. Law Society number)',
+                        conditionalIntro: 'If relevant, please find your:',
+                        conditional: [
+                            'VAT registration number',
+                            'Foreign tax identification numbers'
+                        ]
+                    },
                 },
-                infoAlert: 'We only ask for essential information.',
                 questions: []
             },
             {
@@ -3819,6 +4115,53 @@
             }
         ];
 
+        // Single source of truth for the "Documents we accept" list. Used by
+        // both the Step 1 prep-card help-drawer and the Step 5 upload accordion.
+        const acceptedDocuments = [
+            { heading: 'From the past 3 months:', items: [
+                '<strong>Bank or credit card statement</strong> with at least 1 transaction (not a Barclays account or digital-only bank)',
+                '<strong>Utility bill</strong>'
+            ]},
+            { heading: 'From the past 12 months:', items: [
+                '<strong>Companies House letter</strong>',
+                '<strong>Regulator letter</strong> (e.g. FCA or The Law Society)',
+                '<strong>Accountant or solicitor letter</strong> on headed paper confirming your trading address',
+                '<strong>Business rates bill</strong>'
+            ]},
+            { heading: 'Current documents:', items: [
+                '<strong>HMRC letter</strong> from this financial year',
+                '<strong>Insurance policy, renewal, certificate or schedule</strong>',
+                '<strong>Property lease, licence or rental agreement</strong>'
+            ]}
+        ];
+
+        // Render the accepted-documents list. style 'drawer' uses the help-drawer
+        // look; style 'accordion' uses the Step 5 accordion look.
+        function buildAcceptedDocsHtml(style) {
+            return acceptedDocuments.map((g, idx) => {
+                // Match the on-screen prep-card subhead rhythm: 16px above (0 for the
+                // first group), 8px below.
+                const margin = idx === 0 ? '0 0 8px' : '16px 0 8px';
+                if (style === 'accordion') {
+                    return `<p class="accordion-subhead" style="margin:${margin};">${g.heading}</p>`
+                        + `<ul class="accordion-list">${g.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+                }
+                return `<p class="drawer-subhead" style="margin:${margin};">${g.heading}</p>`
+                    + `<ul class="drawer-bullets">${g.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+            }).join('');
+        }
+
+        // Help-drawer content opened from "What to have ready" prep-card links.
+        const prepDrawers = {
+            proofOfAddress: {
+                title: 'Documents we accept',
+                // Wrapped in a single div so the drawer's flex `gap` doesn't add
+                // space between every heading/list — keeps block-flow margins,
+                // matching the on-screen prep-card spacing (16px above / 8px below headings).
+                build: () => `<div>${buildAcceptedDocsHtml('drawer')}</div>`
+            }
+        };
+
         // Regulator / verification scheme mapping by profession (source: BIC_Regulator_Mapping_v13.xlsx, column C)
         const professionRegulators = {
             "Farming": [{"name": "Farm Subsidies — Defra", "field": "Single Business Identifier (SBI)", "hint": "9 digits, e.g. 123456789"}],
@@ -3999,7 +4342,9 @@
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['protoCopyEditor'] = 'No'; /* PROTOTYPE-ONLY: COPY CHANGE TOOL — off by default */
             formData['regulatorRegion'] = 'England';
+            initCopyEditor(); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             renderScreen(0);
             window.addEventListener('beforeunload', saveFormData);
         }
@@ -4075,10 +4420,12 @@
             if (screenDef.introBlock && screenDef.introBlock.style === 'card-tile') {
                 const ib = screenDef.introBlock;
                 // Card Tile Section — Figma 31:11144. Briefcase icon 31:9920 (48px box, glyph 38.25×35).
-                const briefcaseIcon = `<svg width="38.25" height="35" viewBox="0 0 38.25 35" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.25 6.3125H26.5625V2C26.5609 1.47005 26.3497 0.962265 25.975 0.587535C25.6002 0.212805 25.0924 0.00158273 24.5625 0H14.75C14.2201 0.00158273 13.7123 0.212805 13.3375 0.587535C12.9628 0.962265 12.7516 1.47005 12.75 2V6.3125H2C1.47005 6.31408 0.962265 6.5253 0.587535 6.90003C0.212805 7.27477 0.00158273 7.78255 0 8.3125V33C0.00158273 33.5299 0.212805 34.0377 0.587535 34.4125C0.962265 34.7872 1.47005 34.9984 2 35H36.25C36.7799 34.9984 37.2877 34.7872 37.6625 34.4125C38.0372 34.0377 38.2484 33.5299 38.25 33V8.3125C38.2484 7.78255 38.0372 7.27477 37.6625 6.90003C37.2877 6.5253 36.7799 6.31408 36.25 6.3125ZM16.75 4H22.5625V6.3125H16.75V4ZM34.25 31H4V21.0625H17.5312V21.3125C17.5328 21.8424 17.744 22.3502 18.1188 22.725C18.4935 23.0997 19.0013 23.3109 19.5312 23.3125H19.7812C20.3112 23.3109 20.819 23.0997 21.1937 22.725C21.5684 22.3502 21.7797 21.8424 21.7812 21.3125V21.0625H34.25V31ZM34.25 17.0625H21.5991C21.4425 16.7106 21.1877 16.4114 20.8652 16.2008C20.5428 15.9901 20.1664 15.877 19.7812 15.875H19.5312C19.1461 15.877 18.7697 15.9902 18.4473 16.2008C18.1248 16.4114 17.87 16.7106 17.7134 17.0625H4V10.3125H34.25V17.0625Z" fill="#272727"/></svg>`;
+                // Briefcase icon at 24×24 to match the Figma "Multipurpose panel" (242:4461).
+                // Same glyph as before (vector inset 3px within the 24px box, per Figma).
+                const briefcaseIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path transform="translate(3,3)" d="M18.125 3.15625H13.2812V1C13.2805 0.735027 13.1748 0.481133 12.9875 0.293767C12.8001 0.106402 12.5462 0.000791363 12.2812 0H7.375C7.11003 0.000791363 6.85613 0.106402 6.66877 0.293767C6.4814 0.481133 6.37579 0.735027 6.375 1V3.15625H1C0.735027 3.15704 0.481133 3.26265 0.293767 3.45002C0.106402 3.63738 0.000791363 3.89128 0 4.15625V16.5C0.000791363 16.765 0.106402 17.0189 0.293767 17.2062C0.481133 17.3936 0.735027 17.4992 1 17.5H18.125C18.39 17.4992 18.6439 17.3936 18.8312 17.2062C19.0186 17.0189 19.1242 16.765 19.125 16.5V4.15625C19.1242 3.89128 19.0186 3.63738 18.8312 3.45002C18.6439 3.26265 18.39 3.15704 18.125 3.15625ZM8.375 2H11.2812V3.15625H8.375V2ZM17.125 15.5H2V10.5312H8.76562V10.6562C8.76641 10.9212 8.87202 11.1751 9.05939 11.3625C9.24675 11.5498 9.50065 11.6555 9.76562 11.6562H9.89062C10.1556 11.6555 10.4095 11.5498 10.5969 11.3625C10.7842 11.1751 10.8898 10.9212 10.8906 10.6562V10.5312H17.125V15.5ZM17.125 8.53125H10.7996C10.7213 8.35531 10.5938 8.20571 10.4326 8.10039C10.2714 7.99507 10.0832 7.93851 9.89062 7.9375H9.76562C9.57305 7.93852 9.38486 7.99508 9.22363 8.1004C9.06241 8.20571 8.935 8.35532 8.85669 8.53125H2V5.15625H17.125V8.53125Z" fill="#272727"/></svg>`;
                 const consentId = `card-tile-consent-${screenIndex}`;
                 html += `<div class="card-tile-section" role="status">
-                    <h2 class="card-tile-title">${ib.sectionTitle}</h2>
+                    ${ib.sectionTitle ? `<h2 class="card-tile-title">${ib.sectionTitle}</h2>` : ''}
                     <div class="card-tile">
                         <div class="card-tile-icon">${briefcaseIcon}</div>
                         <div class="card-tile-text">
@@ -4093,6 +4440,44 @@
                         <span class="card-tile-consent-label">${ib.consent}</span>
                     </label>` : ''}
                 </div>`;
+                // "What to have ready" prep card — lists business info the customer
+                // should gather before starting (reference numbers etc. they won't recall).
+                if (ib.prepCard) {
+                    const pc = ib.prepCard;
+                    // Primary list: always-needed items, plus regulator membership numbers
+                    // only when the selected profession is actually regulated.
+                    const primary = [...(pc.always || [])];
+                    if (pc.regulatorItem && (professionRegulators[formData['protoRegulatedSector']] || []).length) {
+                        primary.push(pc.regulatorItem);
+                    }
+                    // An item can be a plain string, or an object with a `drawer` key
+                    // that turns it into a link opening the matching help-drawer.
+                    const prepItem = i => {
+                        if (typeof i === 'string') return `<li>${i}</li>`;
+                        const link = `<button type="button" class="prep-card-link" onclick="openPrepDrawer('${i.drawer}')">${i.linkText || i.label}</button>`;
+                        // With linkText, the label stays plain text and the link trails it.
+                        return i.linkText
+                            ? `<li>${i.label} — ${link}</li>`
+                            : `<li>${link}</li>`;
+                    };
+                    // Attachment icon at 24×24 — Figma "Multipurpose panel" (242:4462),
+                    // vector inset within the 24px box (3px sides, 2px top/bottom).
+                    const attachmentIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(3,2)"><path d="M8.5 2.99645V2.85445C8.5105 2.20609 8.29755 1.57388 7.89693 1.064C7.49631 0.554121 6.93243 0.197643 6.3 0.0544473C5.90076 -0.0261261 5.48862 -0.0171758 5.09325 0.080654C4.69788 0.178484 4.32912 0.362759 4.01352 0.620214C3.69792 0.877668 3.44333 1.2019 3.26807 1.56955C3.09282 1.93721 3.00126 2.33916 3 2.74645V8.49645H5V2.74645C5 2.54753 5.07902 2.35677 5.21967 2.21612C5.36032 2.07546 5.55109 1.99645 5.75 1.99645C5.94891 1.99645 6.13968 2.07546 6.28033 2.21612C6.42098 2.35677 6.5 2.54753 6.5 2.74645V8.11345C6.51292 8.68688 6.31486 9.2451 5.94342 9.68217C5.57198 10.1192 5.05301 10.4047 4.485 10.4844C4.17149 10.5169 3.85467 10.4832 3.55499 10.3856C3.25532 10.2879 2.97946 10.1285 2.74526 9.91756C2.51106 9.70664 2.32372 9.44892 2.19534 9.16107C2.06697 8.87322 2.00042 8.56163 2 8.24645V2.74645H0V8.24645C0.00305249 9.32772 0.4187 10.367 1.16208 11.1522C1.90546 11.9374 2.92052 12.4093 4 12.4714V18.9964C4 19.2617 4.10536 19.516 4.29289 19.7036C4.48043 19.8911 4.73478 19.9964 5 19.9964H17C17.2652 19.9964 17.5196 19.8911 17.7071 19.7036C17.8946 19.516 18 19.2617 18 18.9964V3.99645C18 3.73123 17.8946 3.47688 17.7071 3.28934C17.5196 3.1018 17.2652 2.99645 17 2.99645H8.5ZM16 17.9964H6V12.1094C6.62555 11.8251 7.17286 11.3934 7.59503 10.8512C8.01719 10.309 8.30164 9.67261 8.424 8.99645H14V6.99645H8.5V4.99645H16V17.9964Z" fill="#272727"/><path d="M14 13.9964H8V15.9964H14V13.9964Z" fill="#272727"/><path d="M14 10.4964H8V12.4964H14V10.4964Z" fill="#272727"/></g></svg>`;
+                    html += `<div class="data-card prep-card">`;
+                    html += `<div class="card-tile-icon">${attachmentIcon}</div>`;
+                    html += `<div class="prep-card-body">`;
+                    html += `<div class="data-card-label">${pc.label}</div>`;
+                    if (pc.intro) html += `<p class="prep-card-intro">${pc.intro}</p>`;
+                    if (primary.length) {
+                        html += `<ul class="prep-card-list">${primary.map(prepItem).join('')}</ul>`;
+                    }
+                    if (pc.conditional && pc.conditional.length) {
+                        if (pc.conditionalIntro) html += `<p class="prep-card-subhead">${pc.conditionalIntro}</p>`;
+                        html += `<ul class="prep-card-list">${pc.conditional.map(prepItem).join('')}</ul>`;
+                    }
+                    html += `</div>`;
+                    html += `</div>`;
+                }
             } else if (screenDef.introBlock) {
                 const ib = screenDef.introBlock;
                 // Each \n in the body starts a new paragraph (e.g. break before "This helps us:").
@@ -4132,6 +4517,21 @@
                 html += renderQuestion(q, screenIndex);
             });
 
+            /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — explainer + demo, shown directly below the Copy changes Y/N radio ===== */
+            if (screenDef.isPrescreen && copyEditorEnabled()) {
+                html += `<div class="copy-intro" role="note">
+                    <p class="copy-intro-title">Request copy changes mode is on</p>
+                    <ol class="copy-intro-steps">
+                        <li>Right-click (or long-press) text to request new wording.</li>
+                        <li>In the popup, enter New text, then Apply.</li>
+                        <li>Press "Copy changes" button to see and copy all changes.</li>
+                        <li>Paste them into an email and send to Jifiti.</li>
+                    </ol>
+                    <p class="copy-intro-demo">Try it: <span class="copy-demo-text">Right-click this sentence to change it.</span></p>
+                </div>`;
+            }
+            /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
+
             if (screenDef.requiresSummary) {
                 html += `<div class="sticky-summary" id="summary-${screenIndex}"><div id="summary-content-${screenIndex}"></div></div>`;
             }
@@ -4158,6 +4558,14 @@
                     updateRevenueSummary('revenueSources');
                 }
             }
+            // Restore the "Other" sources of revenue follow-up textarea
+            if (formData['revenueSourcesOtherDetails']) {
+                const otherEl = document.getElementById('revenueSourcesOtherDetails');
+                if (otherEl) {
+                    otherEl.value = formData['revenueSourcesOtherDetails'];
+                    updateCharCounter('revenueSourcesOtherDetails', 250);
+                }
+            }
             if (formData['operationLocation'] && document.getElementById('operationLocation-trigger')) {
                 selectCustomOption('operationLocation', formData['operationLocation'], screenIndex);
             }
@@ -4169,6 +4577,11 @@
             if (screenDef.requiresSummary) {
                 updateSummary(screenIndex);
             }
+
+            /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — apply copy overrides after each render ===== */
+            applyTextOverrides(document.getElementById('contentArea'));
+            updateCopyChangesButton();
+            /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
         }
 
         // Render a single question
@@ -4208,6 +4621,13 @@
             }
             let html = prefix + `<div class="question-group" id="q-${question.id}"${groupStyle}>`;
 
+            // Accessibility (Barclays): for dropdowns in the flow, the placeholder
+            // instruction is shown as a persistent hint above the control rather than
+            // inside it. Excludes the Prototype-settings screen (which uses defaults).
+            const isDropdown = question.type === 'select' || question.type === 'multi-select';
+            const placeholderAsHint = isDropdown && !(screenDefinitions[screenIndex] && screenDefinitions[screenIndex].isPrescreen);
+            const ddlPlaceholder = question.placeholder || (question.type === 'multi-select' ? 'Select options' : 'Select an option');
+
             // Main question (skip default label/hint for document-upload and bic-card — they provide their own headings)
             // A hintless textarea renders its label inside the hint/counter row instead (see below),
             // so the label wraps on the same line as the character counter.
@@ -4220,6 +4640,8 @@
                 // Textarea has its own hint+counter row rendered alongside the field — skip the standard hint here.
                 if (question.hint && question.type !== 'textarea') {
                     html += `<div class="hint-text" id="hint-${question.id}">${question.hint}</div>`;
+                } else if (placeholderAsHint) {
+                    html += `<div class="hint-text" id="hint-${question.id}">${ddlPlaceholder}</div>`;
                 }
             }
 
@@ -4263,8 +4685,8 @@
                 }
             } else if (question.type === 'select') {
                 html += `<div class="custom-select-container">`;
-                html += `<button type="button" class="custom-select-trigger" id="${question.id}-trigger" onclick="toggleCustomSelectDropdown('${question.id}')" onkeydown="handleSelectTriggerKeydown(event, '${question.id}')" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="label-${question.id} ${question.id}-placeholder">
-                    <span class="custom-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select an option'}</span>
+                html += `<button type="button" class="custom-select-trigger" id="${question.id}-trigger" onclick="toggleCustomSelectDropdown('${question.id}')" onkeydown="handleSelectTriggerKeydown(event, '${question.id}')" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="label-${question.id} ${question.id}-placeholder"${placeholderAsHint ? ` aria-describedby="hint-${question.id}"` : ''}>
+                    <span class="custom-select-placeholder" id="${question.id}-placeholder">${placeholderAsHint ? '' : (question.placeholder || 'Select an option')}</span>
                     <span class="custom-select-arrow"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
                 </button>`;
                 html += `<div class="custom-select-dropdown" id="${question.id}-dropdown" role="listbox" aria-labelledby="label-${question.id}">`;
@@ -4287,8 +4709,8 @@
                 }
             } else if (question.type === 'multi-select') {
                 html += `<div class="multi-select-container">`;
-                html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')" onkeydown="handleMultiSelectTriggerKeydown(event, '${question.id}')" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="label-${question.id} ${question.id}-placeholder" data-placeholder="${question.placeholder || 'Select options'}" data-selected-label="${question.selectedLabel || 'options'}">
-                    <span class="multi-select-placeholder" id="${question.id}-placeholder">${question.placeholder || 'Select options'}</span>
+                html += `<button type="button" class="multi-select-trigger" id="${question.id}-trigger" onclick="toggleMultiSelectDropdown('${question.id}')" onkeydown="handleMultiSelectTriggerKeydown(event, '${question.id}')" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="label-${question.id} ${question.id}-placeholder"${placeholderAsHint ? ` aria-describedby="hint-${question.id}"` : ''} data-placeholder="${question.placeholder || 'Select options'}" data-selected-label="${question.selectedLabel || 'options'}"${placeholderAsHint ? ' data-placeholder-hidden="true"' : ''}>
+                    <span class="multi-select-placeholder" id="${question.id}-placeholder">${placeholderAsHint ? '' : (question.placeholder || 'Select options')}</span>
                     <span class="multi-select-arrow"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
                 </button>`;
                 html += `<div class="multi-select-dropdown" id="${question.id}-dropdown" role="group" aria-labelledby="label-${question.id}">`;
@@ -4318,6 +4740,17 @@
                 }
                 // Add follow-up section for revenue sources
                 if (question.id === 'revenueSources') {
+                    // Follow-up shown when "Other" is selected as a revenue source.
+                    // Sits beneath the dropdown, before "How is your revenue split?".
+                    // Same format as "Describe your secondary line of business".
+                    html += `<div class="question-group" id="q-revenueSourcesOtherDetails" style="display:none; margin-top: 28px; margin-bottom: 0;">`;
+                    html += `<div class="textarea-hint-row textarea-hint-row--label">`;
+                    html += `<label class="question-label" id="label-revenueSourcesOtherDetails">Describe your 'other' sources of revenue</label>`;
+                    html += `<div class="char-counter" id="counter-revenueSourcesOtherDetails">0/250</div>`;
+                    html += `</div>`;
+                    html += `<textarea id="revenueSourcesOtherDetails" maxlength="250" aria-labelledby="label-revenueSourcesOtherDetails"
+                        oninput="updateCharCounter('revenueSourcesOtherDetails', 250); handleInputChange('revenueSourcesOtherDetails', null, ${screenIndex}, false)"></textarea>`;
+                    html += `</div>`;
                     html += `<div class="follow-up-group revenue-split-group" id="revenue-split-${question.id}">`;
                     html += `<label class="question-label">How is your revenue split?</label>`;
                     html += `<div class="hint-text">Enter estimates that add up to 100%.</div>`;
@@ -4361,9 +4794,9 @@
                     oninput="handleInputChange('${question.id}', null, ${screenIndex}, false)">`;
                 if (question.helpText) {
                     const linkLabel = question.helpText.linkText || 'View examples';
-                    html += `<button class="help-link" onclick="openDrawer('${question.id}')">
+                    html += `<div style="margin-top: 12px;"><button class="help-link" onclick="openDrawer('${question.id}')">
                         ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
-                    </button>`;
+                    </button></div>`;
                 }
             } else if (question.type === 'country-multi') {
                 html += renderCountryMultiSelect(question);
@@ -4435,18 +4868,7 @@
                             </svg>
                         </button>
                         <div class="accordion-content" id="${question.id}-accept">
-                            <ul class="accordion-list">
-                                <li><strong>Bank</strong> or <strong>credit card statement</strong> from past 3 months, showing at least 1 transaction. This can't be for a Barclays account or digital-only bank.</li>
-                                <li><strong>Utility bill</strong> from the past 3 months</li>
-                                <li><strong>HMRC letter</strong> from your current financial year</li>
-                                <li><strong>Current insurance document</strong> (contract, policy, renewal document, certificate or schedule)</li>
-                                <li>Current property <strong>lease</strong>, <strong>licence</strong> or <strong>rental agreement</strong></li>
-                                <li><strong>Companies House letter</strong> from the past 12 months</li>
-                                <li><strong>Regulator letter</strong> (for example, from FCA, The Law Society) from the past 12 months</li>
-                                <li>A letter from an <strong>accountant</strong> or <strong>solicitor</strong> on headed paper confirming your business trading address, from the past 12 months</li>
-                                <li><strong>HMRC letter</strong> from the current financial year</li>
-                                <li><strong>Business rates</strong> demanded from the past 12 months</li>
-                            </ul>
+                            ${buildAcceptedDocsHtml('accordion')}
                         </div>
                     </div>
                     <div class="accordion-section">
@@ -4457,7 +4879,7 @@
                             </svg>
                         </button>
                         <div class="accordion-content" id="${question.id}-no-doc">
-                            <p>You'll need to make an appointment to talk to us in one in person to prove your business address. Please call us on 0333 202 7431 to make an appointment.</p>
+                            <p>You'll need to make an appointment to talk to us in person to prove your business address. Please call us on 0333 202 7431 to make an appointment.</p>
                             <p>We're here Monday to Friday, 8:30am to 8pm, except bank holidays.</p>
                         </div>
                     </div>
@@ -4591,6 +5013,7 @@
                         <path d="M12 4L4 12M4 4L12 12" stroke="#515151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
+                <span class="multi-select-arrow" aria-hidden="true" style="cursor:pointer;" onmousedown="event.preventDefault()" onclick="toggleCountryDropdown('${question.id}')"><svg width="13" viewBox="0 0 12.4119 7.20429" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 1.41143L1.41143 0L6.20596 4.79453L11.0005 0L12.4119 1.41143L6.20596 7.61739L0 1.41143Z" fill="#006DE3"/></svg></span>
             </div>`;
             html += `<div class="multi-select-dropdown" id="${question.id}-dropdown" role="group" aria-labelledby="label-${question.id}">`;
             html += `<div class="multi-select-options-list" id="${question.id}-options-list">`;
@@ -4687,6 +5110,13 @@
                     delete formData['correspondenceAddress'];
                 }
             }
+
+            /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — re-render so the tool turns on/off immediately ===== */
+            if (questionId === 'protoCopyEditor') {
+                renderScreen(screenIndex);
+                return;
+            }
+            /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
 
             // Show/hide follow-ups
             showFollowUps(questionId, screenIndex);
@@ -4940,6 +5370,21 @@
             trigger.setAttribute('aria-expanded', 'true');
         }
 
+        // Toggle the country dropdown from the chevron (close if open, else open + focus).
+        function toggleCountryDropdown(questionId) {
+            const dropdown = document.getElementById(`${questionId}-dropdown`);
+            const trigger = document.getElementById(`${questionId}-trigger`);
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                trigger.classList.remove('active');
+                trigger.setAttribute('aria-expanded', 'false');
+            } else {
+                openCountryDropdown(questionId);
+                const input = document.getElementById(`${questionId}-search`);
+                if (input) input.focus();
+            }
+        }
+
         // Keyboard for the country autocomplete field
         function handleCountrySearchKeydown(event, questionId) {
             const dropdown = document.getElementById(`${questionId}-dropdown`);
@@ -4966,7 +5411,8 @@
             const trigger = document.getElementById(`${questionId}-trigger`);
             const defaultPlaceholder = trigger?.getAttribute('data-placeholder') || 'Select options';
             if (selected.length === 0) {
-                placeholder.textContent = defaultPlaceholder;
+                // When the instruction lives in a hint above, keep the empty control blank.
+                placeholder.textContent = trigger?.dataset.placeholderHidden ? '' : defaultPlaceholder;
             } else if (selected.length === 1) {
                 placeholder.textContent = selected[0];
             } else {
@@ -5414,6 +5860,14 @@
                 updateCurrencyTotal(questionId);
             }
 
+            // A single country must be 100% — prefill it so the bar fills automatically.
+            // Applies only to the percentage-with-bar questions (imports / exports);
+            // international-payments (% of turnover, no bar) and tax-ID tables are excluded.
+            if (percentageRequired && showPercentageBar && selected.length === 1) {
+                const only = document.getElementById(`${questionId}-${selected[0].code}-percent`);
+                if (only) { only.value = '100'; handleCountryPercentChange(questionId); }
+            }
+
             // Update summary if needed
             const screenIndex = currentScreen;
             const screenDef = screenDefinitions[screenIndex];
@@ -5433,6 +5887,12 @@
                 updateRevenueSourcesTable(questionId, selected);
             } else {
                 revenueSplitGroup.classList.remove('visible');
+            }
+
+            // Show/hide the "Other" sources of revenue follow-up textarea
+            const otherDetails = document.getElementById('q-revenueSourcesOtherDetails');
+            if (otherDetails) {
+                otherDetails.style.display = selected.includes('Other') ? 'block' : 'none';
             }
         }
 
@@ -5493,6 +5953,12 @@
             errorMsg.id = `revenue-error-${questionId}`;
             errorMsg.textContent = 'Error: total revenue must be 100%';
             listElement.appendChild(errorMsg);
+
+            // A single source must be 100% — prefill it so the bar fills automatically.
+            if (selected.length === 1) {
+                const only = document.getElementById(`${questionId}-0-percent`);
+                if (only) only.value = '100';
+            }
 
             // Initialize summary
             updateRevenueSummary(questionId);
@@ -5925,8 +6391,9 @@
                     }
                 }
             } else if (question.type === 'select') {
-                const placeholder = document.getElementById(`${question.id}-placeholder`);
-                if (placeholder && placeholder.textContent === (question.placeholder || 'Select an option')) {
+                // Unanswered = no stored value (works whether or not the placeholder
+                // instruction has been moved to a hint above the control).
+                if (!formData[question.id]) {
                     const trigger = document.getElementById(`${question.id}-trigger`);
                     if (trigger) {
                         const msg = question.validationMessage || 'Error: please answer this question';
@@ -5999,10 +6466,12 @@
         }
 
         function resetAllFields() {
+            const keepCopyEditor = formData['protoCopyEditor'] || 'No'; /* PROTOTYPE-ONLY: COPY CHANGE TOOL — preserve the toggle across a reset */
             for (const key in formData) { delete formData[key]; }
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['protoCopyEditor'] = keepCopyEditor; /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             formData['regulatorRegion'] = 'England';
             renderScreen(0);
             document.getElementById('contentArea').scrollTop = 0;
@@ -6086,6 +6555,21 @@
             return null;
         }
 
+        // Generic help-drawer opener — sets title + body HTML directly.
+        function openHelpDrawer(title, bodyHtml) {
+            document.getElementById('drawerTitle').textContent = title;
+            document.getElementById('drawerContent').innerHTML = bodyHtml;
+            applyTextOverrides(document.getElementById('drawerContent')); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Open a prep-card help-drawer by key (see prepDrawers).
+        function openPrepDrawer(key) {
+            const d = prepDrawers[key];
+            if (d) openHelpDrawer(d.title, typeof d.build === 'function' ? d.build() : d.html);
+        }
+
         function openDrawer(questionId) {
             const screenDef = screenDefinitions[currentScreen];
             let question = findQuestionById(questionId, screenDef.questions);
@@ -6122,6 +6606,7 @@
             }
 
             drawerContent.innerHTML = html;
+            applyTextOverrides(drawerContent); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             document.getElementById('drawerOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -6141,6 +6626,300 @@
             renderScreen(index);
             document.getElementById('contentArea').scrollTop = 0;
         }
+
+        /* ============================================================
+           PROTOTYPE-ONLY: COPY CHANGE TOOL
+           A reviewer aid for suggesting wording changes. NOT part of the
+           real product. Gated behind the "Copy changes" Yes/No setting on
+           the Prototype settings screen (formData.protoCopyEditor). To remove
+           for production: delete this block plus the other clearly-marked
+           "PROTOTYPE-ONLY: COPY CHANGE TOOL" sections (CSS, HTML, and the
+           render/drawer hooks), and the protoCopyEditor radio.
+           ============================================================ */
+
+        // original text -> { new, screen }. Keyed by ORIGINAL so a text that's
+        // already changed still maps back to its true original on re-edit.
+        const textOverrides = {};
+        let changesExported = false;
+        const COPY_OVERRIDES_KEY = 'kyb-copy-overrides';
+
+        // Master switch — everything is inert unless the reviewer turned it on.
+        function copyEditorEnabled() {
+            return formData['protoCopyEditor'] === 'Yes';
+        }
+
+        // Containers whose text must never be edited (chrome + legal footer + the tool's own UI).
+        function copyEditorExcluded(el) {
+            return !el || !!el.closest('.footer, .status-bar, .search-bar, .header, .copy-ui');
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function saveCopyOverrides() {
+            try { localStorage.setItem(COPY_OVERRIDES_KEY, JSON.stringify({ overrides: textOverrides, exported: changesExported })); } catch (e) {}
+        }
+        function loadCopyOverrides() {
+            try {
+                const raw = localStorage.getItem(COPY_OVERRIDES_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (data && data.overrides) { Object.assign(textOverrides, data.overrides); changesExported = !!data.exported; }
+            } catch (e) {}
+        }
+
+        // Walk text nodes under root and replace any whose trimmed value is an
+        // override key. Tag the parent with data-copy-orig so re-edits recover
+        // the original. No-op when the tool is off.
+        function applyTextOverrides(root) {
+            if (!root) return;
+            // Clear stale tags first — persistent elements (screen title, Continue/Exit
+            // buttons, tracker) survive re-renders, so a data-copy-orig left from a
+            // previous screen would otherwise mislead the next right-click's "Old" value.
+            root.querySelectorAll('[data-copy-orig]').forEach(el => { delete el.dataset.copyOrig; });
+            if (!copyEditorEnabled() || !Object.keys(textOverrides).length) return;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(node => {
+                const parent = node.parentElement;
+                if (!parent || copyEditorExcluded(parent)) return;
+                const key = node.nodeValue.trim();
+                const ov = key && textOverrides[key];
+                if (ov) {
+                    node.nodeValue = node.nodeValue.replace(key, ov.new);
+                    parent.dataset.copyOrig = key;
+                }
+            });
+        }
+
+        function copyEditorTextNodeAt(x, y) {
+            if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); return p ? p.offsetNode : null; }
+            if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(x, y); return r ? r.startContainer : null; }
+            return null;
+        }
+
+        function copyEditorTrigger(x, y, target, preventDefault) {
+            if (!copyEditorEnabled()) return;
+            if (!target || target.closest('input, textarea, select') || copyEditorExcluded(target)) return;
+            const node = copyEditorTextNodeAt(x, y);
+            if (!node || node.nodeType !== Node.TEXT_NODE) return;
+            if (copyEditorExcluded(node.parentElement)) return;
+            const current = node.nodeValue.trim();
+            if (!current) return;
+            preventDefault();
+            const original = (node.parentElement && node.parentElement.dataset.copyOrig) || current;
+            openCopyEditor(original, current);
+        }
+
+        function handleCopyEditorContextMenu(e) {
+            copyEditorTrigger(e.clientX, e.clientY, e.target, () => e.preventDefault());
+        }
+
+        // Touch long-press (~500ms, cancelled on movement).
+        let copyLpTimer = null, copyLpStart = null;
+        function copyTouchStart(e) {
+            if (!copyEditorEnabled() || e.touches.length !== 1) return;
+            const t = e.touches[0];
+            copyLpStart = { x: t.clientX, y: t.clientY, target: e.target };
+            copyLpTimer = setTimeout(() => {
+                copyLpTimer = null;
+                copyEditorTrigger(copyLpStart.x, copyLpStart.y, copyLpStart.target, () => {});
+            }, 500);
+        }
+        function copyTouchMove(e) {
+            if (!copyLpTimer || !copyLpStart) return;
+            const t = e.touches[0];
+            if (Math.abs(t.clientX - copyLpStart.x) > 10 || Math.abs(t.clientY - copyLpStart.y) > 10) {
+                clearTimeout(copyLpTimer); copyLpTimer = null;
+            }
+        }
+        function copyTouchEnd() { if (copyLpTimer) { clearTimeout(copyLpTimer); copyLpTimer = null; } }
+
+        let copyEditorOriginal = null;
+        function openCopyEditor(original, current) {
+            copyEditorOriginal = original;
+            document.getElementById('copyEditorOld').textContent = original;
+            const ta = document.getElementById('copyEditorNew');
+            ta.value = current;
+            document.getElementById('copyEditorOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => { ta.focus(); ta.select(); }, 0);
+        }
+        function closeCopyEditor(event) {
+            if (event && event.target.id !== 'copyEditorOverlay' && !event.target.closest('[data-copy-cancel]')) return;
+            document.getElementById('copyEditorOverlay').classList.remove('open');
+            document.body.style.overflow = 'auto';
+            copyEditorOriginal = null;
+        }
+        function applyCopyEdit() {
+            const original = copyEditorOriginal;
+            if (original == null) return;
+            const val = document.getElementById('copyEditorNew').value.trim();
+            if (!val || val === original) {
+                delete textOverrides[original];              // blank or back-to-original = revert
+            } else {
+                const existing = textOverrides[original];
+                textOverrides[original] = { new: val, screen: (existing && existing.screen) || (screenDefinitions[currentScreen] && screenDefinitions[currentScreen].title) || 'Other' };
+            }
+            changesExported = false;
+            saveCopyOverrides();
+            document.getElementById('copyEditorOverlay').classList.remove('open');
+            document.body.style.overflow = 'auto';
+            copyEditorOriginal = null;
+            renderScreen(currentScreen);
+        }
+
+        function updateCopyChangesButton() {
+            const btn = document.getElementById('copyChangesBtn');
+            const hint = document.getElementById('copyHint');
+            if (!btn) return;
+            const n = Object.keys(textOverrides).length;
+            const on = copyEditorEnabled();
+            btn.style.display = (on && n > 0) ? '' : 'none';
+            if (hint) hint.style.display = on ? '' : 'none';
+            const c = document.getElementById('copyChangesCount');
+            if (c) c.textContent = n;
+        }
+
+        function openCopyDrawer() {
+            const groups = {};
+            Object.entries(textOverrides).forEach(([orig, ov]) => {
+                const s = (ov && ov.screen) || 'Other';
+                (groups[s] = groups[s] || []).push({ orig, neu: ov.new });
+            });
+            let html = '';
+            if (!Object.keys(groups).length) {
+                html = '<p class="copy-drawer-empty">No copy changes yet. Right-click any text to suggest a change.</p>';
+            } else {
+                Object.entries(groups).forEach(([screen, rows]) => {
+                    const screenIdx = screenDefinitions.findIndex(s => s.title === screen);
+                    html += screenIdx >= 0
+                        ? `<button type="button" class="copy-drawer-group copy-drawer-group-link" onclick="goToScreenFromCopyDrawer(${screenIdx})">${escapeHtml(screen)}</button>`
+                        : `<p class="copy-drawer-group">${escapeHtml(screen)}</p>`;
+                    rows.forEach(r => {
+                        html += `<div class="copy-drawer-row">
+                            <div class="copy-drawer-texts">
+                                <div class="copy-line"><span class="copy-label">Old:</span><span class="copy-old">${escapeHtml(r.orig)}</span></div>
+                                <div class="copy-line"><span class="copy-label">New:</span><span class="copy-new">${escapeHtml(r.neu)}</span></div>
+                            </div>
+                            <button type="button" class="copy-row-remove" aria-label="Undo" title="Undo" data-orig="${encodeURIComponent(r.orig)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+                        </div>`;
+                    });
+                });
+            }
+            const list = document.getElementById('copyDrawerList');
+            list.innerHTML = html;
+            list.querySelectorAll('.copy-row-remove').forEach(b => {
+                b.addEventListener('click', () => removeCopyOverride(decodeURIComponent(b.dataset.orig)));
+            });
+            document.getElementById('copyDrawerOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCopyDrawer(event) {
+            if (event && event.target.id !== 'copyDrawerOverlay') return;
+            closeCopyDrawerForce();
+        }
+        function closeCopyDrawerForce() {
+            document.getElementById('copyDrawerOverlay').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+        function goToScreenFromCopyDrawer(index) {
+            closeCopyDrawerForce();
+            renderScreen(index);
+            document.getElementById('contentArea').scrollTop = 0;
+        }
+        function removeCopyOverride(orig) {
+            delete textOverrides[orig];
+            changesExported = false;
+            saveCopyOverrides();
+            renderScreen(currentScreen);
+            if (Object.keys(textOverrides).length) { openCopyDrawer(); } else { closeCopyDrawerForce(); }
+        }
+        function resetAllCopyChanges() {
+            if (!Object.keys(textOverrides).length) return;
+            if (!confirm('Remove all copy changes? This cannot be undone.')) return;
+            Object.keys(textOverrides).forEach(k => delete textOverrides[k]);
+            changesExported = false;
+            saveCopyOverrides();
+            closeCopyDrawerForce();
+            renderScreen(currentScreen);
+        }
+        // Synchronous copy via a hidden textarea + execCommand. Works during a
+        // user gesture even in iframes / when the document isn't "focused" (where
+        // the async Clipboard API rejects). Returns true on success.
+        function legacyCopyToClipboard(text) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.top = '-1000px';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                ta.setSelectionRange(0, text.length);
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                return ok;
+            } catch (e) { return false; }
+        }
+
+        function flashCopied() {
+            const btn = document.getElementById('copyDrawerCopyBtn');
+            if (btn) { const o = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = o; }, 1500); }
+        }
+
+        function copyChangesToClipboard() {
+            const entries = Object.entries(textOverrides);
+            if (!entries.length) return;
+            // Group by screen (the screen each change was first made on) so the pasted
+            // list shows the screen titles — easier for the recipient to locate each change.
+            const groups = {};
+            entries.forEach(([orig, ov]) => {
+                const s = (ov && ov.screen) || 'Other';
+                (groups[s] = groups[s] || []).push({ orig, neu: ov.new });
+            });
+            let txt = `Copy changes (${entries.length})\n`;
+            let n = 0;
+            Object.entries(groups).forEach(([screen, rows]) => {
+                txt += `\n${screen}\n`;
+                rows.forEach(r => { n += 1; txt += `${n}. Old: ${r.orig}\n   New: ${r.neu}\n`; });
+            });
+            const done = () => { changesExported = true; saveCopyOverrides(); flashCopied(); };
+            // Prefer the gesture-based execCommand path (reliable here); fall back to
+            // the async Clipboard API, then to a manual prompt as a last resort.
+            if (legacyCopyToClipboard(txt)) { done(); return; }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).then(done).catch(() => { window.prompt('Copy these changes:', txt); done(); });
+            } else {
+                window.prompt('Copy these changes:', txt); done();
+            }
+        }
+
+        function initCopyEditor() {
+            loadCopyOverrides();
+            // Listeners are attached once but stay inert until the tool is switched on
+            // (copyEditorEnabled() guards every entry point).
+            [document.getElementById('contentArea'), document.getElementById('drawerContent')].forEach(el => {
+                if (!el) return;
+                el.addEventListener('contextmenu', handleCopyEditorContextMenu);
+                el.addEventListener('touchstart', copyTouchStart, { passive: true });
+                el.addEventListener('touchmove', copyTouchMove, { passive: true });
+                el.addEventListener('touchend', copyTouchEnd);
+                el.addEventListener('touchcancel', copyTouchEnd);
+            });
+            // Remind reviewers to copy/send before leaving (only when there are unexported changes).
+            window.addEventListener('beforeunload', e => {
+                if (copyEditorEnabled() && Object.keys(textOverrides).length && !changesExported) {
+                    e.preventDefault(); e.returnValue = ''; return '';
+                }
+            });
+        }
+        /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
 
         // Start app
         window.addEventListener('DOMContentLoaded', initApp);
