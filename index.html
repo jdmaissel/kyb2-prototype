@@ -3015,6 +3015,10 @@
            bottom-anchored sheet lands far below the fold. */
         html.dv-desktop .copy-editor-overlay,
         html.dv-desktop .copy-drawer-overlay { position: fixed; }
+        /* Desktop: drawers cap at the 816px content width and centre (matching the body
+           cards). width:100% means they shrink to the browser width when it's < 816. */
+        html.dv-desktop .copy-drawer-sheet,
+        html.dv-desktop .drawer-sheet { max-width: 816px; }
         .copy-editor-overlay { align-items: center; justify-content: center; padding: 24px; }
         .copy-editor-modal {
             background: #fff;
@@ -3117,8 +3121,9 @@
             display: flex; align-items: center;
         }
         .copy-row-remove svg { width: 18px; height: 18px; display: block; }
-        .copy-drawer-foot { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid #ececec; }
-        .copy-drawer-foot button { flex: 1; border-radius: 22px; padding: 10px 12px; font: 600 15px/1 var(--bx-font); cursor: pointer; }
+        .copy-drawer-foot { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid #ececec; justify-content: center; }
+        .copy-drawer-foot button { flex: 0 0 auto; border-radius: 22px; padding: 10px 24px; font: 600 15px/1 var(--bx-font); cursor: pointer; }
+        .copy-drawer-foot button:disabled { opacity: 0.4; cursor: not-allowed; }
         .copy-drawer-copy { background: #006de3; color: #fff; border: none; }
         .copy-drawer-copy:hover { background: #0a58c2; }
         .copy-drawer-reset { background: #fff; color: #b00020; border: 1.5px solid #d9b3ba; }
@@ -3281,8 +3286,8 @@
                 </div>
                 <div class="copy-drawer-list" id="copyDrawerList"></div>
                 <div class="copy-drawer-foot">
-                    <button type="button" class="copy-drawer-reset" onclick="resetAllCopyChanges()">Reset all</button>
                     <button type="button" class="copy-drawer-copy" id="copyDrawerCopyBtn" onclick="copyChangesToClipboard()">Copy to clipboard</button>
+                    <button type="button" class="copy-drawer-reset" onclick="resetAllCopyChanges()">Reset all</button>
                 </div>
             </div>
         </div>
@@ -6711,7 +6716,18 @@
             if (!current) return;
             preventDefault();
             const original = (node.parentElement && node.parentElement.dataset.copyOrig) || current;
-            openCopyEditor(original, current);
+            openCopyEditor(original, current, copyTextNodeOrder(node));
+        }
+
+        // Position of a text node among the page's text nodes — i.e. its top-to-bottom
+        // order on screen. Used to sort changes within a screen group.
+        function copyTextNodeOrder(node) {
+            const root = document.getElementById('contentArea');
+            if (!root || !node) return Number.MAX_SAFE_INTEGER;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+            let i = 0;
+            while (walker.nextNode()) { if (walker.currentNode === node) return i; i++; }
+            return Number.MAX_SAFE_INTEGER;
         }
 
         function handleCopyEditorContextMenu(e) {
@@ -6739,8 +6755,10 @@
         function copyTouchEnd() { if (copyLpTimer) { clearTimeout(copyLpTimer); copyLpTimer = null; } }
 
         let copyEditorOriginal = null;
-        function openCopyEditor(original, current) {
+        let copyEditorOrder = Number.MAX_SAFE_INTEGER;
+        function openCopyEditor(original, current, order) {
             copyEditorOriginal = original;
+            copyEditorOrder = (typeof order === 'number') ? order : Number.MAX_SAFE_INTEGER;
             document.getElementById('copyEditorOld').textContent = original;
             const ta = document.getElementById('copyEditorNew');
             ta.value = current;
@@ -6762,7 +6780,11 @@
                 delete textOverrides[original];              // blank or back-to-original = revert
             } else {
                 const existing = textOverrides[original];
-                textOverrides[original] = { new: val, screen: (existing && existing.screen) || (screenDefinitions[currentScreen] && screenDefinitions[currentScreen].title) || 'Other' };
+                textOverrides[original] = {
+                    new: val,
+                    screen: (existing && existing.screen) || (screenDefinitions[currentScreen] && screenDefinitions[currentScreen].title) || 'Other',
+                    order: copyEditorOrder
+                };
             }
             changesExported = false;
             saveCopyOverrides();
@@ -6778,23 +6800,34 @@
             if (!btn) return;
             const n = Object.keys(textOverrides).length;
             const on = copyEditorEnabled();
-            btn.style.display = (on && n > 0) ? '' : 'none';
+            // Show the button whenever the tool is on (even at N=0), so reviewers can
+            // open the drawer and see how to start.
+            btn.style.display = on ? '' : 'none';
             if (hint) hint.style.display = on ? '' : 'none';
             const c = document.getElementById('copyChangesCount');
             if (c) c.textContent = n;
+        }
+
+        // Sort screen groups by their position in the flow (Prototype settings first,
+        // Tax & VAT details last), so the list order is stable regardless of edit order.
+        function sortGroupsByScreen(groups) {
+            const order = t => { const i = screenDefinitions.findIndex(s => s.title === t); return i === -1 ? Number.MAX_SAFE_INTEGER : i; };
+            return Object.entries(groups).sort((a, b) => order(a[0]) - order(b[0]));
         }
 
         function openCopyDrawer() {
             const groups = {};
             Object.entries(textOverrides).forEach(([orig, ov]) => {
                 const s = (ov && ov.screen) || 'Other';
-                (groups[s] = groups[s] || []).push({ orig, neu: ov.new });
+                (groups[s] = groups[s] || []).push({ orig, neu: ov.new, order: (ov && typeof ov.order === 'number') ? ov.order : Number.MAX_SAFE_INTEGER });
             });
             let html = '';
             if (!Object.keys(groups).length) {
-                html = '<p class="copy-drawer-empty">No copy changes yet. Right-click any text to suggest a change.</p>';
+                html = '<p class="copy-drawer-empty">No copy changes yet.<br>Right-click text to request new wording.</p>';
             } else {
-                Object.entries(groups).forEach(([screen, rows]) => {
+                sortGroupsByScreen(groups).forEach(([screen, rows]) => {
+                    rows.sort((a, b) => a.order - b.order); // top-to-bottom on screen
+
                     const screenIdx = screenDefinitions.findIndex(s => s.title === screen);
                     html += screenIdx >= 0
                         ? `<button type="button" class="copy-drawer-group copy-drawer-group-link" onclick="goToScreenFromCopyDrawer(${screenIdx})">${escapeHtml(screen)}</button>`
@@ -6815,6 +6848,12 @@
             list.querySelectorAll('.copy-row-remove').forEach(b => {
                 b.addEventListener('click', () => removeCopyOverride(decodeURIComponent(b.dataset.orig)));
             });
+            // Disable the footer actions until there's at least one change.
+            const hasChanges = Object.keys(textOverrides).length > 0;
+            const copyBtn = document.getElementById('copyDrawerCopyBtn');
+            const resetBtn = document.querySelector('.copy-drawer-reset');
+            if (copyBtn) copyBtn.disabled = !hasChanges;
+            if (resetBtn) resetBtn.disabled = !hasChanges;
             document.getElementById('copyDrawerOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -6881,11 +6920,12 @@
             const groups = {};
             entries.forEach(([orig, ov]) => {
                 const s = (ov && ov.screen) || 'Other';
-                (groups[s] = groups[s] || []).push({ orig, neu: ov.new });
+                (groups[s] = groups[s] || []).push({ orig, neu: ov.new, order: (ov && typeof ov.order === 'number') ? ov.order : Number.MAX_SAFE_INTEGER });
             });
             let txt = `Copy changes (${entries.length})\n`;
             let n = 0;
-            Object.entries(groups).forEach(([screen, rows]) => {
+            sortGroupsByScreen(groups).forEach(([screen, rows]) => {
+                rows.sort((a, b) => a.order - b.order);
                 txt += `\n${screen}\n`;
                 rows.forEach(r => { n += 1; txt += `${n}. Old: ${r.orig}\n   New: ${r.neu}\n`; });
             });
