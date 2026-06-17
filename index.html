@@ -1390,7 +1390,7 @@
         textarea {
             min-height: 96px;
             padding: 16px 14px;
-            resize: vertical;
+            resize: none;
             line-height: 22px;
             color: #272727;
             display: block;            /* default inline-block leaves ~5px descender gap below */
@@ -3051,7 +3051,7 @@
             border: 1.5px solid #b3b3b3;
             border-radius: 6px;
             padding: 8px 10px;
-            resize: vertical;
+            resize: none;
         }
         .copy-editor-new:focus { outline: none; border-color: #006de3; }
         .copy-editor-actions { display: flex; gap: 10px; margin-top: 6px; }
@@ -3064,7 +3064,7 @@
         }
         .copy-editor-apply { background: #006de3; color: #fff; border: none; }
         .copy-editor-apply:hover { background: #0a58c2; }
-        .copy-editor-cancel { background: #fff; color: #006de3; border: 1.5px solid #006de3; }
+        .copy-editor-cancel { background: #fff; color: #006de3; border: 2px solid #006de3; }
 
         /* Changes drawer (reuses .drawer-sheet styling via shared classes) */
         .copy-drawer-overlay { align-items: flex-end; justify-content: center; }
@@ -3126,7 +3126,39 @@
         .copy-drawer-foot button:disabled { opacity: 0.4; cursor: not-allowed; }
         .copy-drawer-copy { background: #006de3; color: #fff; border: none; }
         .copy-drawer-copy:hover { background: #0a58c2; }
-        .copy-drawer-reset { background: #fff; color: #b00020; border: 1.5px solid #d9b3ba; }
+        .copy-drawer-reset { background: #fff; color: #b00020; border: 2px solid #b00020; }
+        /* Import button in the drawer header */
+        .copy-drawer-head-actions { display: flex; align-items: center; gap: 12px; }
+        .copy-drawer-import {
+            background: none; border: 2px solid #006de3; color: #006de3;
+            border-radius: 16px; padding: 5px 14px; font: 600 13px/1 var(--bx-font); cursor: pointer;
+        }
+        .copy-drawer-import:hover { background: #eef4fd; }
+        /* Import summary line in the drawer */
+        .copy-drawer-summary {
+            margin: 0; padding: 10px 16px; background: #eef4fd;
+            font: 400 16px/22px var(--bx-font); color: #272727; border-bottom: 1px solid #ececec;
+        }
+        /* Import paste popup: balanced spacing, stacked buttons (primary on top). */
+        #copyImportOverlay .copy-editor-new { margin: 4px 0 20px; }
+        #copyImportOverlay .copy-editor-actions { flex-direction: column; margin-top: 0; }
+        #copyImportOverlay .copy-editor-actions button { flex: 0 0 auto; width: 100%; }
+        /* Import review popup */
+        .copy-review-body { max-height: 50vh; overflow-y: auto; font: 400 16px/22px var(--bx-font); }
+        .copy-review-intro { margin: 0 0 4px; font: 500 16px/22px var(--bx-font); color: #272727; }
+        .copy-review-note { margin: 0 0 12px; font: 400 16px/22px var(--bx-font); color: #6b6b6b; }
+        .copy-review-section-title { margin: 14px 0 6px; font: 600 16px/22px var(--bx-font); color: #272727; }
+        .copy-review-unmatched-title { color: #272727; font-weight: 500; }
+        .copy-review-item { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .copy-review-item .copy-line { display: flex; gap: 8px; }
+        .copy-review-item .copy-label { flex-shrink: 0; width: 56px; white-space: nowrap; color: #9a9a9a; }
+        .copy-review-screen { font: 500 16px/22px var(--bx-font); color: #272727; margin-bottom: 2px; }
+        .copy-review-old { color: #8a8a8a; }
+        .copy-review-mine { color: #8a8a8a; }
+        .copy-review-import { color: #272727; }
+        /* Review popup actions stack vertically (mobile style): primary on top. */
+        #copyReviewActions { flex-direction: column; }
+        #copyReviewActions button { flex: 0 0 auto; width: 100%; }
         /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
     </style>
 </head>
@@ -3277,18 +3309,43 @@
         <div id="copyDrawerOverlay" class="copy-ui copy-drawer-overlay" onclick="closeCopyDrawer(event)">
             <div class="copy-drawer-sheet" onclick="event.stopPropagation()">
                 <div class="copy-drawer-head">
-                    <h3>Request copy changes</h3>
-                    <button type="button" class="copy-drawer-close" aria-label="Close" onclick="closeCopyDrawerForce()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
+                    <h3>Copy changes</h3>
+                    <div class="copy-drawer-head-actions">
+                        <button type="button" class="copy-drawer-import" onclick="openCopyImport()">Import</button>
+                        <button type="button" class="copy-drawer-close" aria-label="Close" onclick="closeCopyDrawerForce()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+                <div class="copy-drawer-summary" id="copyDrawerSummary" style="display:none;"></div>
                 <div class="copy-drawer-list" id="copyDrawerList"></div>
                 <div class="copy-drawer-foot">
                     <button type="button" class="copy-drawer-copy" id="copyDrawerCopyBtn" onclick="copyChangesToClipboard()">Copy to clipboard</button>
                     <button type="button" class="copy-drawer-reset" onclick="resetAllCopyChanges()">Reset all</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Import: paste another reviewer's copied changes -->
+        <div id="copyImportOverlay" class="copy-ui copy-editor-overlay" onclick="closeCopyImport(event)">
+            <div class="copy-editor-modal" onclick="event.stopPropagation()">
+                <h3>Import copy changes</h3>
+                <textarea class="copy-editor-new" id="copyImportText" rows="8" placeholder="Paste copy changes here…"></textarea>
+                <div class="copy-editor-actions">
+                    <button type="button" class="copy-editor-apply" onclick="applyCopyImport()">Apply</button>
+                    <button type="button" class="copy-editor-cancel" data-copy-cancel onclick="closeCopyImport(event)">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import review: unmatched + conflicts -->
+        <div id="copyReviewOverlay" class="copy-ui copy-editor-overlay">
+            <div class="copy-editor-modal" onclick="event.stopPropagation()">
+                <h3>Review import</h3>
+                <div class="copy-review-body" id="copyReviewBody"></div>
+                <div class="copy-editor-actions" id="copyReviewActions"></div>
             </div>
         </div>
         <!-- ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== -->
@@ -4525,14 +4582,13 @@
             /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — explainer + demo, shown directly below the Copy changes Y/N radio ===== */
             if (screenDef.isPrescreen && copyEditorEnabled()) {
                 html += `<div class="copy-intro" role="note">
-                    <p class="copy-intro-title">Request copy changes mode is on</p>
+                    <p class="copy-intro-title">Copy changes mode is on</p>
                     <ol class="copy-intro-steps">
-                        <li>Right-click (or long-press) text to request new wording.</li>
-                        <li>In the popup, enter New text, then Apply.</li>
-                        <li>Press "Copy changes" button to see and copy all changes.</li>
-                        <li>Paste them into an email and send to Jifiti.</li>
+                        <li>Right-click any text to suggest new wording.</li>
+                        <li>Open "Copy changes" to copy them.</li>
+                        <li>Email them to Jifiti to update the prototype.</li>
                     </ol>
-                    <p class="copy-intro-demo">Try it: <span class="copy-demo-text">Right-click this sentence to change it.</span></p>
+                    <p class="copy-intro-demo">Try it: <span class="copy-demo-text">Right-click this sentence.</span></p>
                 </div>`;
             }
             /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
@@ -6823,7 +6879,7 @@
             });
             let html = '';
             if (!Object.keys(groups).length) {
-                html = '<p class="copy-drawer-empty">No copy changes yet.<br>Right-click text to request new wording.</p>';
+                html = '<p class="copy-drawer-empty">No copy changes yet.<br>Right-click text to suggest new wording.<br>Or import changes from another session.</p>';
             } else {
                 sortGroupsByScreen(groups).forEach(([screen, rows]) => {
                     rows.sort((a, b) => a.order - b.order); // top-to-bottom on screen
@@ -6854,6 +6910,9 @@
             const resetBtn = document.querySelector('.copy-drawer-reset');
             if (copyBtn) copyBtn.disabled = !hasChanges;
             if (resetBtn) resetBtn.disabled = !hasChanges;
+            // Clear any previous import summary (showDrawerSummary re-shows it after a merge).
+            const sum = document.getElementById('copyDrawerSummary');
+            if (sum) { sum.style.display = 'none'; sum.textContent = ''; }
             document.getElementById('copyDrawerOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -6885,6 +6944,172 @@
             saveCopyOverrides();
             closeCopyDrawerForce();
             renderScreen(currentScreen);
+        }
+
+        /* ----- Import / merge copy changes from another reviewer ----- */
+
+        let pendingImport = null; // { matched:[{old,new,info}], unmatched:[{old,new}], conflicts:[...] }
+
+        function showDrawerSummary(text) {
+            const sum = document.getElementById('copyDrawerSummary');
+            if (!sum) return;
+            sum.textContent = text;
+            sum.style.display = text ? '' : 'none';
+        }
+
+        // Parse the pasted "Old: … / New: …" format (single-line values). Screen headings
+        // and numbering are ignored — the screen/order are recomputed on import.
+        function parseCopyChangesText(text) {
+            const lines = String(text || '').split(/\r?\n/);
+            const out = [];
+            let pendingOld = null;
+            lines.forEach(line => {
+                const oldM = line.match(/^\s*(?:\d+\.\s*)?Old:\s*(.*)$/);
+                if (oldM) { pendingOld = oldM[1].trim(); return; }
+                const newM = line.match(/^\s*New:\s*(.*)$/);
+                if (newM && pendingOld !== null) {
+                    out.push({ old: pendingOld, new: newM[1].trim() });
+                    pendingOld = null;
+                }
+            });
+            return out;
+        }
+
+        // Walk every screen to map each editable ORIGINAL string → { screen, order }.
+        // Renders each screen in turn (then restores the current one). Follow-ups are
+        // pre-rendered (hidden) so they're included at their true positions. Used to
+        // validate imported "Old" text and to place imported changes correctly.
+        function buildOriginalsInfo() {
+            const info = new Map();
+            const prev = currentScreen;
+            const root = document.getElementById('contentArea');
+            for (let i = 0; i < screenDefinitions.length; i++) {
+                renderScreen(i);
+                const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+                let idx = 0;
+                while (walker.nextNode()) {
+                    const n = walker.currentNode, p = n.parentElement;
+                    const key = (p && p.dataset && p.dataset.copyOrig) ? p.dataset.copyOrig : (n.nodeValue ? n.nodeValue.trim() : '');
+                    if (key && p && !copyEditorExcluded(p) && !info.has(key)) {
+                        info.set(key, { screen: screenDefinitions[i].title, order: idx });
+                    }
+                    idx++;
+                }
+            }
+            renderScreen(prev);
+            return info;
+        }
+
+        function openCopyImport() {
+            document.getElementById('copyImportText').value = '';
+            document.getElementById('copyImportOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('copyImportText').focus(), 0);
+        }
+        function closeCopyImport(event) {
+            if (event && event.target.id !== 'copyImportOverlay' && !event.target.closest('[data-copy-cancel]')) return;
+            document.getElementById('copyImportOverlay').classList.remove('open');
+            document.body.style.overflow = 'hidden'; // drawer still open behind
+        }
+
+        function applyCopyImport() {
+            const parsed = parseCopyChangesText(document.getElementById('copyImportText').value)
+                .filter(p => p.old && p.new && p.new !== p.old);
+            document.getElementById('copyImportOverlay').classList.remove('open');
+            if (!parsed.length) {
+                openCopyDrawer();
+                showDrawerSummary('Nothing to import — no changes found in the pasted text.');
+                return;
+            }
+            const info = buildOriginalsInfo();
+            const matched = [], unmatched = [];
+            parsed.forEach(p => {
+                if (info.has(p.old)) matched.push({ old: p.old, new: p.new, info: info.get(p.old) });
+                else unmatched.push(p);
+            });
+            const conflicts = matched.filter(p => textOverrides[p.old] && textOverrides[p.old].new !== p.new);
+            pendingImport = { matched, unmatched, conflicts };
+            if (!unmatched.length && !conflicts.length) {
+                commitImport('all'); // clean import — no review needed
+            } else {
+                openImportReview();
+            }
+        }
+
+        function openImportReview() {
+            const { unmatched, conflicts } = pendingImport;
+            let html = '';
+            if (conflicts.length) {
+                html += `<p class="copy-review-intro">${conflicts.length === 1 ? '1 import clashes with yours. Use the import or keep yours?' : conflicts.length + ' imports clash with yours. Use the imports or keep yours?'}</p>`;
+                conflicts.forEach(c => {
+                    html += `<div class="copy-review-item">
+                        <div class="copy-review-screen">${escapeHtml(c.info.screen)}</div>
+                        <div class="copy-line"><span class="copy-label">Old:</span><span class="copy-review-old">${escapeHtml(c.old)}</span></div>
+                        <div class="copy-line"><span class="copy-label">Import:</span><span class="copy-review-import">${escapeHtml(c.new)}</span></div>
+                        <div class="copy-line"><span class="copy-label">Mine:</span><span class="copy-review-mine">${escapeHtml(textOverrides[c.old].new)}</span></div>
+                    </div>`;
+                });
+            }
+            if (unmatched.length) {
+                html += `<p class="copy-review-section-title copy-review-unmatched-title">⚠️ ${unmatched.length} skipped as Old text is not present.</p>`;
+                unmatched.forEach(u => {
+                    html += `<div class="copy-review-item">
+                        <div class="copy-line"><span class="copy-label">Old:</span><span class="copy-review-old">${escapeHtml(u.old)}</span></div>
+                        <div class="copy-line"><span class="copy-label">New:</span><span class="copy-review-import">${escapeHtml(u.new)}</span></div>
+                    </div>`;
+                });
+            }
+            document.getElementById('copyReviewBody').innerHTML = html;
+
+            // Buttons depend on whether there are conflicts.
+            const actions = document.getElementById('copyReviewActions');
+            if (conflicts.length) {
+                actions.innerHTML = `
+                    <button type="button" class="copy-editor-apply" onclick="commitImport('all')">Use import</button>
+                    <button type="button" class="copy-editor-cancel" onclick="commitImport('keepMine')">Keep mine</button>
+                    <button type="button" class="copy-editor-cancel" onclick="cancelImport()">Cancel import</button>`;
+            } else {
+                actions.innerHTML = `
+                    <button type="button" class="copy-editor-apply" onclick="commitImport('all')">Continue</button>
+                    <button type="button" class="copy-editor-cancel" onclick="cancelImport()">Cancel import</button>`;
+            }
+            document.getElementById('copyReviewOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeImportReview() {
+            document.getElementById('copyReviewOverlay').classList.remove('open');
+        }
+
+        function commitImport(mode) {
+            if (!pendingImport) return;
+            const { matched, unmatched, conflicts } = pendingImport;
+            const conflictOlds = new Set(conflicts.map(c => c.old));
+            let added = 0, updated = 0, kept = 0;
+            matched.forEach(p => {
+                if (conflictOlds.has(p.old) && mode === 'keepMine') { kept++; return; }
+                const ex = textOverrides[p.old];
+                if (ex) { if (ex.new !== p.new) updated++; }
+                else { added++; }
+                textOverrides[p.old] = { new: p.new, screen: p.info.screen, order: p.info.order };
+            });
+            changesExported = false;
+            saveCopyOverrides();
+            closeImportReview();
+            pendingImport = null;
+            renderScreen(currentScreen);
+            openCopyDrawer();
+            const parts = [];
+            if (added) parts.push(`${added} added`);
+            if (updated) parts.push(`${updated} updated`);
+            if (kept) parts.push(`${kept} kept`);
+            if (unmatched.length) parts.push(`${unmatched.length} skipped as not present`);
+            if (!parts.length) parts.push('no changes');
+            showDrawerSummary(`Import summary: ${parts.join(', ')}.`);
+        }
+        function cancelImport() {
+            closeImportReview();
+            pendingImport = null;
+            openCopyDrawer(); // nothing changed
         }
         // Synchronous copy via a hidden textarea + execCommand. Works during a
         // user gesture even in iframes / when the document isn't "focused" (where
