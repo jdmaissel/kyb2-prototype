@@ -3007,7 +3007,9 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.45);
             display: none;
-            z-index: 60;
+            /* Above the help drawer (z-index:1000) so the "Suggest new copy" popup,
+               triggered by right-clicking text inside an open drawer, sits on top of it. */
+            z-index: 1100;
         }
         .copy-editor-overlay.open, .copy-drawer-overlay.open { display: flex; }
         /* In desktop view the phone frame is full-page-tall, so anchor these overlays to
@@ -3134,6 +3136,23 @@
             border-radius: 16px; padding: 5px 14px; font: 600 13px/1 var(--bx-font); cursor: pointer;
         }
         .copy-drawer-import:hover { background: #eef4fd; }
+        /* Minimize / maximize toggle (Copy changes drawer only) */
+        .copy-drawer-min { background: none; border: none; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+        .copy-drawer-min svg { width: 24px; height: 24px; display: block; }
+        .copy-drawer-min .cd-icon-max { display: none; }
+        .copy-drawer-overlay.minimized .copy-drawer-min .cd-icon-min { display: none; }
+        .copy-drawer-overlay.minimized .copy-drawer-min .cd-icon-max { display: block; }
+        /* Minimized: only the head row sits at the bottom; page behind stays interactive */
+        .copy-drawer-overlay.minimized { background: transparent; pointer-events: none; }
+        .copy-drawer-overlay.minimized .copy-drawer-sheet {
+            pointer-events: auto;
+            max-height: none;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+        }
+        .copy-drawer-overlay.minimized .copy-drawer-head { border-bottom: none; }
+        .copy-drawer-overlay.minimized .copy-drawer-summary,
+        .copy-drawer-overlay.minimized .copy-drawer-list,
+        .copy-drawer-overlay.minimized .copy-drawer-foot { display: none !important; }
         /* Import summary line in the drawer */
         .copy-drawer-summary {
             margin: 0; padding: 10px 16px; background: #eef4fd;
@@ -3312,6 +3331,14 @@
                     <h3>Copy changes</h3>
                     <div class="copy-drawer-head-actions">
                         <button type="button" class="copy-drawer-import" onclick="openCopyImport()">Import</button>
+                        <button type="button" class="copy-drawer-min" aria-label="Minimize" title="Minimize" onclick="toggleCopyDrawerMinimize(event)">
+                            <svg class="cd-icon-min" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 9L12 15L18 9" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <svg class="cd-icon-max" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 15L12 9L18 15" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                         <button type="button" class="copy-drawer-close" aria-label="Close" onclick="closeCopyDrawerForce()">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3573,7 +3600,7 @@
                         id: 'tradingName',
                         type: 'radio',
                         label: 'Do you trade under a different name?',
-                        hint: 'Other than your registered Companies House name.',
+                        hint: 'Apart from your Companies House name.',
                         // Hidden for Sole traders (they have no separate registered name).
                         showIf: () => formData['protoBusinessType'] !== 'Sole trader',
                         options: ['Yes', 'No'],
@@ -3617,7 +3644,7 @@
                         id: 'website',
                         type: 'radio',
                         label: 'Does your business have a website?',
-                        hint: 'A Facebook, Yelp or social media page also works.',
+                        hint: 'A social media or listings page also works.',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
@@ -3632,7 +3659,7 @@
                         id: 'businessDescription',
                         type: 'textarea',
                         label: 'Describe your business and customers',
-                        hint: 'List your products or services and who you serve.',
+                        hint: 'What you offer and who you serve.',
                         maxLength: 250,
                         validationRules: [
                             { test: v => v.length < 20, message: 'Error: please provide more detail.' },
@@ -3641,10 +3668,10 @@
                         ],
                         helpText: {
                             title: 'Describing your business',
-                            intro: 'Make sure you include key products or services offered, target markets and any specialisation.',
+                            intro: 'Include key products or services, target markets and any specialisation. For example:',
                             examples: [
-                                '"Northbridge Global Imports Ltd imports household electronics goods, such as laptops, monitors and servers from China and supply to local retailers."',
-                                '"Silverstone Auto Works is a local garage, providing MOT, servicing and emergency vehicle replacement."'
+                                '"We import electronics goods, such as laptops, monitors and servers from China and supply to local retailers."',
+                                '"We are a local garage, providing MOT, servicing and emergency vehicle replacement."'
                             ]
                         }
                     },
@@ -3693,7 +3720,7 @@
                         id: 'secondaryLineOfBusiness',
                         type: 'radio',
                         label: 'Do you have a secondary line of business?',
-                        hint: 'A separate activity that earns extra income, alongside your main business.',
+                        hint: 'Another source of income, alongside your main business.',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
@@ -3722,7 +3749,7 @@
                             'Yes': {
                                 id: 'seasonalExplain',
                                 type: 'textarea',
-                                label: 'Explain when and why your revenue changes.',
+                                label: 'When does it change, and why?',
                                 maxLength: 300
                             }
                         }
@@ -3854,7 +3881,7 @@
                                 id: 'internationalOpsDetails',
                                 type: 'textarea',
                                 label: 'What operations do you have outside the UK?',
-                                hint: 'E.g. registered office, warehouse or retail space',
+                                hint: 'E.g. office, warehouse or shop',
                                 maxLength: 250,
                                 helpText: {
                                     title: 'International operations',
@@ -3900,7 +3927,7 @@
                         id: 'financialServices',
                         type: 'radio',
                         label: 'Does your business provide financial services?',
-                        hint: 'Including lending, debt management or investment.',
+                        hint: 'E.g. lending, debt management or investment.',
                         options: ['Yes', 'No'],
                         followUp: {
                             'Yes': {
@@ -3964,7 +3991,7 @@
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Online gambling involvement',
-                                    intro: 'Ensure you provide as much detail as possible when describing how your business is involved in online gambling or games',
+                                    intro: 'Describe in detail how your business is involved in online gambling or games.',
                                     examples: [
                                         '"Our products include sports betting, online casino, online poker and online bingo."',
                                         '"Our online platform offers loot boxes and micro-transactions for a range of popular online games"'
@@ -4098,7 +4125,7 @@
                         id: 'ukTax',
                         type: 'radio',
                         label: 'Does your business pay tax in the UK?',
-                        hint: 'This means paying corporation tax or business rates in the UK.',
+                        hint: 'E.g. corporation tax or business rates.',
                         options: ['Yes', 'No']
                     },
                     {
@@ -4126,7 +4153,7 @@
                                 type: 'country-multi',
                                 label: 'Which other countries does your business pay tax?',
                                 taxIdRequired: true,
-                                countryAmountsLabel: 'Enter the Tax Identification Number for each country',
+                                countryAmountsLabel: 'Enter a Tax ID Number for each country',
                                 percentageHeaderLabel: 'TAX ID NUMBER',
                                 excludeCountries: ['US']
                             }
@@ -4180,6 +4207,11 @@
         // Single source of truth for the "Documents we accept" list. Used by
         // both the Step 1 prep-card help-drawer and the Step 5 upload accordion.
         const acceptedDocuments = [
+            { heading: 'Current documents:', items: [
+                '<strong>HMRC letter</strong> from this financial year',
+                '<strong>Insurance policy</strong>, renewal, certificate or schedule',
+                '<strong>Property lease</strong>, licence or rental agreement'
+            ]},
             { heading: 'From the past 3 months:', items: [
                 '<strong>Bank or credit card statement</strong> with at least 1 transaction (not a Barclays account or digital-only bank)',
                 '<strong>Utility bill</strong>'
@@ -4189,11 +4221,6 @@
                 '<strong>Regulator letter</strong> (e.g. FCA or The Law Society)',
                 '<strong>Accountant or solicitor letter</strong> on headed paper confirming your trading address',
                 '<strong>Business rates bill</strong>'
-            ]},
-            { heading: 'Current documents:', items: [
-                '<strong>HMRC letter</strong> from this financial year',
-                '<strong>Insurance policy, renewal, certificate or schedule</strong>',
-                '<strong>Property lease, licence or rental agreement</strong>'
             ]}
         ];
 
@@ -6616,13 +6643,31 @@
             return null;
         }
 
+        // Raw, pre-override body HTML of the drawer that's currently shown, so it can be
+        // re-rendered in place when a copy change is applied while it's open. /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+        let currentDrawerBodyHtml = null;
+
         // Generic help-drawer opener — sets title + body HTML directly.
         function openHelpDrawer(title, bodyHtml) {
             document.getElementById('drawerTitle').textContent = title;
-            document.getElementById('drawerContent').innerHTML = bodyHtml;
-            applyTextOverrides(document.getElementById('drawerContent')); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+            currentDrawerBodyHtml = bodyHtml; /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+            const drawerContent = document.getElementById('drawerContent');
+            drawerContent.innerHTML = bodyHtml;
+            applyTextOverrides(drawerContent); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             document.getElementById('drawerOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
+        }
+
+        // Re-render the open drawer from its original body so copy overrides applied while
+        // it's open (via the "Suggest new copy" popup) show immediately, without losing the
+        // rest of the drawer's text. Works for any drawer, however it was populated. /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+        function refreshOpenDrawerCopy() {
+            const overlay = document.getElementById('drawerOverlay');
+            if (overlay && overlay.classList.contains('open') && currentDrawerBodyHtml != null) {
+                const drawerContent = document.getElementById('drawerContent');
+                drawerContent.innerHTML = currentDrawerBodyHtml; // restore override-free original
+                applyTextOverrides(drawerContent);               // re-apply current overrides
+            }
         }
 
         // Open a prep-card help-drawer by key (see prepDrawers).
@@ -6636,11 +6681,6 @@
             let question = findQuestionById(questionId, screenDef.questions);
 
             if (!question || !question.helpText) return;
-
-            const drawerContent = document.getElementById('drawerContent');
-            const drawerTitle = document.getElementById('drawerTitle');
-
-            drawerTitle.textContent = question.helpText.title;
 
             let html = '';
 
@@ -6666,10 +6706,7 @@
                 html += `<div class="drawer-outro">${question.helpText.outro}</div>`;
             }
 
-            drawerContent.innerHTML = html;
-            applyTextOverrides(drawerContent); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
-            document.getElementById('drawerOverlay').classList.add('open');
-            document.body.style.overflow = 'hidden';
+            openHelpDrawer(question.helpText.title, html);
         }
 
         function closeDrawer(event) {
@@ -6848,6 +6885,7 @@
             document.body.style.overflow = 'auto';
             copyEditorOriginal = null;
             renderScreen(currentScreen);
+            refreshOpenDrawerCopy(); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
         }
 
         function updateCopyChangesButton() {
@@ -6913,7 +6951,10 @@
             // Clear any previous import summary (showDrawerSummary re-shows it after a merge).
             const sum = document.getElementById('copyDrawerSummary');
             if (sum) { sum.style.display = 'none'; sum.textContent = ''; }
-            document.getElementById('copyDrawerOverlay').classList.add('open');
+            const ov = document.getElementById('copyDrawerOverlay');
+            ov.classList.remove('minimized');     // always reopen in maximized view
+            setCopyDrawerMinLabel(false);
+            ov.classList.add('open');
             document.body.style.overflow = 'hidden';
         }
         function closeCopyDrawer(event) {
@@ -6921,11 +6962,32 @@
             closeCopyDrawerForce();
         }
         function closeCopyDrawerForce() {
-            document.getElementById('copyDrawerOverlay').classList.remove('open');
+            const ov = document.getElementById('copyDrawerOverlay');
+            ov.classList.remove('open', 'minimized');
             document.body.style.overflow = 'auto';
         }
+        function setCopyDrawerMinLabel(minimized) {
+            const btn = document.querySelector('#copyDrawerOverlay .copy-drawer-min');
+            if (!btn) return;
+            btn.setAttribute('aria-label', minimized ? 'Maximize' : 'Minimize');
+            btn.setAttribute('title', minimized ? 'Maximize' : 'Minimize');
+        }
+        function toggleCopyDrawerMinimize(event) {
+            if (event) event.stopPropagation();
+            const ov = document.getElementById('copyDrawerOverlay');
+            const minimized = ov.classList.toggle('minimized');
+            setCopyDrawerMinLabel(minimized);
+            // When minimized, let the page behind scroll/interact again.
+            document.body.style.overflow = minimized ? 'auto' : 'hidden';
+        }
         function goToScreenFromCopyDrawer(index) {
-            closeCopyDrawerForce();
+            // Keep the drawer available but out of the way: minimize instead of closing.
+            const ov = document.getElementById('copyDrawerOverlay');
+            if (!ov.classList.contains('minimized')) {
+                ov.classList.add('minimized');
+                setCopyDrawerMinLabel(true);
+                document.body.style.overflow = 'auto';
+            }
             renderScreen(index);
             document.getElementById('contentArea').scrollTop = 0;
         }
