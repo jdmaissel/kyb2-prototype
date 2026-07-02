@@ -3683,7 +3683,7 @@
                         hint: 'What you offer and who you serve.',
                         maxLength: 250,
                         validationRules: [
-                            { test: v => v.length < 10, message: 'Error: please add more detail about what your business and customers', when: 'Under 10 characters' }
+                            { test: v => v.length < 10, message: 'Error: please add more detail about your business and customers', when: 'Under 10 characters' }
                         ],
                         helpText: {
                             title: 'Describing your business',
@@ -4692,21 +4692,20 @@
 
             screenDef.questions.forEach(q => {
                 html += renderQuestion(q, screenIndex);
+                /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — explainer + demo, shown directly below the Copy changes Y/N radio ===== */
+                if (screenDef.isPrescreen && q.id === 'protoCopyEditor' && copyEditorEnabled()) {
+                    html += `<div class="copy-intro" role="note">
+                        <p class="copy-intro-title">Copy changes mode is on</p>
+                        <ol class="copy-intro-steps">
+                            <li>Right-click any text to suggest new wording.</li>
+                            <li>Open "Copy changes" to copy them.</li>
+                            <li>Email them to Jifiti to update the prototype.</li>
+                        </ol>
+                        <p class="copy-intro-demo">Try it: <span class="copy-demo-text">Right-click this sentence.</span></p>
+                    </div>`;
+                }
+                /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
             });
-
-            /* ===== PROTOTYPE-ONLY: COPY CHANGE TOOL — explainer + demo, shown directly below the Copy changes Y/N radio ===== */
-            if (screenDef.isPrescreen && copyEditorEnabled()) {
-                html += `<div class="copy-intro" role="note">
-                    <p class="copy-intro-title">Copy changes mode is on</p>
-                    <ol class="copy-intro-steps">
-                        <li>Right-click any text to suggest new wording.</li>
-                        <li>Open "Copy changes" to copy them.</li>
-                        <li>Email them to Jifiti to update the prototype.</li>
-                    </ol>
-                    <p class="copy-intro-demo">Try it: <span class="copy-demo-text">Right-click this sentence.</span></p>
-                </div>`;
-            }
-            /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
 
             if (screenDef.requiresSummary) {
                 html += `<div class="sticky-summary" id="summary-${screenIndex}"><div id="summary-content-${screenIndex}"></div></div>`;
