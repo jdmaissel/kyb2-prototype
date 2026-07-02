@@ -2079,6 +2079,12 @@
         }
         .drawer-close:hover { opacity: 0.7; }
         .drawer-close svg { width: 24px; height: 24px; }
+        .drawer-header-action { background: #006de3; color: #fff; border: none; border-radius: 18px; padding: 7px 14px; font: 600 13px/1 var(--bx-font); cursor: pointer; white-space: nowrap; }
+        .drawer-header-action:hover { background: #0a58c2; }
+        /* When a header action is present (e.g. Validation rules), left-align the title
+           and drop the balancing left padding so the button has room, esp. on mobile. */
+        .drawer-header.header-has-action { padding-left: 24px; }
+        .drawer-header.header-has-action .drawer-title { text-align: left; }
 
         .drawer-content {
             padding: 16px 24px 24px;
@@ -2191,6 +2197,11 @@
         .drawer-steps li:last-child { margin-bottom: 0; }
         .drawer-label { font-weight: 600; color: #272727; }
         .drawer-subhead { font: 400 16px/22px var(--bx-font); color: #515151; }
+        /* Validation-rules reference table (reviewer aid) */
+        .val-catalog-table { width: 100%; border-collapse: collapse; font: 400 13px/18px var(--bx-font); }
+        .val-catalog-table th, .val-catalog-table td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid #ececec; word-break: break-word; }
+        .val-catalog-table th { font-weight: 600; color: #272727; background: #f6f6f6; position: sticky; top: 0; }
+        .val-catalog-table td { color: #515151; }
         .drawer-table th {
             font-weight: 600;
             color: #272727;
@@ -3032,7 +3043,7 @@
             padding: 20px;
             font-family: var(--bx-font);
         }
-        .copy-editor-modal h3 { margin: 0 0 16px; font: 600 18px/24px var(--bx-font); color: #272727; }
+        .copy-editor-modal h3 { margin: 0 0 16px; font: 600 18px/24px var(--bx-font); color: #272727; cursor: move; user-select: none; touch-action: none; }
         .copy-editor-field { margin-bottom: 14px; }
         .copy-editor-field-label { font: 600 13px/18px var(--bx-font); color: #6b6b6b; margin-bottom: 4px; }
         .copy-editor-old {
@@ -3293,6 +3304,7 @@
             <div class="drawer-sheet" onclick="event.stopPropagation()">
                 <div class="drawer-header">
                     <div class="drawer-title" id="drawerTitle">Describing your business</div>
+                    <button type="button" class="copy-ui drawer-header-action" id="drawerHeaderAction" style="display:none;" onclick="downloadValidationCatalogCSV()">Download CSV</button>
                     <button class="drawer-close" onclick="closeDrawer()">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 6L18 18M18 6L6 18" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3566,8 +3578,19 @@
                         options: ['Yes', 'No']
                         // No help-link: the blue "Copy review mode is on" box (shown when set to
                         // Yes) is the explanation.
-                    }
+                    },
                     /* ===== END PROTOTYPE-ONLY: COPY CHANGE TOOL ===== */
+                    {
+                        id: 'fieldValidation',
+                        type: 'radio',
+                        label: 'Field validation',
+                        options: ['Yes', 'No'],
+                        helpText: {
+                            title: 'What does this affect?',
+                            linkText: 'What does this affect?',
+                            intro: 'Field validation checks each answer is complete and in some cases valid (e.g. website address) before you continue to the next screen.<br><br><span class="drawer-label">Yes:</span> invalid or missing answers block Continue and show an error message.<br><span class="drawer-label">No:</span> you can move between screens freely, with no checks.<br><br>The shortcut buttons can still be used to jump between screens, even when field validation is on.'
+                        }
+                    }
                 ]
             },
             {
@@ -3611,7 +3634,7 @@
                                     type: 'text',
                                     label: 'Your trading name',
                                     validationRules: [
-                                        { test: v => v.length < 2, message: 'Error: please enter at least 2 characters.' }
+                                        { test: v => v.length < 2, message: 'Error: please enter your full trading name', when: 'Under 2 characters' }
                                     ]
                                 },
                                 {
@@ -3627,12 +3650,10 @@
                                             label: 'Explain initials, abbreviations and non-English words',
                                             hint: 'E.g. \'JB\' = Joe Bloggs, \'Uno\' = one in Spanish',
                                             maxLength: 250,
-                                            validationMessage: 'Error: please explain your trading name',
+                                            validationMessage: 'Error: please explain what these stand for',
                                             validationRules: [
-                                                { test: v => v.length < 5, message: 'Error: please enter a clear explanation.' },
-                                                { test: v => /^[0-9\s]+$/.test(v), message: 'Error: please enter a clear explanation.' },
-                                                { test: v => { const tn = document.getElementById('tradingNameValue'); return tn && v.toLowerCase() === tn.value.trim().toLowerCase(); }, message: 'Error: please enter a clear explanation.' },
-                                                { test: v => /^(.)\1+$/.test(v) || /^(.{1,2})\1{2,}/.test(v), message: 'Error: please enter a clear explanation.' }
+                                                { test: v => v.length < 10, message: 'Error: please enter a clear explanation of what these mean', when: 'Under 10 characters' },
+                                                { test: v => { const tn = document.getElementById('tradingNameValue'); return tn && v.toLowerCase() === tn.value.trim().toLowerCase(); }, message: 'Error: please enter a clear explanation of what these mean', when: 'Same as the trading name' }
                                             ]
                                         }
                                     }
@@ -3662,9 +3683,7 @@
                         hint: 'What you offer and who you serve.',
                         maxLength: 250,
                         validationRules: [
-                            { test: v => v.length < 20, message: 'Error: please provide more detail.' },
-                            { test: v => /^[0-9\s]+$/.test(v), message: 'Error: please enter a meaningful description.' },
-                            { test: v => /^(.)\1+$/.test(v) || /^(.{1,2})\1{2,}/.test(v), message: 'Error: please enter a meaningful description.' }
+                            { test: v => v.length < 10, message: 'Error: please add more detail about what your business and customers', when: 'Under 10 characters' }
                         ],
                         helpText: {
                             title: 'Describing your business',
@@ -3680,12 +3699,13 @@
                         type: 'select',
                         label: 'Number of employees, including directors',
                         options: ['1 to 9', '10 to 24', '25 to 49', '50-99', '100-149', '150-199', '200-249', '250-499', '500-999', '1000+'],
-                        validationMessage: 'Error: please select your number of employees.'
+                        validationMessage: 'Error: please select the number of employees'
                     }
                 ]
             },
             {
                 title: 'Your finances',
+                validate: true,
                 requiresSummary: true,
                 questions: [
                     {
@@ -3694,12 +3714,14 @@
                         label: 'Where did the money to start your business come from?',
                         placeholder: 'Select funding sources',
                         selectedLabel: 'sources',
+                        validationMessage: 'Error: please select sources of start-up funding',
                         options: ['Angel investor', 'Crowd funding platform', 'Gift', 'Inheritance', 'Investment sales', 'Life/saving policy maturity', 'Loan', 'Personal savings', 'Property/asset/business sale', 'Redundancy', 'Trust fund', 'Venture capital firm', 'Other'],
                         followUp: {
                             'Other': {
                                 id: 'fundingSourceOther',
                                 type: 'text',
-                                label: 'What is the source of the \'other\' funds?'
+                                label: 'What is the source of the \'other\' funds?',
+                                validationMessage: 'Error: please enter the source of the other funds'
                             }
                         }
                     },
@@ -3727,7 +3749,10 @@
                                 id: 'secondaryLineOfBusinessDetails',
                                 type: 'textarea',
                                 label: 'Describe your secondary line of business',
-                                maxLength: 250
+                                maxLength: 250,
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about your secondary line of business', when: 'Under 10 characters' }
+                                ]
                             }
                         }
                     },
@@ -3737,6 +3762,9 @@
                         label: 'How does your business earn revenue?',
                         placeholder: 'Select all sources',
                         selectedLabel: 'sources',
+                        validationMessage: 'Error: please select how your business earns revenue',
+                        otherValidationMessage: 'Error: please tell us about your other sources of revenue',
+                        otherMinMessage: 'Error: please add more detail about your other sources of revenue',
                         options: ['Consulting', 'Crowdfunding', 'Crypto/digital asset', 'Fundraising/donations', 'Income from property (including property management)', 'Membership fees', 'Outside investment', 'Providing a service', 'Sale of goods (online, physical stores)', 'Sale of technology solutions', 'Other'],
                         percentageRequired: true
                     },
@@ -3750,7 +3778,11 @@
                                 id: 'seasonalExplain',
                                 type: 'textarea',
                                 label: 'When does it change, and why?',
-                                maxLength: 300
+                                maxLength: 300,
+                                validationMessage: 'Error: please tell us when your revenue changes and why',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about when and why your revenue changes', when: 'Under 10 characters' }
+                                ]
                             }
                         }
                     }
@@ -3758,11 +3790,13 @@
             },
             {
                 title: 'Business locations',
+                validate: true,
                 questions: [
                     {
                         id: 'operationLocation',
                         type: 'select',
                         label: 'Where do you operate your business from?',
+                        validationMessage: 'Error: please select where you operate from',
                         options: ['Registered address', 'Trading address', 'Home address', 'Mobile business'],
                         // Address options depend on business type (set in Prototype settings):
                         //  - Sole trader:     no registered address
@@ -3780,6 +3814,10 @@
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
                                 hint: 'Describe the activities at this location.',
+                                validationMessage: 'Error: please describe the activities at this address',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about the activities at this address', when: 'Under 10 characters' }
+                                ],
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -3796,6 +3834,10 @@
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
                                 hint: 'Describe the activities at this location.',
+                                validationMessage: 'Error: please describe the activities at this address',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about the activities at this address', when: 'Under 10 characters' }
+                                ],
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -3812,6 +3854,10 @@
                                 type: 'textarea',
                                 label: 'What activities take place at this address?',
                                 hint: 'Describe the activities at this location.',
+                                validationMessage: 'Error: please describe the activities at this address',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about the activities at this address', when: 'Under 10 characters' }
+                                ],
                                 maxLength: 250,
                                 helpText: {
                                     title: 'Activities at this address',
@@ -3829,6 +3875,7 @@
                         id: 'correspondenceAddress',
                         type: 'select',
                         label: 'Where should we send loan communications?',
+                        validationMessage: 'Error: please select where to send loan communications',
                         placeholder: 'Select or specify an address',
                         options: ['Registered address', 'Trading address', 'Home address', 'Another address'],
                         // Address options depend on business type (set in Prototype settings):
@@ -3850,22 +3897,26 @@
                                     {
                                         id: 'customCorrespondenceAddress-line1',
                                         label: 'Address line 1',
-                                        placeholder: 'Street address'
+                                        placeholder: 'Street address',
+                                        validationMessage: 'Error: please enter the first line of your address'
                                     },
                                     {
                                         id: 'customCorrespondenceAddress-line2',
                                         label: 'Address line 2 (Optional)',
-                                        placeholder: 'Apt, suite, etc.'
+                                        placeholder: 'Apt, suite, etc.',
+                                        optional: true
                                     },
                                     {
                                         id: 'customCorrespondenceAddress-city',
                                         label: 'City',
-                                        placeholder: 'City'
+                                        placeholder: 'City',
+                                        validationMessage: 'Error: please enter your town or city'
                                     },
                                     {
                                         id: 'customCorrespondenceAddress-postcode',
                                         label: 'Postcode',
-                                        placeholder: 'Postcode'
+                                        placeholder: 'Postcode',
+                                        validationMessage: 'Error: please enter your postcode'
                                     }
                                 ]
                             }
@@ -3882,6 +3933,10 @@
                                 type: 'textarea',
                                 label: 'What operations do you have outside the UK?',
                                 hint: 'E.g. office, warehouse or shop',
+                                validationMessage: 'Error: please describe your operations outside the UK',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about your operations outside the UK', when: 'Under 10 characters' }
+                                ],
                                 maxLength: 250,
                                 helpText: {
                                     title: 'International operations',
@@ -3899,17 +3954,20 @@
             {
                 title: 'Proof of business address',
                 hideTitle: true,
+                validate: true,
                 questions: [
                     {
                         id: 'documentUpload',
                         type: 'document-upload',
                         label: 'Upload proof of your business address',
-                        hint: 'Provide a document that shows the address your business operates from'
+                        hint: 'Provide a document that shows the address your business operates from',
+                        confirmValidationMessage: 'Error: please confirm your document meets the requirements'
                     }
                 ]
             },
             {
                 title: 'Industry regulation',
+                validate: true,
                 questions: [
                     {
                         id: 'industryRegulator',
@@ -3917,6 +3975,7 @@
                         label: 'Who are you regulated by?',
                         placeholder: 'Select regulators',
                         selectedLabel: 'regulators',
+                        validationMessage: 'Error: please select who regulates your business',
                         // Options and per-regulator reference follow-ups are populated dynamically
                         // from the selected 'Regulated business sector' profession (see applyDynamicRegulators).
                         dynamicRegulators: true,
@@ -3934,6 +3993,7 @@
                                 id: 'regulationBody',
                                 type: 'select',
                                 label: 'Who are you regulated by?',
+                                validationMessage: 'Error: please select who regulates your business',
                                 options: ['Financial Conduct Authority', 'Prudential Regulation Authority', 'Other'],
                                 followUp: {
                                     'Financial Conduct Authority': {
@@ -3941,6 +4001,7 @@
                                         type: 'text',
                                         label: 'Firm reference number',
                                         hint: 'This is typically 6 or 7 digits.',
+                                        validationMessage: 'Error: please enter your firm reference number',
                                         helpText: {
                                             title: 'Firm reference number',
                                             intro: "You can find your reference number on the FCA's Financial Services Register. Search for the 'Financial Services Register' online, and official documents you may have received from the FCA.",
@@ -3952,6 +4013,7 @@
                                         type: 'text',
                                         label: 'Firm reference number',
                                         hint: 'This is typically 6 or 7 digits.',
+                                        validationMessage: 'Error: please enter your firm reference number',
                                         helpText: {
                                             title: 'Where can I find my reference number?',
                                             examples: [
@@ -3965,12 +4027,14 @@
                                         id: 'otherAuthority',
                                         type: 'text',
                                         label: 'Which other authority are you regulated by?',
+                                        validationMessage: 'Error: please enter the name of the authority that regulates you',
                                         followUp: {
                                             true: {
                                                 id: 'otherRefNumber',
                                                 type: 'text',
                                                 label: 'Firm reference number',
-                                                hint: 'This is typically 6 or 7 digits.'
+                                                hint: 'This is typically 6 or 7 digits.',
+                                                validationMessage: 'Error: please enter your firm reference number'
                                             }
                                         }
                                     }
@@ -3989,6 +4053,10 @@
                                 type: 'textarea',
                                 label: 'Describe your involvement.',
                                 maxLength: 250,
+                                validationMessage: 'Error: please describe your business\'s involvement in gambling',
+                                validationRules: [
+                                    { test: v => v.length < 10, message: 'Error: please add more detail about your involvement in gambling', when: 'Under 10 characters' }
+                                ],
                                 helpText: {
                                     title: 'Online gambling involvement',
                                     intro: 'Describe in detail how your business is involved in online gambling or games.',
@@ -4004,12 +4072,14 @@
             },
             {
                 title: 'Import & export',
+                validate: true,
                 requiresSummary: true,
                 questions: [
                     {
                         id: 'importExport',
                         type: 'select',
                         label: 'Does your business import or export?',
+                        validationMessage: 'Error: please tell us if you import or export',
                         options: ['No', 'Import only', 'Export only', 'Import and export'],
                         followUp: {
                             'Import only': {
@@ -4020,7 +4090,7 @@
                                 percentageLabel: 'What % of imports come from each country?',
                                 percentageHeaderLabel: '% OF IMPORTS',
                                 summaryLabel: 'Total allocated',
-                                errorMessage: 'Error: total imports must be 100%',
+                                errorMessage: 'Error: please make import percentages total 100%',
                                 showPercentageBar: true
                             },
                             'Export only': {
@@ -4031,7 +4101,7 @@
                                 percentageLabel: 'What % of exports go to each country?',
                                 percentageHeaderLabel: '% OF EXPORTS',
                                 summaryLabel: 'Total allocated',
-                                errorMessage: 'Error: total exports must be 100%',
+                                errorMessage: 'Error: please make export percentages total 100%',
                                 showPercentageBar: true
                             },
                             'Import and export': [
@@ -4043,7 +4113,7 @@
                                     percentageLabel: 'What % of imports come from each country?',
                                     percentageHeaderLabel: '% OF IMPORTS',
                                     summaryLabel: 'Total allocated',
-                                    errorMessage: 'Error: total imports must be 100%',
+                                    errorMessage: 'Error: please make import percentages total 100%',
                                     showPercentageBar: true
                                 },
                                 {
@@ -4054,7 +4124,7 @@
                                     percentageLabel: 'What % of exports go to each country?',
                                     percentageHeaderLabel: '% OF EXPORTS',
                                     summaryLabel: 'Total allocated',
-                                    errorMessage: 'Error: total exports must be 100%',
+                                    errorMessage: 'Error: please make export percentages total 100%',
                                     showPercentageBar: true
                                 }
                             ]
@@ -4064,6 +4134,7 @@
             },
             {
                 title: 'International payments',
+                validate: true,
                 requiresSummary: true,
                 questions: [
                     {
@@ -4076,6 +4147,7 @@
                                 id: 'paymentDirection',
                                 type: 'select',
                                 label: 'How do payments flow?',
+                                validationMessage: 'Error: please select how your payments flow',
                                 options: ['Send only', 'Receive only', 'Send and receive'],
                                 followUp: {
                                     'Send only': {
@@ -4120,6 +4192,7 @@
             },
             {
                 title: 'Tax & VAT details',
+                validate: true,
                 questions: [
                     {
                         id: 'ukTax',
@@ -4138,7 +4211,8 @@
                                 id: 'usTaxId',
                                 type: 'text',
                                 label: 'Enter US Tax Identification Number',
-                                hint: 'Find your Employer Identification Number (EIN) on IRS correspondence or US tax returns. Format: 12-3456789.'
+                                hint: 'Find your Employer Identification Number (EIN) on IRS correspondence or US tax returns. Format: 12-3456789.',
+                                validationMessage: 'Error: please enter your US Tax Identification Number'
                             }
                         }
                     },
@@ -4170,6 +4244,7 @@
                                 type: 'text',
                                 label: 'VAT registration number',
                                 hint: 'Usually starts with "GB" followed by 9 digits.',
+                                validationMessage: 'Error: please enter your VAT registration number',
                                 helpText: {
                                     title: 'Find your VAT registration number',
                                     linkText: 'Where can I find this?',
@@ -4188,13 +4263,18 @@
                                 id: 'vatReason',
                                 type: 'select',
                                 label: 'Why isn\'t your business VAT registered?',
+                                validationMessage: 'Error: please select why your business isn\'t VAT registered',
                                 options: ['Taxable income is below £90,000', 'Everything the business sells is exempt from VAT', 'Other'],
                                 followUp: {
                                     'Other': {
                                         id: 'vatReasonOther',
                                         type: 'textarea',
                                         label: 'Please specify',
-                                        maxLength: 250
+                                        maxLength: 250,
+                                        validationMessage: 'Error: please tell us why your business isn\'t VAT registered',
+                                        validationRules: [
+                                            { test: v => v.length < 10, message: 'Error: please add more detail about why you\'re not VAT registered', when: 'Under 10 characters' }
+                                        ]
                                     }
                                 }
                             }
@@ -4418,8 +4498,9 @@
                     type: 'text',
                     label: r.field || 'Registration / membership number',
                     hint: r.hint || '',
-                    // Validation (only where a format is defined in columns I & J).
-                    pattern: fmt ? fmt.pattern : null,
+                    // Required only — no regex/format check, even where a format hint exists.
+                    validationMessage: 'Error: please enter this number',
+                    pattern: null,
                     maxLength: fmt ? fmt.maxLength : null
                 };
             });
@@ -4431,9 +4512,16 @@
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['fieldValidation'] = 'No'; // validation off by default
             formData['protoCopyEditor'] = 'No'; /* PROTOTYPE-ONLY: COPY CHANGE TOOL — off by default */
             formData['regulatorRegion'] = 'England';
             initCopyEditor(); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+            // Clear a field's validation error as soon as the user starts fixing it.
+            const contentArea = document.getElementById('contentArea');
+            if (contentArea) {
+                contentArea.addEventListener('input', clearErrorOnInteract, true);
+                contentArea.addEventListener('change', clearErrorOnInteract, true);
+            }
             renderScreen(0);
             window.addEventListener('beforeunload', saveFormData);
         }
@@ -4754,6 +4842,12 @@
                     html += `<div style="margin-top: 12px;"><button class="help-link" onclick="openDrawer('${question.id}')">
                         ${linkLabel} <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
                     </button></div>`;
+                    // Reviewer aid: link straight to the validation-rules reference (Field validation only).
+                    if (question.id === 'fieldValidation') {
+                        html += `<div style="margin-top: 8px;"><button class="help-link" onclick="openValidationCatalog()">
+                        See all validation rules <span class="help-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="#006de3" stroke-width="2"/><circle cx="12" cy="8" r="1.5" fill="#006de3"/><path d="M12 11v6" stroke="#006de3" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    </button></div>`;
+                    }
                 }
             } else if (question.type === 'checkbox') {
                 html += `<div class="checkbox-group">`;
@@ -5020,10 +5114,13 @@
                 html += `<input type="file" id="${question.id}-file-input" class="file-input-hidden"
                     onchange="handleFileUpload('${question.id}', ${screenIndex})">`;
 
-                // Confirmation checkbox
-                html += `<div class="confirmation-checkbox">
-                    <input type="checkbox" id="${question.id}-confirm">
-                    <p class="confirmation-text">This document shows my business address and meets upload requirements.</p>
+                // Confirmation checkbox (wrapped so its validation error sits tight
+                // beneath the card instead of picking up the container's 20px gap).
+                html += `<div class="confirmation-block">
+                    <div class="confirmation-checkbox">
+                        <input type="checkbox" id="${question.id}-confirm">
+                        <p class="confirmation-text">This document shows my business address and meets upload requirements.</p>
+                    </div>
                 </div>`;
 
                 html += `</div>`;
@@ -5241,7 +5338,7 @@
                 // Hide unselected ones
                 document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
                     const val = el.id.replace(`followup-${questionId}-`, '');
-                    if (!selected.includes(val)) el.classList.remove('visible');
+                    if (!selected.includes(val)) { el.classList.remove('visible'); clearValidationErrorsIn(el); }
                 });
                 return;
             } else if (element && element.type === 'checkbox') {
@@ -5254,7 +5351,7 @@
                 // Hide unchecked ones
                 document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
                     const val = el.id.replace(`followup-${questionId}-`, '');
-                    if (!checked.includes(val)) el.classList.remove('visible');
+                    if (!checked.includes(val)) { el.classList.remove('visible'); clearValidationErrorsIn(el); }
                 });
                 return;
             } else if (element && element.multiple) {
@@ -5268,7 +5365,7 @@
                 // Hide unselected ones
                 document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
                     const val = el.id.replace(`followup-${questionId}-`, '');
-                    if (!selected.includes(val)) el.classList.remove('visible');
+                    if (!selected.includes(val)) { el.classList.remove('visible'); clearValidationErrorsIn(el); }
                 });
                 return;
             } else if (element && element.tagName === 'SELECT') {
@@ -5278,6 +5375,7 @@
             // Show/hide follow-up
             document.querySelectorAll(`[id^="followup-${questionId}-"]`).forEach(el => {
                 el.classList.remove('visible');
+                clearValidationErrorsIn(el);
             });
 
             if (selectedValue) {
@@ -5537,7 +5635,9 @@
                 Object.entries(questionDef.conditionalFollowUps).forEach(([option, followUpQ]) => {
                     const el = document.getElementById(`conditional-${questionId}-${option}`);
                     if (el) {
-                        el.style.display = selected.includes(option) ? 'block' : 'none';
+                        const show = selected.includes(option);
+                        el.style.display = show ? 'block' : 'none';
+                        if (!show) clearValidationErrorsIn(el); // drop stale errors so they don't reappear on re-show
                     }
                 });
             }
@@ -5573,6 +5673,8 @@
         function selectCustomOption(questionId, value, screenIndex) {
             // Update form data
             formData[questionId] = value;
+            // Custom selects don't fire a native change event, so clear any error here.
+            clearFieldError(questionId);
 
             // Changing the profession can change whether the Region question is relevant.
             // Reset any stale region/regulator selection and re-render the settings screen.
@@ -5934,6 +6036,7 @@
                 const customErrorMessage = countryAmountsGroup.getAttribute('data-error-message') || 'Error: total must be 100%';
                 errorDiv.textContent = customErrorMessage;
                 listElement.appendChild(errorDiv);
+                if (typeof applyTextOverrides === 'function') applyTextOverrides(errorDiv); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             } else if (!percentageRequired) {
                 // Add currency total summary for foreign funding
                 const summaryDiv = document.createElement('div');
@@ -6039,8 +6142,9 @@
             const errorMsg = document.createElement('div');
             errorMsg.className = 'revenue-split-error';
             errorMsg.id = `revenue-error-${questionId}`;
-            errorMsg.textContent = 'Error: total revenue must be 100%';
+            errorMsg.textContent = 'Error: please make your percentages total 100%';
             listElement.appendChild(errorMsg);
+            if (typeof applyTextOverrides === 'function') applyTextOverrides(errorMsg); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
 
             // A single source must be 100% — prefill it so the bar fills automatically.
             if (selected.length === 1) {
@@ -6382,6 +6486,8 @@
             } else {
                 targetEl.closest('.question-group').appendChild(errorMsg);
             }
+            /* PROTOTYPE-ONLY: COPY CHANGE TOOL — reflect any copy override for this error text */
+            if (typeof applyTextOverrides === 'function') applyTextOverrides(errorMsg);
             return false;
         }
 
@@ -6414,31 +6520,26 @@
         function validateQuestion(question) {
             const group = document.getElementById(`q-${question.id}`);
             if (!group) return true;
+            // Skip anything not currently on screen (e.g. hidden follow-ups). This lets the
+            // follow-up recursion below run generically — only the visible branch validates.
+            if (group.offsetParent === null) return true;
 
             if (question.type === 'radio') {
                 const checked = document.querySelector(`input[name="${question.id}"]:checked`);
                 if (!checked) {
                     const radioGroup = group.querySelector('.radio-group');
                     if (radioGroup) {
-                        showValidationError(radioGroup, `error-${question.id}`, 'Error: please answer this question', false);
+                        showValidationError(radioGroup, `error-${question.id}`, 'Error: please select yes or no', false);
                         const firstRadio = radioGroup.querySelector('input[type="radio"]');
                         if (firstRadio) firstRadio.focus();
                     }
                     return false;
                 }
-                // Validate visible follow-ups for the selected value
-                if (question.followUp && question.followUp[checked.value]) {
-                    const followUps = question.followUp[checked.value];
-                    const followUpArray = Array.isArray(followUps) ? followUps : [followUps];
-                    for (const fu of followUpArray) {
-                        if (!validateQuestion(fu)) return false;
-                    }
-                }
             } else if (question.type === 'text' || question.type === 'url') {
                 const element = document.getElementById(question.id);
                 if (element && element.value.trim().length === 0) {
-                    const label = question.label.charAt(0).toLowerCase() + question.label.slice(1);
-                    showValidationError(element, `error-${question.id}`, `Error: please enter ${label}`, true);
+                    const fallback = `Error: please enter ${question.label.charAt(0).toLowerCase() + question.label.slice(1)}`;
+                    showValidationError(element, `error-${question.id}`, question.validationMessage || fallback, true);
                     element.focus();
                     return false;
                 }
@@ -6455,7 +6556,7 @@
                 if (question.type === 'url' && element && element.value.trim().length > 0) {
                     const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
                     if (!urlPattern.test(element.value.trim())) {
-                        showValidationError(element, `error-${question.id}`, 'Error: please enter a valid website address', true);
+                        showValidationError(element, `error-${question.id}`, 'Error: please enter a valid website address, e.g. www.example.co.uk', true);
                         element.focus();
                         return false;
                     }
@@ -6490,14 +6591,231 @@
                     }
                     return false;
                 }
+            } else if (question.type === 'multi-select') {
+                const sel = formData[question.id];
+                if (!Array.isArray(sel) || sel.length === 0) {
+                    const trigger = document.getElementById(`${question.id}-trigger`);
+                    if (trigger) {
+                        showValidationError(trigger, `error-${question.id}`, question.validationMessage || 'Error: please select an option', false);
+                        trigger.focus();
+                    }
+                    return false;
+                }
+                // "Other" free-text box is required (and min 10 chars) when 'Other' is selected.
+                if (sel.includes('Other')) {
+                    const other = document.getElementById(`${question.id}OtherDetails`);
+                    if (other) {
+                        const oval = other.value.trim();
+                        let omsg = null;
+                        if (oval.length === 0) omsg = question.otherValidationMessage || 'Error: please tell us more';
+                        else if (oval.length < 10) omsg = question.otherMinMessage || 'Error: please add more detail';
+                        if (omsg) {
+                            showValidationError(other, `error-${question.id}OtherDetails`, omsg, true);
+                            other.focus();
+                            return false;
+                        }
+                    }
+                }
+                // Revenue-split percentages must total exactly 100. Reuse the inline
+                // revenue error (same message) rather than adding a second one.
+                if (question.percentageRequired) {
+                    const inputs = document.querySelectorAll(`#list-${question.id} .percent-input`);
+                    if (inputs.length) {
+                        let total = 0;
+                        inputs.forEach(i => { total += (parseInt(i.value) || 0); });
+                        if (total !== 100) {
+                            const inlineErr = document.getElementById(`revenue-error-${question.id}`);
+                            if (inlineErr) {
+                                inlineErr.classList.add('visible');
+                                inlineErr.scrollIntoView({ block: 'center' });
+                            }
+                            return false;
+                        }
+                    }
+                }
+            } else if (question.type === 'country-multi') {
+                // Selection is stored either as an array of codes (plain/amount/tax-id lists)
+                // or as { countries, percentages } (percentage lists) — handle both.
+                const v = formData[question.id];
+                const codes = Array.isArray(v) ? v : ((v && Array.isArray(v.countries)) ? v.countries : []);
+                if (codes.length === 0) {
+                    const trigger = document.getElementById(`${question.id}-trigger`);
+                    if (trigger) {
+                        showValidationError(trigger, `error-${question.id}`, question.validationMessage || 'Error: please select at least one country', false);
+                        trigger.focus();
+                    }
+                    return false;
+                }
+                // Each selected country must have its per-country value entered. Amount (£)
+                // and Tax ID lists are checked here; percentage lists keep their own
+                // remaining/over-100% mechanism.
+                const amountsGroup = document.getElementById(`country-amounts-${question.id}`);
+                const isPercent = amountsGroup && amountsGroup.getAttribute('data-percentage-required') === 'true';
+                if (amountsGroup && !isPercent) {
+                    const isTaxId = amountsGroup.getAttribute('data-tax-id-required') === 'true';
+                    const suffix = isTaxId ? 'taxid' : 'amount';
+                    const emptyInputs = codes
+                        .map(code => document.getElementById(`${question.id}-${code}-${suffix}`))
+                        .filter(inp => inp && (isTaxId
+                            ? inp.value.trim() === ''
+                            : (inp.value.trim() === '' || (parseFloat(inp.value) || 0) <= 0)));
+                    if (emptyInputs.length) {
+                        emptyInputs.forEach(inp => { inp.classList.add('has-error'); inp.setAttribute('aria-invalid', 'true'); });
+                        const errDiv = document.createElement('div');
+                        errDiv.className = 'validation-error';
+                        errDiv.id = `error-${question.id}-amounts`;
+                        errDiv.setAttribute('role', 'alert');
+                        errDiv.textContent = isTaxId
+                            ? 'Error: please enter a Tax ID Number for each country'
+                            : 'Error: please enter an amount for each country';
+                        amountsGroup.appendChild(errDiv);
+                        if (typeof applyTextOverrides === 'function') applyTextOverrides(errDiv); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+                        emptyInputs[0].focus();
+                        emptyInputs[0].scrollIntoView({ block: 'center' });
+                        return false;
+                    }
+                }
+                // Percentage lists that show a total bar (imports/exports) must total exactly
+                // 100. Lists without the bar (e.g. payments = % of total turnover) are exempt.
+                const showsTotalBar = amountsGroup && amountsGroup.getAttribute('data-show-percentage-bar') !== 'false';
+                if (amountsGroup && isPercent && showsTotalBar) {
+                    const inputs = document.querySelectorAll(`#list-${question.id} .percent-input`);
+                    if (inputs.length) {
+                        let total = 0;
+                        inputs.forEach(i => { total += (parseInt(i.value) || 0); });
+                        if (total !== 100) {
+                            const perr = document.getElementById(`percent-error-${question.id}`);
+                            if (perr) {
+                                perr.classList.add('visible');
+                                perr.scrollIntoView({ block: 'center' });
+                            }
+                            return false;
+                        }
+                    }
+                }
+                // Percentage lists WITHOUT a total bar (payments = % of turnover): each
+                // selected country must have a percentage entered, but they needn't total 100.
+                if (amountsGroup && isPercent && !showsTotalBar) {
+                    const emptyInputs = codes
+                        .map(code => document.getElementById(`${question.id}-${code}-percent`))
+                        .filter(inp => inp && (parseInt(inp.value) || 0) <= 0);
+                    if (emptyInputs.length) {
+                        emptyInputs.forEach(inp => { inp.classList.add('has-error'); inp.setAttribute('aria-invalid', 'true'); });
+                        const errDiv = document.createElement('div');
+                        errDiv.className = 'validation-error';
+                        errDiv.id = `error-${question.id}-pct`;
+                        errDiv.setAttribute('role', 'alert');
+                        errDiv.textContent = 'Error: please enter a percentage for each country';
+                        amountsGroup.appendChild(errDiv);
+                        if (typeof applyTextOverrides === 'function') applyTextOverrides(errDiv); /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
+                        emptyInputs[0].focus();
+                        emptyInputs[0].scrollIntoView({ block: 'center' });
+                        return false;
+                    }
+                }
+            } else if (question.type === 'address-fields') {
+                if (question.fields && Array.isArray(question.fields)) {
+                    for (const field of question.fields) {
+                        const el = document.getElementById(field.id);
+                        if (!el) continue;
+                        const optional = field.optional || /\(optional\)/i.test(field.label);
+                        const val = el.value.trim();
+                        if (!optional && val.length === 0) {
+                            const fallback = `Error: please enter ${field.label.charAt(0).toLowerCase() + field.label.slice(1)}`;
+                            showValidationError(el, `error-${field.id}`, field.validationMessage || fallback, true);
+                            el.focus();
+                            return false;
+                        }
+                        if (field.validationRules && val.length > 0) {
+                            for (const rule of field.validationRules) {
+                                if (rule.test(val)) {
+                                    showValidationError(el, `error-${field.id}`, rule.message, true);
+                                    el.focus();
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (question.type === 'document-upload') {
+                // Require the "meets requirements" confirmation checkbox to be ticked.
+                const confirm = document.getElementById(`${question.id}-confirm`);
+                if (confirm && !confirm.checked) {
+                    const container = confirm.closest('.confirmation-checkbox') || confirm;
+                    showValidationError(container, `error-${question.id}-confirm`, question.confirmValidationMessage || 'Error: please confirm your document meets the requirements', true);
+                    confirm.focus();
+                    return false;
+                }
+            }
+
+            // Validate visible follow-ups (hidden branches are skipped by the guard above).
+            return validateFollowUps(question);
+        }
+
+        // Recurse into every follow-up of a question; the offsetParent guard in
+        // validateQuestion means only the currently-visible branch actually validates.
+        // Covers both standard followUp and the dynamically-built conditionalFollowUps
+        // (e.g. the per-regulator registration-number boxes on Industry regulation).
+        function validateFollowUps(question) {
+            const sources = [question.followUp, question.conditionalFollowUps];
+            for (const fuObj of sources) {
+                if (!fuObj) continue;
+                for (const key in fuObj) {
+                    const fu = fuObj[key];
+                    const arr = Array.isArray(fu) ? fu : [fu];
+                    for (const f of arr) {
+                        if (f && f.id && !validateQuestion(f)) return false;
+                    }
+                }
             }
             return true;
+        }
+
+        // Remove a field's validation error + error styling by field id. Used to clear an
+        // error the moment the user starts fixing the field (re-checked on next Continue).
+        function clearFieldError(id) {
+            if (!id) return;
+            const err = document.getElementById(`error-${id}`);
+            if (err) err.remove();
+            const controls = [document.getElementById(id), document.getElementById(`${id}-trigger`)];
+            const grp = document.getElementById(`q-${id}`);
+            if (grp) { const rg = grp.querySelector('.radio-group.has-error'); if (rg) controls.push(rg); }
+            controls.forEach(el => {
+                if (el) { el.classList.remove('has-error'); el.removeAttribute('aria-invalid'); clearDescribedBy(el); }
+            });
+        }
+
+        // Remove any validation errors inside a container (used when a follow-up is hidden,
+        // so a stale error doesn't reappear when the follow-up is shown again).
+        function clearValidationErrorsIn(root) {
+            if (!root) return;
+            root.querySelectorAll('.validation-error').forEach(e => e.remove());
+            root.querySelectorAll('.has-error').forEach(e => { e.classList.remove('has-error'); e.removeAttribute('aria-invalid'); clearDescribedBy(e); });
+        }
+
+        // Delegated handler: as soon as the user interacts with a field, clear its error.
+        // Maps the interacted control back to its field id across every input type.
+        function clearErrorOnInteract(e) {
+            const t = e.target;
+            if (!t) return;
+            let fieldId = null;
+            if (t.name && /-checkbox$/.test(t.name)) fieldId = t.name.replace(/-checkbox$/, ''); // multi-select & country lists
+            else if (t.type === 'radio' && t.name) fieldId = t.name;                              // radio groups
+            else if (t.id) fieldId = t.id;                                                        // text / url / textarea / address / reg boxes
+            clearFieldError(fieldId);
+            // Per-country amount / tax-id / percentage inputs also clear their list's group-level error.
+            const m = t.id && t.id.match(/^(.*)-[A-Za-z]{2}-(amount|taxid|percent)$/);
+            if (m) { ['amounts', 'pct'].forEach(sfx => { const e = document.getElementById(`error-${m[1]}-${sfx}`); if (e) e.remove(); }); }
         }
 
         // Validate current screen — show first error only
         function validateCurrentScreen() {
             const screenDef = screenDefinitions[currentScreen];
             if (!screenDef) return true;
+
+            // Master switch (Prototype settings → Field validation). Off by default,
+            // so no field validation runs unless the reviewer turns it on.
+            if (formData['fieldValidation'] !== 'Yes') return true;
 
             // Only validate screens explicitly flagged with `validate: true`
             // (currently the Business identity screen). Flag-based so it survives
@@ -6518,6 +6836,115 @@
             }
 
             return true;
+        }
+
+        // ===== Validation-rules reference (reviewer aid) =====
+        // Builds a flat list of every validation error the flow can show, generated live
+        // from the config so it never drifts. Each row: { screen, field, when, error }.
+        function buildValidationCatalog() {
+            const rows = [];
+            const seen = new Set();
+            const lc = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+
+            function walk(q, screenTitle) {
+                const label = q.label || q.id;
+                const add = (when, error) => {
+                    const key = screenTitle + '|' + label + '|' + when + '|' + error;
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    rows.push({ screen: screenTitle, field: label, when: when, error: error });
+                };
+                const rules = q.validationRules || [];
+                switch (q.type) {
+                    case 'radio':
+                        add('No option selected', 'Error: please select yes or no');
+                        break;
+                    case 'select':
+                        add('No option selected', q.validationMessage || 'Error: please answer this question');
+                        break;
+                    case 'text':
+                    case 'url':
+                        add('Left blank', q.validationMessage || ('Error: please enter ' + lc(label)));
+                        rules.forEach(r => add(r.when || 'Invalid entry', r.message));
+                        if (q.type === 'url') add('Not a valid web address', 'Error: please enter a valid website address, e.g. www.example.co.uk');
+                        break;
+                    case 'textarea':
+                        add('Left blank', q.validationMessage || ('Error: please ' + lc(label)));
+                        rules.forEach(r => add(r.when || 'Invalid entry', r.message));
+                        break;
+                    case 'multi-select':
+                        add('Nothing selected', q.validationMessage || 'Error: please select an option');
+                        if (q.dynamicRegulators) add("A regulator's number is blank", 'Error: please enter this number');
+                        if (q.percentageRequired) add("Percentages don't total 100%", 'Error: please make your percentages total 100%');
+                        if (q.otherValidationMessage) {
+                            add("'Other' selected but box blank", q.otherValidationMessage);
+                            if (q.otherMinMessage) add("'Other' box under 10 characters", q.otherMinMessage);
+                        }
+                        break;
+                    case 'country-multi':
+                        add('No country selected', q.validationMessage || 'Error: please select at least one country');
+                        if (q.percentageLabel && q.showPercentageBar !== false) add("Percentages don't total 100%", q.errorMessage || 'Error: please make your percentages total 100%');
+                        else if (q.percentageLabel) add('A country has 0%', 'Error: please enter a percentage for each country');
+                        else if (q.taxIdRequired) add('A country has no Tax ID', 'Error: please enter a Tax ID Number for each country');
+                        else add('A country has no amount', 'Error: please enter an amount for each country');
+                        break;
+                    case 'address-fields':
+                        (q.fields || []).forEach(f => {
+                            const optional = f.optional || /\(optional\)/i.test(f.label);
+                            if (!optional) add('Left blank', f.validationMessage || ('Error: please enter ' + lc(f.label)));
+                            (f.validationRules || []).forEach(r => add(r.when || 'Invalid entry', r.message));
+                        });
+                        break;
+                    case 'document-upload':
+                        add('Confirmation not ticked', q.confirmValidationMessage || 'Error: please confirm');
+                        break;
+                }
+                // Recurse into follow-ups (standard + conditional).
+                const kids = [];
+                if (q.followUp) Object.values(q.followUp).forEach(f => Array.isArray(f) ? kids.push.apply(kids, f) : kids.push(f));
+                if (q.conditionalFollowUps) Object.values(q.conditionalFollowUps).forEach(f => kids.push(f));
+                kids.forEach(f => { if (f && f.id) walk(f, screenTitle); });
+            }
+
+            screenDefinitions.forEach(s => {
+                if (!s.validate) return;
+                (s.questions || []).forEach(q => walk(q, s.title));
+            });
+            return rows;
+        }
+
+        // Show the reference as a table inside the help drawer (so copy overrides + right-click
+        // editing work via the existing drawer machinery).
+        function openValidationCatalog() {
+            const rows = buildValidationCatalog();
+            const esc = escapeHtml;
+            let html = '<div class="val-catalog">';
+            html += '<table class="val-catalog-table"><thead><tr><th>Screen</th><th>Field</th><th>When</th><th>Error message</th></tr></thead><tbody>';
+            rows.forEach(r => {
+                html += '<tr><td>' + esc(r.screen) + '</td><td>' + esc(r.field) + '</td><td>' + esc(r.when) + '</td><td>' + esc(r.error) + '</td></tr>';
+            });
+            html += '</tbody></table></div>';
+            openHelpDrawer('Validation rules', html);
+            // Reveal the Download CSV action in the drawer header for this view only, and
+            // left-align the title so the button has room (esp. on mobile).
+            const hdrAction = document.getElementById('drawerHeaderAction');
+            if (hdrAction) hdrAction.style.display = '';
+            const hdr = document.querySelector('#drawerOverlay .drawer-header');
+            if (hdr) hdr.classList.add('header-has-action');
+        }
+
+        function downloadValidationCatalogCSV() {
+            const rows = buildValidationCatalog();
+            const eff = m => (typeof copyEditorEnabled === 'function' && copyEditorEnabled() && textOverrides[m]) ? textOverrides[m].new : m;
+            const cell = s => '"' + String(s).replace(/"/g, '""') + '"';
+            let csv = ['Screen', 'Field', 'When shown', 'Error message'].map(cell).join(',') + '\r\n';
+            rows.forEach(r => { csv += [r.screen, r.field, r.when, eff(r.error)].map(cell).join(',') + '\r\n'; });
+            const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'validation-errors.csv';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
         // Navigate to next screen
@@ -6559,6 +6986,7 @@
             formData['protoBusinessType'] = 'Both';
             formData['protoRegulatedSector'] = 'Travel agents / tour operators';
             formData['protoPrefilling'] = 'No';
+            formData['fieldValidation'] = 'No'; // validation off by default
             formData['protoCopyEditor'] = keepCopyEditor; /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             formData['regulatorRegion'] = 'England';
             renderScreen(0);
@@ -6650,6 +7078,11 @@
         // Generic help-drawer opener — sets title + body HTML directly.
         function openHelpDrawer(title, bodyHtml) {
             document.getElementById('drawerTitle').textContent = title;
+            // Header action button is off unless a specific view (e.g. the validation catalog) turns it on.
+            const hdrAction = document.getElementById('drawerHeaderAction');
+            if (hdrAction) hdrAction.style.display = 'none';
+            const hdr = document.querySelector('#drawerOverlay .drawer-header');
+            if (hdr) hdr.classList.remove('header-has-action');
             currentDrawerBodyHtml = bodyHtml; /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             const drawerContent = document.getElementById('drawerContent');
             drawerContent.innerHTML = bodyHtml;
@@ -6855,6 +7288,8 @@
             document.getElementById('copyEditorOld').textContent = original;
             const ta = document.getElementById('copyEditorNew');
             ta.value = current;
+            const modal = document.querySelector('#copyEditorOverlay .copy-editor-modal');
+            if (modal) { modal.style.transform = ''; modal._dragOffset = { x: 0, y: 0 }; } // re-centre on open
             document.getElementById('copyEditorOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
             setTimeout(() => { ta.focus(); ta.select(); }, 0);
@@ -7064,6 +7499,8 @@
 
         function openCopyImport() {
             document.getElementById('copyImportText').value = '';
+            const m = document.querySelector('#copyImportOverlay .copy-editor-modal');
+            if (m) { m.style.transform = ''; m._dragOffset = { x: 0, y: 0 }; } // re-centre on open
             document.getElementById('copyImportOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
             setTimeout(() => document.getElementById('copyImportText').focus(), 0);
@@ -7135,6 +7572,8 @@
                     <button type="button" class="copy-editor-apply" onclick="commitImport('all')">Continue</button>
                     <button type="button" class="copy-editor-cancel" onclick="cancelImport()">Cancel import</button>`;
             }
+            const rm = document.querySelector('#copyReviewOverlay .copy-editor-modal');
+            if (rm) { rm.style.transform = ''; rm._dragOffset = { x: 0, y: 0 }; } // re-centre on open
             document.getElementById('copyReviewOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -7227,8 +7666,34 @@
             }
         }
 
+        // Let copy-tool popups be dragged by their title bar (the h3). Uses a translate
+        // offset so the popup still opens centred; pointer events cover mouse + touch.
+        function initCopyModalDrag() {
+            let dragEl = null, startX = 0, startY = 0, baseX = 0, baseY = 0;
+            document.addEventListener('pointerdown', e => {
+                const h3 = e.target.closest && e.target.closest('.copy-editor-modal > h3');
+                if (!h3) return;
+                dragEl = h3.parentElement;
+                const off = dragEl._dragOffset || { x: 0, y: 0 };
+                baseX = off.x; baseY = off.y;
+                startX = e.clientX; startY = e.clientY;
+                e.preventDefault();
+            });
+            document.addEventListener('pointermove', e => {
+                if (!dragEl) return;
+                const nx = baseX + (e.clientX - startX);
+                const ny = baseY + (e.clientY - startY);
+                dragEl._dragOffset = { x: nx, y: ny };
+                dragEl.style.transform = `translate(${nx}px, ${ny}px)`;
+            });
+            const end = () => { dragEl = null; };
+            document.addEventListener('pointerup', end);
+            document.addEventListener('pointercancel', end);
+        }
+
         function initCopyEditor() {
             loadCopyOverrides();
+            initCopyModalDrag();
             // Listeners are attached once but stay inert until the tool is switched on
             // (copyEditorEnabled() guards every entry point).
             [document.getElementById('contentArea'), document.getElementById('drawerContent')].forEach(el => {
