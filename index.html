@@ -2085,6 +2085,10 @@
            and drop the balancing left padding so the button has room, esp. on mobile. */
         .drawer-header.header-has-action { padding-left: 24px; }
         .drawer-header.header-has-action .drawer-title { text-align: left; }
+        /* One-line title: drop the balancing left padding and left-align so a
+           longer title fits without wrapping (e.g. Proof of regulator membership). */
+        .drawer-header.header-one-line-title { padding-left: 24px; }
+        .drawer-header.header-one-line-title .drawer-title { text-align: left; white-space: nowrap; }
 
         .drawer-content {
             padding: 16px 24px 24px;
@@ -2465,6 +2469,14 @@
             line-height: 22px;
             margin: 0;
         }
+        .upload-intro-list {
+            font: 400 16px/22px var(--bx-font);
+            color: #515151;
+            margin: 0;
+            padding-left: 24px;
+        }
+        .upload-intro-list li { margin-bottom: 4px; }
+        .upload-intro-list li:last-child { margin-bottom: 0; }
 
         /* Review card — same Phase 2.0 preview spec as .data-card */
         .review-card {
@@ -3492,9 +3504,10 @@
                                 <p style="margin:0 0 8px;"><span class="drawer-label">Real system:</span></p>
                                 <ol class="drawer-steps">
                                     <li>The customer selects their BIC code early in their enquiry.</li>
-                                    <li>If their BIC code is regulated, <button type="button" class="drawer-inline-link" onclick="goToScreen(1)">Before we begin</button> lists their regulator membership numbers as something to have ready.</li>
-                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(6)">Industry regulation</button> screen, the BIC code sets whether the "Who are you regulated by?" question appears, and which regulators are listed.</li>
+                                    <li>If their BIC code is regulated, <button type="button" class="drawer-inline-link" onclick="goToScreen(1)">Before we begin</button> lists their regulator membership numbers and proof of regulator membership as things to have ready, with a drawer listing accepted proofs.</li>
+                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(5)">Industry regulation</button> screen, the BIC code sets whether the "Who are you regulated by?" question appears, and which regulators are listed.</li>
                                     <li>They select their regulator(s) and enter each registration number.</li>
+                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(6)">Upload documents</button> screen, the BIC code determines whether proof of regulator membership is requested.</li>
                                 </ol>`
                         }
                     },
@@ -3603,9 +3616,11 @@
                     bullets: ['Confirm your details', 'Meet legal requirements', 'Prevent fraud and financial crime'],
                     prepCard: {
                         label: 'Please have ready:',
-                        always: [{ label: 'Proof of your trading address', linkText: 'see accepted documents', drawer: 'proofOfAddress' }],
+                        always: [{ label: 'Proof of your trading address', linkText: 'accepted documents', drawer: 'proofOfAddress' }],
                         // Added to the primary list only when the selected profession is regulated.
                         regulatorItem: 'Regulator membership numbers (e.g. Law Society number)',
+                        // Follows regulatorItem, same regulated-only condition.
+                        regulatorProofItem: { label: 'Proof of your regulator membership', linkText: 'accepted documents', drawer: 'proofOfRegulated' },
                         conditionalIntro: 'If relevant, please find your:',
                         conditional: [
                             'VAT registration number',
@@ -3952,20 +3967,6 @@
                 ]
             },
             {
-                title: 'Proof of business address',
-                hideTitle: true,
-                validate: true,
-                questions: [
-                    {
-                        id: 'documentUpload',
-                        type: 'document-upload',
-                        label: 'Upload proof of your business address',
-                        hint: 'Provide a document that shows the address your business operates from',
-                        confirmValidationMessage: 'Error: please confirm your document meets the requirements'
-                    }
-                ]
-            },
-            {
                 title: 'Industry regulation',
                 validate: true,
                 questions: [
@@ -4067,6 +4068,20 @@
                                 }
                             }
                         }
+                    }
+                ]
+            },
+            {
+                title: 'Upload documents',
+                hideTitle: true,
+                validate: true,
+                questions: [
+                    {
+                        id: 'documentUpload',
+                        type: 'document-upload',
+                        label: 'Upload proof documents',
+                        hint: 'Please upload proof of:',
+                        confirmValidationMessage: 'Error: please confirm your document meets the requirements'
                     }
                 ]
             },
@@ -4285,7 +4300,7 @@
         ];
 
         // Single source of truth for the "Documents we accept" list. Used by
-        // both the Step 1 prep-card help-drawer and the Step 5 upload accordion.
+        // both the Step 1 prep-card help-drawer and the Step 6 upload accordion.
         const acceptedDocuments = [
             { heading: 'Current documents:', items: [
                 '<strong>HMRC letter</strong> from this financial year',
@@ -4305,12 +4320,13 @@
         ];
 
         // Render the accepted-documents list. style 'drawer' uses the help-drawer
-        // look; style 'accordion' uses the Step 5 accordion look.
+        // look; style 'accordion' uses the Step 6 accordion look.
         function buildAcceptedDocsHtml(style) {
-            return acceptedDocuments.map((g, idx) => {
-                // Match the on-screen prep-card subhead rhythm: 16px above (0 for the
-                // first group), 8px below.
-                const margin = idx === 0 ? '0 0 8px' : '16px 0 8px';
+            const sub = style === 'accordion' ? 'accordion-subhead' : 'drawer-subhead';
+            const intro = `<p class="${sub}" style="margin:0 0 8px;">Please provide one of these documents:</p>`;
+            return intro + acceptedDocuments.map(g => {
+                // Match the on-screen prep-card subhead rhythm: 16px above, 8px below.
+                const margin = '16px 0 8px';
                 if (style === 'accordion') {
                     return `<p class="accordion-subhead" style="margin:${margin};">${g.heading}</p>`
                         + `<ul class="accordion-list">${g.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
@@ -4323,13 +4339,35 @@
         // Help-drawer content opened from "What to have ready" prep-card links.
         const prepDrawers = {
             proofOfAddress: {
-                title: 'Documents we accept',
+                title: 'Proof of your trading address',
+                oneLineTitle: true,
                 // Wrapped in a single div so the drawer's flex `gap` doesn't add
                 // space between every heading/list — keeps block-flow margins,
                 // matching the on-screen prep-card spacing (16px above / 8px below headings).
                 build: () => `<div>${buildAcceptedDocsHtml('drawer')}</div>`
+            },
+            // Placeholder accepted-proof list — pending PM/Barclays confirmation.
+            proofOfRegulated: {
+                title: 'Proof of your regulator membership',
+                oneLineTitle: true,
+                build: () => `<div>${buildAcceptedProofHtml('drawer')}</div>`
             }
         };
+
+        // Accepted proof-of-regulator-membership list, shared by the Step 1
+        // prep-card help-drawer and the Step 6 upload accordion (mirrors
+        // buildAcceptedDocsHtml). Placeholder — pending PM/Barclays confirmation.
+        function buildAcceptedProofHtml(style) {
+            const sub = style === 'accordion' ? 'accordion-subhead' : 'drawer-subhead';
+            const list = style === 'accordion' ? 'accordion-list' : 'drawer-bullets';
+            return `<p class="${sub}" style="margin:0 0 8px;">Please provide one of the following for each regulator or scheme you belong to:</p>`
+                + `<ul class="${list}">
+                    <li><strong>Membership or registration certificate</strong></li>
+                    <li><strong>Renewal letter or email</strong> from your regulator, dated within the last 12 months</li>
+                    <li><strong>Your registry entry on regulator's website</strong></li>
+                </ul>`
+                + `<p class="${sub}" style="margin:16px 0 0;">Make sure your business name and membership number are clearly visible.</p>`;
+        }
 
         // Regulator / verification scheme mapping by profession (source: BIC_Regulator_Mapping_v13.xlsx, column C)
         const professionRegulators = {
@@ -4534,8 +4572,10 @@
             const screenDef = screenDefinitions[screenIndex];
             const screenContainer = document.getElementById('screenContainer');
 
-            // Update header and tracker
+            // Update header and tracker. hideScreenTitle removes the big h1 (e.g. the
+            // upload screen, where the intro title carries the heading instead).
             document.getElementById('screenTitle').textContent = screenDef.title;
+            document.getElementById('screenTitle').style.display = screenDef.hideScreenTitle ? 'none' : '';
             document.getElementById('continueBtn').textContent = screenDef.continueLabel || 'Continue';
             const progressTracker = document.querySelector('.progress-tracker');
 
@@ -4626,6 +4666,7 @@
                     const primary = [...(pc.always || [])];
                     if (pc.regulatorItem && (professionRegulators[formData['protoRegulatedSector']] || []).length) {
                         primary.push(pc.regulatorItem);
+                        if (pc.regulatorProofItem) primary.push(pc.regulatorProofItem);
                     }
                     // An item can be a plain string, or an object with a `drawer` key
                     // that turns it into a link opening the matching help-drawer.
@@ -5015,10 +5056,18 @@
             } else if (question.type === 'document-upload') {
                 html += `<div class="document-upload-container">`;
 
-                // Intro section with title and hint
+                // Regulated professions also upload proof of regulator membership,
+                // mirroring the Before we begin prep-card condition.
+                const uploadRegulated = (professionRegulators[formData['protoRegulatedSector']] || []).length > 0;
+
+                // Intro section — hint and the list of required proofs (the screen
+                // h1 carries the title, so no inline title here).
                 html += `<div class="upload-intro">
-                    <p class="upload-intro-title">${question.label}</p>
                     <p class="upload-intro-hint">${question.hint}</p>
+                    <ul class="upload-intro-list">
+                        <li>Your trading address</li>
+                        ${uploadRegulated ? '<li>Your regulator membership</li>' : ''}
+                    </ul>
                 </div>`;
 
                 // Determine address based on user's selection in operationLocation
@@ -5035,15 +5084,16 @@
 
                 // Review card with address
                 html += `<div class="review-card">
-                    <div class="review-card-label">Where you operate</div>
+                    <div class="review-card-label">Your trading address</div>
                     <div class="review-card-value">${reviewAddress}</div>
                 </div>`;
 
-                // Accordion sections
+                // Accordion sections — accepted docs per proof type, matching the
+                // Before we begin drawers (same shared content builders).
                 html += `<div class="accordion-group">
                     <div class="accordion-section">
                         <button class="accordion-button" onclick="toggleAccordion(event, '${question.id}-accept')">
-                            <span>Documents we accept</span>
+                            <span>Proof of your trading address</span>
                             <svg class="accordion-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6 9L12 15L18 9" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -5052,6 +5102,17 @@
                             ${buildAcceptedDocsHtml('accordion')}
                         </div>
                     </div>
+                    ${uploadRegulated ? `<div class="accordion-section">
+                        <button class="accordion-button" onclick="toggleAccordion(event, '${question.id}-regulated')">
+                            <span>Proof of your regulator membership</span>
+                            <svg class="accordion-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 9L12 15L18 9" stroke="#272727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="accordion-content" id="${question.id}-regulated">
+                            ${buildAcceptedProofHtml('accordion')}
+                        </div>
+                    </div>` : ''}
                     <div class="accordion-section">
                         <button class="accordion-button" onclick="toggleAccordion(event, '${question.id}-no-doc')">
                             <span>Don't have a document we need?</span>
@@ -5060,14 +5121,14 @@
                             </svg>
                         </button>
                         <div class="accordion-content" id="${question.id}-no-doc">
-                            <p>You'll need to make an appointment to talk to us in person to prove your business address. Please call us on 0333 202 7431 to make an appointment.</p>
+                            <p>You'll need to make an appointment to talk to us in person. Please call us on 0333 202 7431 to make an appointment.</p>
                             <p>We're here Monday to Friday, 8:30am to 8pm, except bank holidays.</p>
                         </div>
                     </div>
                 </div>`;
 
-                // Requirements heading
-                html += `<p class="requirements-heading">Please make sure your document is:</p>`;
+                // Requirements heading — singular/plural follows how many proofs are required
+                html += `<p class="requirements-heading">Please make sure your ${uploadRegulated ? 'documents are' : 'document is'}:</p>`;
 
                 // Requirements list
                 html += `<div class="requirements-list">
@@ -5087,7 +5148,7 @@
 
                 // Upload area
                 html += `<div class="upload-block">
-                    <p class="upload-area-title">Upload your document</p>
+                    <p class="upload-area-title">Upload your document${uploadRegulated ? 's' : ''}</p>
                     <div class="upload-area" onclick="document.getElementById('${question.id}-file-input').click()">
                     <div class="upload-icon-wrapper">
                         <svg width="72" height="67.5" viewBox="0 0 72 67.5" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -5118,7 +5179,7 @@
                 html += `<div class="confirmation-block">
                     <div class="confirmation-checkbox">
                         <input type="checkbox" id="${question.id}-confirm">
-                        <p class="confirmation-text">This document shows my business address and meets upload requirements.</p>
+                        <p class="confirmation-text">My document${uploadRegulated ? 's show' : ' shows'} the required information and ${uploadRegulated ? 'meet' : 'meets'} upload requirements.</p>
                     </div>
                 </div>`;
 
@@ -6741,7 +6802,12 @@
                 const confirm = document.getElementById(`${question.id}-confirm`);
                 if (confirm && !confirm.checked) {
                     const container = confirm.closest('.confirmation-checkbox') || confirm;
-                    showValidationError(container, `error-${question.id}-confirm`, question.confirmValidationMessage || 'Error: please confirm your document meets the requirements', true);
+                    // Pluralise when a regulated profession must upload both proofs.
+                    let confirmMsg = question.confirmValidationMessage || 'Error: please confirm your document meets the requirements';
+                    if ((professionRegulators[formData['protoRegulatedSector']] || []).length > 0) {
+                        confirmMsg = confirmMsg.replace('your document meets', 'your documents meet');
+                    }
+                    showValidationError(container, `error-${question.id}-confirm`, confirmMsg, true);
                     confirm.focus();
                     return false;
                 }
@@ -7081,7 +7147,7 @@
             const hdrAction = document.getElementById('drawerHeaderAction');
             if (hdrAction) hdrAction.style.display = 'none';
             const hdr = document.querySelector('#drawerOverlay .drawer-header');
-            if (hdr) hdr.classList.remove('header-has-action');
+            if (hdr) hdr.classList.remove('header-has-action', 'header-one-line-title');
             currentDrawerBodyHtml = bodyHtml; /* PROTOTYPE-ONLY: COPY CHANGE TOOL */
             const drawerContent = document.getElementById('drawerContent');
             drawerContent.innerHTML = bodyHtml;
@@ -7105,7 +7171,12 @@
         // Open a prep-card help-drawer by key (see prepDrawers).
         function openPrepDrawer(key) {
             const d = prepDrawers[key];
-            if (d) openHelpDrawer(d.title, typeof d.build === 'function' ? d.build() : d.html);
+            if (!d) return;
+            openHelpDrawer(d.title, typeof d.build === 'function' ? d.build() : d.html);
+            if (d.oneLineTitle) {
+                const hdr = document.querySelector('#drawerOverlay .drawer-header');
+                if (hdr) hdr.classList.add('header-one-line-title');
+            }
         }
 
         function openDrawer(questionId) {
