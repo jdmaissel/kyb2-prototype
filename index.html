@@ -3463,7 +3463,6 @@
                             'Allied health professionals',
                             'Ambulance services',
                             'Architects',
-                            'Armed security',
                             'Barristers',
                             'Charities',
                             'Chartered IT professionals',
@@ -3479,7 +3478,7 @@
                             'Financial / investment services',
                             'Gambling businesses',
                             'Gas installation engineers',
-                            'High value dealers',
+                            'High value and art dealers',
                             'Hospices',
                             'Hospitals',
                             'Mutual societies',
@@ -3487,34 +3486,38 @@
                             'Nursing homes',
                             'Opticians',
                             'Pharmacists',
+                            'Political parties',
+                            'Pre-paid funeral plans',
                             'Residential care (elderly)',
                             'Restaurants / food businesses',
                             'Schools',
+                            'Security, defence & cash-in-transit',
                             'Social workers',
                             'Solicitors / law firms',
                             'Specialist care homes',
                             'Travel agents / tour operators',
                             'Universities',
-                            'Vets'
+                            'Vets',
+                            'Waste carrier'
                         ],
                         helpText: {
                             title: 'What does this affect?',
                             linkText: 'What does this affect?',
-                            outro: `<p style="margin:0 0 16px;"><span class="drawer-label">Prototype:</span> selecting a profession shows its BIC codes here on the settings screen.</p>
-                                <p style="margin:0 0 8px;"><span class="drawer-label">Real system:</span></p>
+                            outro: `<p style="margin:0 0 16px;"><span class="drawer-label">Prototype:</span> selecting a profession shows its BIC codes on the settings screen.</p>
+                                <p style="margin:0 0 8px;"><span class="drawer-label">Real system</span> — the customer's BIC code drives the regulator journey:</p>
                                 <ol class="drawer-steps">
-                                    <li>The customer selects their BIC code early in their enquiry.</li>
-                                    <li>If their BIC code is regulated, <button type="button" class="drawer-inline-link" onclick="goToScreen(1)">Before we begin</button> lists their regulator membership numbers and proof of regulator membership as things to have ready, with a drawer listing accepted proofs.</li>
-                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(5)">Industry regulation</button> screen, the BIC code sets whether the "Who are you regulated by?" question appears, and which regulators are listed.</li>
-                                    <li>They select their regulator(s) and enter each registration number.</li>
-                                    <li>On <button type="button" class="drawer-inline-link" onclick="goToScreen(6)">Upload documents</button> screen, the BIC code determines whether proof of regulator membership is requested.</li>
+                                    <li>They pick it early in the enquiry.</li>
+                                    <li>If it's regulated, <button type="button" class="drawer-inline-link" onclick="goToScreen(1)">Before we begin</button> tells them to get their membership numbers and proofs ready.</li>
+                                    <li><button type="button" class="drawer-inline-link" onclick="goToScreen(5)">Industry regulation</button> shows the "Who are you regulated by?" question and its regulators.</li>
+                                    <li>They select their regulator/s - or - "None of the above", and enter each membership number.</li>
+                                    <li><button type="button" class="drawer-inline-link" onclick="goToScreen(6)">Upload documents</button> requests proof of membership, unless they chose "None of the above".</li>
                                 </ol>`
                         }
                     },
                     {
                         id: 'regulatorRegion',
                         type: 'select',
-                        label: 'Region (accountants, care professions, charities and law firms)',
+                        label: 'Region (accountants, care professions, charities, law firms and waste carriers)',
                         placeholder: 'Select region',
                         // Prototype-only field. In the real system the region is derived from the
                         // business address. Shown here only when the selected profession has a
@@ -3554,6 +3557,14 @@
                                     <tr><td>England &amp; Wales</td><td>SRA &mdash; Solicitors Authority<br>Law Society (E&amp;W)</td></tr>
                                     <tr><td>Scotland</td><td>Law Society (Scot)</td></tr>
                                     <tr><td>Northern Ireland</td><td>Law Society (NI)</td></tr>
+                                </table>
+                                <p class="drawer-table-title" style="margin-top:24px;">Waste carriers</p>
+                                <table class="drawer-table drawer-table--labeled">
+                                    <tr><th>Region</th><th>Regulating body</th></tr>
+                                    <tr><td>England</td><td>Environment Agency (Eng)</td></tr>
+                                    <tr><td>Wales</td><td>Natural Resources Wales</td></tr>
+                                    <tr><td>Scotland</td><td>SEPA — Environment Agency (Scot)</td></tr>
+                                    <tr><td>Northern Ireland</td><td>NIEA — Environment Agency (NI)</td></tr>
                                 </table>`
                         }
                     },
@@ -3601,7 +3612,7 @@
                         helpText: {
                             title: 'What does this affect?',
                             linkText: 'What does this affect?',
-                            intro: 'Field validation checks each answer is complete and in some cases valid (e.g. website address) before you continue to the next screen.<br><br><span class="drawer-label">Yes:</span> invalid or missing answers block Continue and show an error message.<br><span class="drawer-label">No:</span> you can move between screens freely, with no checks.<br><br>The shortcut buttons can still be used to jump between screens, even when field validation is on.'
+                            intro: '<span class="drawer-label">Yes:</span> missing or invalid answers block Continue and show an error.<br><span class="drawer-label">No:</span> move between screens freely, with no checks.<br><br>Shortcut buttons still jump between screens either way.'
                         }
                     }
                 ]
@@ -4369,7 +4380,11 @@
                 + `<p class="${sub}" style="margin:16px 0 0;">Make sure your business name and membership number are clearly visible.</p>`;
         }
 
-        // Regulator / verification scheme mapping by profession (source: BIC_Regulator_Mapping_v13.xlsx, column C)
+        // Opt-out option for the "Who are you regulated by?" multi-select. Pinned last and
+        // mutually exclusive with the regulator options (see applyDynamicRegulators / handleMultiSelectChange).
+        const NONE_OF_THE_ABOVE = 'None of the above';
+
+        // Regulator / verification scheme mapping by profession (source: BIC_Regulator_Mapping_v14.xlsx, column C)
         const professionRegulators = {
             "Farming": [{"name": "Farm Subsidies — Defra", "field": "Single Business Identifier (SBI)", "hint": "9 digits, e.g. 123456789"}],
             "Alcohol wholesalers": [{"name": "AWRS — Alcohol Wholesalers", "field": "AWRS Reference (URN)", "hint": "4 letters + 11 digits, e.g. XXAW00000123456"}],
@@ -4379,7 +4394,7 @@
             "Pharmacists": [{"name": "General Pharmaceutical Council", "field": "GPhC Registration Number", "hint": "7 digits, e.g. 1234567"}],
             "Restaurants / food businesses": [{"name": "Food Standards Agency", "field": "Food Hygiene Rating", "hint": "Rating 1–5, e.g. 4"}],
             "Opticians": [{"name": "General Optical Council", "field": "GOC Registration Number", "hint": "2-letter code + hyphen + digits, e.g. CO-1234"}],
-            "High value dealers": [{"name": "HMRC Supervised Business Register", "field": "HMRC AML Registration Number", "hint": "4 letters + 11 digits, e.g. XXML00000140310"}],
+            "High value and art dealers": [{"name": "HMRC Supervised Business Register", "field": "HMRC AML Registration Number", "hint": "4 letters + 11 digits, e.g. XXML00000140310"}],
             "Schools": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
             "Travel agents / tour operators": [{"name": "ABTA", "field": "ABTA Membership Number", "hint": "1 letter + 4 digits, e.g. Y1234"}, {"name": "ATOL (Civil Aviation Authority)", "field": "ATOL Licence Number", "hint": "1 letter + 4–5 digits, e.g. T12345"}],
             "Financial / investment services": [{"name": "FCA — Financial Conduct", "field": "FCA Firm Reference Number (FRN)", "hint": "6 or 7 digits, e.g. 1234567"}],
@@ -4388,12 +4403,12 @@
             "Charities": [{"name": "Charity Commission (E&W)", "field": "Registered Charity Number", "hint": "6 or 7 digits, e.g. 1234567"}, {"name": "Charity Commission (NI)", "field": "Registered Charity Number", "hint": "3 letters + 5–6 digits, e.g. NIC101234"}, {"name": "OSCR (Scottish Charity Register)", "field": "Scottish Charity Number", "hint": "2 letters + 6 digits, e.g. SC123456"}],
             "Chartered IT professionals": [{"name": "Chartered Institute for IT (BCS)", "field": "BCS Membership Number", "hint": ""}],
             "Solicitors / law firms": [{"name": "Faculty Office (Notaries)", "field": "Faculty Office Number", "hint": ""}, {"name": "Law Society (E&W)", "field": "Law Society Membership Number", "hint": "6 digits, e.g. 123456"}, {"name": "Law Society (NI)", "field": "Law Society (NI) Membership No.", "hint": ""}, {"name": "Law Society (Scot)", "field": "Law Society (Scot) Member No.", "hint": ""}, {"name": "SRA — Solicitors Authority", "field": "SRA Registration Number", "hint": "6 digits, e.g. 123456"}],
-            "Accountants": [{"name": "AAT — Accounting Technicians", "field": "AAT Membership Number", "hint": ""}, {"name": "ACCA — Certified Accountants", "field": "ACCA Membership Number", "hint": ""}, {"name": "ATT — Tax Technicians", "field": "ATT Membership Number", "hint": ""}, {"name": "CIMA — Management Accountants", "field": "CIMA Membership Number", "hint": ""}, {"name": "CIOT — Taxation", "field": "CIOT Membership Number", "hint": ""}, {"name": "CIPFA — Public Finance", "field": "CIPFA Membership Number", "hint": ""}, {"name": "ICAEW — Accountants (E&W)", "field": "ICAEW Membership Number", "hint": ""}, {"name": "ICAS — Accountants (Scot)", "field": "ICAS Membership Number", "hint": ""}, {"name": "Chartered Accountants Ireland (CAI)", "field": "CAI Membership Number", "hint": ""}],
+            "Accountants": [{"name": "AAT — Accounting Technicians", "field": "AAT Membership Number", "hint": ""}, {"name": "ACCA — Certified Accountants", "field": "ACCA Membership Number", "hint": ""}, {"name": "ATT — Tax Technicians", "field": "ATT Membership Number", "hint": ""}, {"name": "CIMA — Management Accountants", "field": "CIMA Membership Number", "hint": ""}, {"name": "CIOT — Taxation", "field": "CIOT Membership Number", "hint": ""}, {"name": "CIPFA — Public Finance", "field": "CIPFA Membership Number", "hint": ""}, {"name": "FRC — Financial Reporting", "field": "Audit Registration Number", "hint": ""}, {"name": "IAB — Accountants & Bookkeepers", "field": "IAB Membership Number", "hint": ""}, {"name": "ICAEW — Accountants (E&W)", "field": "ICAEW Membership Number", "hint": ""}, {"name": "ICAS — Accountants (Scot)", "field": "ICAS Membership Number", "hint": ""}, {"name": "ICB — Certified Bookkeepers", "field": "ICB Membership Number", "hint": ""}, {"name": "IPA — Insolvency Practitioners", "field": "Insolvency Practitioner Authorisation No.", "hint": ""}, {"name": "Chartered Accountants Ireland (CAI)", "field": "CAI Membership Number", "hint": ""}],
             "Barristers": [{"name": "Bar Standards Board", "field": "BSB Registration Number", "hint": ""}],
             "Conveyancers": [{"name": "Council for Licensed Conveyancers", "field": "CLC Registration Number", "hint": ""}],
             "Architects": [{"name": "ARB — Architects Board", "field": "ARB Registration Number", "hint": ""}],
             "Chartered surveyors": [{"name": "RICS — Chartered Surveyors", "field": "RICS Registration Number", "hint": ""}],
-            "Armed security": [{"name": "Security Industry Authority (SIA)", "field": "SIA Licence Number", "hint": "16 digits, e.g. 1234567890123456"}],
+            "Security, defence & cash-in-transit": [{"name": "Security Industry Authority (SIA)", "field": "SIA Licence Number", "hint": "16 digits, e.g. 1234567890123456"}],
             "Nurseries": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
             "Colleges": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
             "Universities": [{"name": "Ofsted", "field": "Ofsted URN", "hint": "6 or 7 digits, or 2 letters + 6 digits, e.g. 1234567 or EY012345"}],
@@ -4408,10 +4423,13 @@
             "Residential care (elderly)": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
             "Social workers": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "HCPC — Care Professions", "field": "HCPC Registration Number", "hint": "2–3 letter code + up to 6 digits, e.g. PH123456"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
             "Specialist care homes": [{"name": "Care Inspectorate (Scot)", "field": "Care Inspectorate Number", "hint": ""}, {"name": "Care Inspectorate (Wales)", "field": "CIW Registration Number", "hint": "3 letters + 8 digits, e.g. CYM00002456"}, {"name": "Care Quality Commission (Eng)", "field": "CQC Provider ID", "hint": "\"1-\" + 9–10 digits, e.g. 1-1234567890"}, {"name": "RQIA — Quality Authority (NI)", "field": "RQIA Registration Number", "hint": ""}],
-            "Gambling businesses": [{"name": "Gambling Commission", "field": "Gambling Commission Number", "hint": "Digit groups separated by hyphens, e.g. 000-012345-N-987654-001"}]
+            "Gambling businesses": [{"name": "Gambling Commission", "field": "Gambling Commission Number", "hint": "Digit groups separated by hyphens, e.g. 000-012345-N-987654-001"}],
+            "Political parties": [{"name": "Electoral Commission", "field": "Electoral Commission Registration Number", "hint": ""}],
+            "Pre-paid funeral plans": [{"name": "FCA — Financial Conduct", "field": "FCA Firm Reference Number (FRN)", "hint": "6 or 7 digits, e.g. 1234567"}],
+            "Waste carrier": [{"name": "Environment Agency (Eng)", "field": "Waste Carrier Registration Number", "hint": "Starts with 'CBDU' or 'CBDL' + up to 6 digits, e.g. CBDU123456"}, {"name": "Natural Resources Wales", "field": "Waste Carrier Registration Number", "hint": "Starts with 'CBDU' or 'CBDL' + up to 6 digits, e.g. CBDU123456"}, {"name": "NIEA — Environment Agency (NI)", "field": "Waste Carrier Registration Number", "hint": "Starts with 'ROC', e.g. ROC UT 8649"}, {"name": "SEPA — Environment Agency (Scot)", "field": "Waste Carrier Registration Number", "hint": "Starts with 'WCR/', e.g. WCR/1234567"}]
         };
 
-        // BIC codes & descriptions per profession (source: BIC_Regulator_Mapping_v13.xlsx, columns A & B)
+        // BIC codes & descriptions per profession (source: BIC_Regulator_Mapping_v14.xlsx, columns A & B)
         const professionBicCodes = {
             "Farming": [{"code": "111", "desc": "Growing of Cereals & other Crops"}, {"code": "112", "desc": "Growing of Vegetables, Fruit, Horticulture & Nursery Products"}, {"code": "123", "desc": "Pig Farming"}, {"code": "124", "desc": "Poultry Farming"}, {"code": "125", "desc": "Other/misc Animal Farming"}, {"code": "126", "desc": "Lowland Cattle & Sheep"}, {"code": "127", "desc": "Hill & Upland Cattle & Sheep Farming"}, {"code": "128", "desc": "Dairy Farming"}, {"code": "130", "desc": "Mixed Farming"}, {"code": "140", "desc": "Agricultural Services (excl. veterinary activities)"}, {"code": "150", "desc": "Hunting, Trapping and Game propagation"}, {"code": "200", "desc": "Forestry, Logging and Related Services"}, {"code": "501", "desc": "Fishing & Related Service Activities"}, {"code": "502", "desc": "Fish Farming & Related Service Activities"}],
             "Alcohol wholesalers": [{"code": "1591", "desc": "Spirit Distilling & Compounding"}, {"code": "1593", "desc": "Mfg. Wines, Cider & Perry"}, {"code": "1596", "desc": "Brewing & Malting"}, {"code": "5130", "desc": "Food, Beverages & Tobacco Wholesalers"}, {"code": "5228", "desc": "Off Licenses & Wine Merchants"}],
@@ -4421,7 +4439,7 @@
             "Pharmacists": [{"code": "5148", "desc": "Other Pharmaceutical Activities"}, {"code": "5149", "desc": "Pharmaceutical [Licensing]"}, {"code": "5152", "desc": "Pharmaceutical Wholesale"}],
             "Restaurants / food businesses": [{"code": "5210", "desc": "Confectioners, Tobacconists & Newsagents"}, {"code": "5211", "desc": "Supermarkets, Grocers & Convenience Stores"}, {"code": "5220", "desc": "Retail Sale of Food (including Tobacco) in Specialist Stores"}, {"code": "5501", "desc": "B&B Accommodation"}, {"code": "5503", "desc": "International clientele hotel &/or part of a chain, with restaurant"}, {"code": "5504", "desc": "Summer holiday seaside hotels with Restaurants"}, {"code": "5505", "desc": "Other Hotels & Restaurants"}, {"code": "5530", "desc": "Licensed & Unlicensed Restaurants & Cafes"}, {"code": "5531", "desc": "Take-away Food Shops & Stalls"}, {"code": "5541", "desc": "Licensed Clubs with Entertainment"}, {"code": "5543", "desc": "Public Houses and Bars (excludes Nightclubs and Discotheques) - drink only"}, {"code": "5544", "desc": "Public Houses and Bars (excludes Nightclubs and Discotheques) - food and drink"}, {"code": "5550", "desc": "Canteens & Catering"}],
             "Opticians": [{"code": "5230", "desc": "Retail: Pharmaceutical & Medical Goods, Cosmetics & Toilet Articles"}],
-            "High value dealers": [{"code": "5240", "desc": "Retail Sale of Jewellery"}, {"code": "5250", "desc": "Secondhand & Antique Shops"}, {"code": "6310", "desc": "Cargo Handling, Storage & Warehousing"}, {"code": "9232", "desc": "Operation of Arts Facilities (Theatres, Concert Halls etc.)"}, {"code": "9239", "desc": "Non-performance Artists (incl. Authors, Painters, Art Restorers)"}, {"code": "9251", "desc": "Library, Archives, Museums & other Cultural Activities (for profit)"}],
+            "High value and art dealers": [{"code": "5240", "desc": "Retail Sale of Jewellery"}, {"code": "5250", "desc": "Secondhand & Antique Shops"}, {"code": "6310", "desc": "Cargo Handling, Storage & Warehousing"}, {"code": "9232", "desc": "Operation of Arts Facilities (Theatres, Concert Halls etc.)"}, {"code": "9239", "desc": "Non-performance Artists (incl. Authors, Painters, Art Restorers)"}, {"code": "9251", "desc": "Library, Archives, Museums & other Cultural Activities (for profit)"}],
             "Schools": [{"code": "5521", "desc": "Student Accommodation"}, {"code": "8011", "desc": "Primary Education - Independent"}, {"code": "8012", "desc": "Primary Education - State"}, {"code": "8013", "desc": "Secondary Education - State"}, {"code": "8020", "desc": "Secondary Education - Independent"}],
             "Travel agents / tour operators": [{"code": "6331", "desc": "Travel Agencies"}, {"code": "6332", "desc": "Tour Operators & Guides"}],
             "Financial / investment services": [{"code": "6501", "desc": "Non-Banking Payment Service Providers"}, {"code": "6502", "desc": "Pure Payment Initiation or Registered Account Information Service Provider"}, {"code": "6509", "desc": "Other Money Service Businesses"}, {"code": "6517", "desc": "Investment Banks (underwriting or originating issues of securities)"}, {"code": "6561", "desc": "Non Deposit Taking Finance Houses, Specialist Consumer Credit"}, {"code": "6562", "desc": "Credit Factoring"}, {"code": "6563", "desc": "Specialist Mortgage Finance Companies"}, {"code": "6571", "desc": "Investment Trusts excluding Money Market Mutual Funds"}, {"code": "6572", "desc": "Unit Trusts excluding Money Market Mutual Funds"}, {"code": "6573", "desc": "Closed-Ended Money Market Funds"}, {"code": "6574", "desc": "Open-Ended Money Market Funds"}, {"code": "6575", "desc": "Hedge Fund"}, {"code": "6577", "desc": "Open Ended Investment Company (OEIC) excluding Money Market Mutual Funds"}, {"code": "6578", "desc": "Commingled Fund"}, {"code": "6580", "desc": "Private Equity Fund"}, {"code": "6581", "desc": "Securities Dealers"}, {"code": "6582", "desc": "GEMMs Gilts Market Makers"}, {"code": "6583", "desc": "SEMBs Stock Exchange Money Brokers"}, {"code": "6584", "desc": "Inter-Dealer Brokers"}, {"code": "6585", "desc": "Futures, Options & Derivatives Dealers"}, {"code": "6586", "desc": "Capital Requirements Directive Equivalent Securities Dealers"}, {"code": "6592", "desc": "Venture/development Capital Companies"}, {"code": "6593", "desc": "Other Financial Intermediation"}, {"code": "6597", "desc": "Personal Investment Company"}, {"code": "6601", "desc": "Life Insurance"}, {"code": "6603", "desc": "Non-Life Insurance"}, {"code": "6604", "desc": "Company Pension Fund (Defined Benefits Schemes)"}, {"code": "6605", "desc": "Company Pension Fund (Defined Contribution Schemes)"}, {"code": "6606", "desc": "Pension Insurance Company"}, {"code": "6607", "desc": "Private Company Pension Investments - SIPP & SSAS"}, {"code": "6711", "desc": "Administration of Financial Markets"}, {"code": "6712", "desc": "Clearing Activities"}, {"code": "6713", "desc": "Other Auxiliary Activities"}, {"code": "6718", "desc": "Fund Managers"}, {"code": "6719", "desc": "Security Broking/Stock Broking"}, {"code": "6720", "desc": "Activities Auxiliary to Insurance & Pension Funding"}, {"code": "6721", "desc": "Hedge Fund Manager"}, {"code": "6723", "desc": "Non Fund Mandates managed by Asset Managers"}, {"code": "6724", "desc": "Private Equity Sponsor"}, {"code": "6726", "desc": "Broker Dealer"}, {"code": "6727", "desc": "Specialist Mortgage Company Funds"}, {"code": "6728", "desc": "Specialist Mortgage Company REITs"}, {"code": "9274", "desc": "Contracts for Difference (inc. Financial Spread Betting)"}],
@@ -4435,7 +4453,7 @@
             "Conveyancers": [{"code": "7418", "desc": "Licensed Conveyors"}],
             "Architects": [{"code": "7421", "desc": "Architects"}],
             "Chartered surveyors": [{"code": "7422", "desc": "Consulting Engineers"}, {"code": "7423", "desc": "Property Surveyors (other than Quantity Surveyors)"}, {"code": "7424", "desc": "Quantity Surveyors"}, {"code": "7425", "desc": "Other Architectural, Engineering & Technical Activities"}],
-            "Armed security": [{"code": "7460", "desc": "Investigation & Security Activities"}, {"code": "7522", "desc": "Defence Activities"}],
+            "Security, defence & cash-in-transit": [{"code": "7460", "desc": "Investigation & Security Activities"}, {"code": "7522", "desc": "Defence Activities"}],
             "Nurseries": [{"code": "8007", "desc": "Pre-primary education (incl. nursery schools)"}],
             "Colleges": [{"code": "8023", "desc": "Colleges of Further Education - Independent"}, {"code": "8024", "desc": "Colleges of Further Education - State"}, {"code": "8042", "desc": "Professional and Skills Training not elsewhere classified"}],
             "Universities": [{"code": "8031", "desc": "Higher Education - Independent"}, {"code": "8032", "desc": "Higher Education - State"}],
@@ -4450,7 +4468,10 @@
             "Residential care (elderly)": [{"code": "8527", "desc": "Residential Accommodation for the Elderly - Public"}, {"code": "8528", "desc": "Residential Accommodation for the Elderly - Private (for profit)"}, {"code": "8536", "desc": "Residential Accommodation for the Elderly - Private (Not for Profit)"}],
             "Social workers": [{"code": "8530", "desc": "Social Work"}, {"code": "8532", "desc": "Social Work Activities Without Accommodation"}],
             "Specialist care homes": [{"code": "8533", "desc": "Specialist Care Homes - Private (for profit)"}, {"code": "8534", "desc": "Specialist Care Homes - Private (Not for Profit)"}, {"code": "8535", "desc": "Specialist Care Homes - Public"}],
-            "Gambling businesses": [{"code": "9233", "desc": "Fair & Amusement Park Activities (inc. Leisure & Theme Parks)"}, {"code": "9269", "desc": "Betting Shops & Bookmakers"}, {"code": "9270", "desc": "Amusement Arcades"}, {"code": "9271", "desc": "Gambling & Betting"}, {"code": "9273", "desc": "Internet Gaming"}]
+            "Gambling businesses": [{"code": "9233", "desc": "Fair & Amusement Park Activities (inc. Leisure & Theme Parks)"}, {"code": "9269", "desc": "Betting Shops & Bookmakers"}, {"code": "9270", "desc": "Amusement Arcades"}, {"code": "9271", "desc": "Gambling & Betting"}, {"code": "9273", "desc": "Internet Gaming"}],
+            "Political parties": [{"code": "9150", "desc": "Political organisations"}],
+            "Pre-paid funeral plans": [{"code": "9303", "desc": "Funeral Services"}],
+            "Waste carrier": [{"code": "3710", "desc": "Metal Waste & Scrap Metal Recycling"}, {"code": "3720", "desc": "Non Metal Waste & Scrap Recycling"}, {"code": "9010", "desc": "Sewage"}, {"code": "9021", "desc": "Collection of hazardous waste"}, {"code": "9022", "desc": "Collection of non-hazardous waste"}, {"code": "9031", "desc": "Treatment and disposal of hazardous waste"}, {"code": "9032", "desc": "Disposal of non-hazardous waste in Landfill"}, {"code": "9033", "desc": "Disposal of non-hazardous waste in Combustors and Incinerators"}, {"code": "9039", "desc": "Non-hazardous waste Treatment and Disposal not elsewhere classified"}, {"code": "9050", "desc": "Remediation, decontamination and pollution cleanup Services"}, {"code": "9090", "desc": "Waste Management Services Not Elsewhere Classified"}]
         };
 
         // Jurisdiction-specific regulators. A regulator listed here is only shown when the
@@ -4474,7 +4495,12 @@
             // Chartered accountancy (UK-wide bodies omitted so they always show)
             "ICAEW — Accountants (E&W)": ["England", "Wales"],
             "ICAS — Accountants (Scot)": ["Scotland"],
-            "Chartered Accountants Ireland (CAI)": ["Northern Ireland"]
+            "Chartered Accountants Ireland (CAI)": ["Northern Ireland"],
+            // Waste carrier registration (regional environmental regulator, by trading address)
+            "Environment Agency (Eng)": ["England"],
+            "Natural Resources Wales": ["Wales"],
+            "SEPA — Environment Agency (Scot)": ["Scotland"],
+            "NIEA — Environment Agency (NI)": ["Northern Ireland"]
         };
 
         // Validation rules for regulator reference fields, derived from columns I & J.
@@ -4506,7 +4532,10 @@
             "HCPC — Care Professions": {"pattern": "^[A-Za-z]{2,3}\\d{1,6}$", "maxLength": 9},
             "NHS GP Search": {"pattern": "^[A-Za-z]\\d{5}$", "maxLength": 6},
             "RCVS — Veterinary Surgeons": {"pattern": "^\\d{6}$", "maxLength": 6},
-            "Gambling Commission": {"pattern": "^\\d{3}-\\d{6}-[A-Za-z]-\\d{6}-\\d{3}$", "maxLength": 23}
+            "Gambling Commission": {"pattern": "^\\d{3}-\\d{6}-[A-Za-z]-\\d{6}-\\d{3}$", "maxLength": 23},
+            "Environment Agency (Eng)": {"pattern": "^CBD[UL]\\d{1,6}$", "maxLength": 10},
+            "Natural Resources Wales": {"pattern": "^CBD[UL]\\d{1,6}$", "maxLength": 10},
+            "SEPA — Environment Agency (Scot)": {"pattern": "^WCR/(R/)?\\d+$", "maxLength": 20}
         };
 
         // Is the Region question relevant? Only when the selected profession has at least one
@@ -4542,6 +4571,15 @@
                     maxLength: fmt ? fmt.maxLength : null
                 };
             });
+            // Pinned opt-out, always last — but only when the profession actually has
+            // regulators. For non-regulated professions (e.g. 'Not applicable') the options
+            // stay empty so the whole question hides (see renderQuestion). Lets businesses
+            // whose regulation is optional (e.g. Chartered IT, Construction trade schemes)
+            // answer honestly. Mutually exclusive with the regulators — enforced in
+            // handleMultiSelectChange.
+            if (regulators.length) {
+                question.options.push(NONE_OF_THE_ABOVE);
+            }
             return question;
         }
 
@@ -4940,7 +4978,7 @@
                     const inputId = `${question.id}-checkbox-${opt}`;
                     html += `<div class="multi-select-option">
                         <input type="checkbox" id="${inputId}" name="${question.id}-checkbox" value="${opt}"
-                            onchange="handleMultiSelectChange('${question.id}', ${screenIndex})">
+                            onchange="handleMultiSelectChange('${question.id}', ${screenIndex}, this.value)">
                         <label for="${inputId}">${opt}</label>
                     </div>`;
                 });
@@ -5056,9 +5094,11 @@
             } else if (question.type === 'document-upload') {
                 html += `<div class="document-upload-container">`;
 
-                // Regulated professions also upload proof of regulator membership,
-                // mirroring the Before we begin prep-card condition.
-                const uploadRegulated = (professionRegulators[formData['protoRegulatedSector']] || []).length > 0;
+                // Proof of regulator membership is requested only when the customer actually
+                // named a regulator on the Industry regulation screen. Selecting "None of the
+                // above" (or leaving it unanswered) skips the proof — a regulated profession
+                // alone is not enough, since membership here is optional.
+                const uploadRegulated = (formData['industryRegulator'] || []).some(r => r !== NONE_OF_THE_ABOVE);
 
                 // Intro section — hint and the list of required proofs (the screen
                 // h1 carries the title, so no inline title here).
@@ -5648,8 +5688,21 @@
         }
 
         // Handle multi-select checkbox change
-        function handleMultiSelectChange(questionId, screenIndex) {
+        function handleMultiSelectChange(questionId, screenIndex, changedValue) {
             const checkboxes = document.querySelectorAll(`input[name="${questionId}-checkbox"]`);
+
+            // "None of the above" is mutually exclusive with every real option: checking it
+            // clears the others; checking any other option clears it.
+            const noneCb = Array.from(checkboxes).find(cb => cb.value === NONE_OF_THE_ABOVE);
+            if (noneCb) {
+                if (changedValue === NONE_OF_THE_ABOVE && noneCb.checked) {
+                    checkboxes.forEach(cb => { if (cb.value !== NONE_OF_THE_ABOVE) cb.checked = false; });
+                } else if (changedValue && changedValue !== NONE_OF_THE_ABOVE) {
+                    const cb = Array.from(checkboxes).find(c => c.value === changedValue);
+                    if (cb && cb.checked) noneCb.checked = false;
+                }
+            }
+
             const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
 
             // Update placeholder
