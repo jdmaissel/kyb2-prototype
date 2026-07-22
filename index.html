@@ -197,6 +197,39 @@
         .proto-nav button:hover { background: #e7f0fb; }
         .proto-nav button:active { background: #cfe2fb; }
 
+        /* Jump navigation (‹ › steppers + tappable label that opens the jump
+           drawer), replacing the 0-9 step shortcuts. Not part of the real system. */
+        .proto-nav--jump { align-items: center; }
+        .proto-nav .jump-arrow { width: 26px; font-size: 15px; font-weight: 700; padding-bottom: 2px; }
+        .proto-nav .jump-arrow:disabled { opacity: 0.35; cursor: default; background: #ffffff; }
+        .proto-nav .jump-label {
+            width: auto; min-width: 150px; max-width: 190px; padding: 0 10px;
+            font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        /* Desktop toolbar sizing (needs higher specificity than html.dv-desktop
+           .proto-nav button, which would otherwise squash the label to 28px). */
+        html.dv-desktop .proto-nav .jump-arrow { width: 30px; height: 28px; }
+        html.dv-desktop .proto-nav .jump-label { width: auto; min-width: 200px; max-width: 300px; height: 28px; font-size: 13px; }
+
+        /* Jump drawer list — Blueprint list rows: rounded, Barclays hover fill,
+           Information-light active pill, 28px number atom. No section grouping. */
+        .jump-list { display: flex; flex-direction: column; gap: 2px; }
+        .jump-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border: none; border-radius: 8px;
+            background: none; cursor: pointer; text-align: left;
+            font: 400 16px/24px var(--bx-font); color: #272727; width: 100%;
+            transition: background 0.15s ease;
+        }
+        .jump-item:hover { background: #E8E8E9; }
+        .jump-item-num {
+            flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; background: #eeeeee;
+            color: #515151; font: 500 14px/28px var(--bx-font); text-align: center;
+        }
+        .jump-item--active { background: #e7f0fb; }
+        .jump-item--active .jump-item-num { background: #006de3; color: #fff; }
+        .jump-item-now { margin-left: auto; font: 500 14px/18px var(--bx-font); color: #006de3; }
+
         /* ============================================================
            HEADER (Barclays eagle + SECURE pill)
            ============================================================ */
@@ -2292,30 +2325,30 @@
         }
 
         /* ============================================================
-           PREFILL ALERT (inline green/blue banner)
-           Repurposed to match Figma's green dismissible banner.
+           PREFILL ALERT (inline information banner)
+           Barclays Information Alert style, borderless: light-blue surface,
+           filled blue (i) icon, dark title text. Single line stays centred;
+           the longer first-occurrence note wraps within the same box.
            ============================================================ */
         .prefill-alert {
-            background: var(--bx-success-bg);
-            border: 1px solid var(--bx-success-border);
+            background: var(--bx-blue-100);
+            border: none;
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 12px 16px;
             display: flex;
-            gap: 10px;
-            align-items: flex-start;
+            gap: 12px;
+            align-items: center;
             margin-bottom: 16px;
         }
         .prefill-alert-icon {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             flex-shrink: 0;
-            margin-top: 1px;
-            color: var(--bx-success);
         }
         .prefill-alert-text {
-            font-size: 14px;
-            line-height: 20px;
-            color: var(--bx-ink-soft);
+            font-size: 16px;
+            line-height: 22px;
+            color: #272727;
             font-family: var(--bx-font);
             font-weight: 400;
             margin: 0;
@@ -3152,6 +3185,7 @@
         .copy-drawer-copy { background: #006de3; color: #fff; border: none; }
         .copy-drawer-copy:hover { background: #0a58c2; }
         .copy-drawer-reset { background: #fff; color: #b00020; border: 2px solid #b00020; }
+        .copy-drawer-reset.armed { background: #b00020; color: #fff; }
         /* Import button in the drawer header */
         .copy-drawer-head-actions { display: flex; align-items: center; gap: 12px; }
         .copy-drawer-import {
@@ -3224,18 +3258,11 @@
                     <div style="position: absolute; top: 50%; transform: translateY(-50%); left: 9.65px; width: 17.846px; height: 11.766px;">
                         <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;" aria-label="Text size"><path d="M8.84777 11.7663C9.27548 11.7663 9.49353 11.5818 9.66126 11.1121L10.6425 8.40328H15.2802L16.2531 11.1121C16.4208 11.5818 16.6388 11.7663 17.0665 11.7663C17.5362 11.7663 17.8465 11.4895 17.8465 11.0534C17.8465 10.9025 17.8129 10.7683 17.7542 10.5838L14.0893 0.805105C13.8881 0.259982 13.5274 0 12.9572 0C12.412 0 12.043 0.259982 11.8501 0.796718L8.18523 10.6005C8.11814 10.7851 8.09298 10.9192 8.09298 11.0618C8.09298 11.4979 8.37812 11.7663 8.84777 11.7663ZM11.045 7.11176L12.932 1.82826H12.9823L14.8609 7.11176H11.045ZM0.729626 11.7663C1.08186 11.7663 1.31668 11.5902 1.45925 11.1373L2.06308 9.39289H4.9732L5.57703 11.1373C5.72799 11.5985 5.96281 11.7663 6.31504 11.7663C6.74275 11.7663 7.04467 11.4895 7.04467 11.087C7.04467 10.936 7.01112 10.7851 6.93564 10.5754L4.58742 4.32744C4.40292 3.82425 4.05907 3.51395 3.50556 3.51395C2.97721 3.51395 2.64175 3.82425 2.45725 4.32744L0.100638 10.5754C0.0251595 10.7851 0 10.9444 0 11.087C0 11.4895 0.293528 11.7663 0.729626 11.7663ZM2.43209 8.24394L3.46363 5.14093H3.56427L4.60419 8.24394H2.43209Z" fill="black"/></svg>
                     </div>
-                    <!-- Prototype-only step shortcuts (replace figma.com domain) -->
-                    <div class="proto-nav" role="group" aria-label="Prototype step shortcuts">
-                        <button type="button" onclick="renderScreen(0)" title="Prototype settings">0</button>
-                        <button type="button" onclick="renderScreen(1)" title="Step 1">1</button>
-                        <button type="button" onclick="renderScreen(2)" title="Step 2">2</button>
-                        <button type="button" onclick="renderScreen(3)" title="Step 3">3</button>
-                        <button type="button" onclick="renderScreen(4)" title="Step 4">4</button>
-                        <button type="button" onclick="renderScreen(5)" title="Step 5">5</button>
-                        <button type="button" onclick="renderScreen(6)" title="Step 6">6</button>
-                        <button type="button" onclick="renderScreen(7)" title="Step 7">7</button>
-                        <button type="button" onclick="renderScreen(8)" title="Step 8">8</button>
-                        <button type="button" onclick="renderScreen(9)" title="Step 9">9</button>
+                    <!-- Prototype-only screen navigation: ‹ › steppers + tappable label that opens the jump drawer -->
+                    <div class="proto-nav proto-nav--jump" role="group" aria-label="Prototype screen navigation">
+                        <button type="button" class="jump-arrow" id="jumpPrev" onclick="stepScreen(-1)" aria-label="Previous screen">&#8249;</button>
+                        <button type="button" class="jump-label" id="jumpLabel" onclick="openJumpDrawer()" title="Jump to a screen">Prototype settings</button>
+                        <button type="button" class="jump-arrow" id="jumpNext" onclick="stepScreen(1)" aria-label="Next screen">&#8250;</button>
                     </div>
                     <!-- Reload icon (right) -->
                     <div style="position: absolute; top: 50%; transform: translateY(-50%); right: 8.36px; width: 14.081px; height: 17.159px;">
@@ -3588,9 +3615,21 @@
                                 <ul class="drawer-bullets">
                                     <li>Trading name</li>
                                     <li>Website</li>
+                                    <li>Business description</li>
+                                    <li>Number of employees</li>
+                                    <li>Secondary line of business</li>
                                     <li>How the business earns revenue</li>
                                     <li>Where the business operates from</li>
+                                    <li>Activities at that address</li>
                                     <li>Where to send communications</li>
+                                    <li>Operating outside the UK</li>
+                                    <li>Industry regulator</li>
+                                    <li>Financial services</li>
+                                    <li>Online gambling</li>
+                                    <li>Proof of trading address</li>
+                                    <li>Import / export</li>
+                                    <li>Paying UK tax</li>
+                                    <li>VAT registration</li>
                                 </ul>`
                         }
                     },
@@ -3612,7 +3651,7 @@
                         helpText: {
                             title: 'What does this affect?',
                             linkText: 'What does this affect?',
-                            intro: '<span class="drawer-label">Yes:</span> missing or invalid answers block Continue and show an error.<br><span class="drawer-label">No:</span> move between screens freely, with no checks.<br><br>Shortcut buttons still jump between screens either way.'
+                            intro: '<span class="drawer-label">Yes:</span> missing or invalid answers block Continue and show an error.<br><span class="drawer-label">No:</span> move between screens freely, with no checks.<br><br>You can always use shortcuts to jump to screens.'
                         }
                     }
                 ]
@@ -4310,6 +4349,30 @@
             }
         ];
 
+        // Fields that can be prefilled from public sources (mirrors the "Prefilled
+        // answers" list in the Prototype-settings drawer). Each gets an inline green
+        // "we prefilled this" note above the question. operationActivities is a
+        // follow-up under operationLocation but counts as its own prefilled field.
+        const PREFILLED_FIELD_IDS = ['tradingName', 'website', 'businessDescription', 'employees',
+            'secondaryLineOfBusiness', 'revenueSources', 'operationLocation', 'operationActivities',
+            'correspondenceAddress', 'internationalOps', 'industryRegulator', 'financialServices',
+            'gambling', 'documentUpload', 'importExport', 'ukTax', 'vatRegistered'];
+
+        // The first prefilled field in flow order shows the full explanation; every later
+        // one shows a short reminder instead. Scans top-level questions in screen order
+        // (respecting showIf, so e.g. a Sole trader who never sees "Trading name" gets the
+        // full note on the next visible field). The first prefilled field is always a
+        // top-level question, never a follow-up, so scanning top level is enough.
+        function firstPrefilledFieldId() {
+            for (const screen of screenDefinitions) {
+                for (const q of screen.questions) {
+                    if (q.showIf && !q.showIf()) continue;
+                    if (PREFILLED_FIELD_IDS.includes(q.id)) return q.id;
+                }
+            }
+            return null;
+        }
+
         // Single source of truth for the "Documents we accept" list. Used by
         // both the Step 1 prep-card help-drawer and the Step 6 upload accordion.
         const acceptedDocuments = [
@@ -4610,6 +4673,15 @@
             const screenDef = screenDefinitions[screenIndex];
             const screenContainer = document.getElementById('screenContainer');
 
+            // Prototype-only jump navigation: show the current screen in the header
+            // label and disable the stepper arrow at each end of the flow.
+            const jumpLabelEl = document.getElementById('jumpLabel');
+            if (jumpLabelEl) jumpLabelEl.textContent = screenDef.jumpLabel || screenDef.title;
+            const jumpPrevEl = document.getElementById('jumpPrev');
+            const jumpNextEl = document.getElementById('jumpNext');
+            if (jumpPrevEl) jumpPrevEl.disabled = screenIndex === 0;
+            if (jumpNextEl) jumpNextEl.disabled = screenIndex === screenDefinitions.length - 1;
+
             // Update header and tracker. hideScreenTitle removes the big h1 (e.g. the
             // upload screen, where the intro title carries the heading instead).
             document.getElementById('screenTitle').textContent = screenDef.title;
@@ -4805,6 +4877,20 @@
                 const urlEl = document.getElementById('websiteUrl');
                 if (urlEl) urlEl.value = formData['websiteUrl'];
             }
+            // Prefilled follow-up textarea under operationLocation. The activities
+            // question is rendered once per address option (Registered / Trading / Home),
+            // so three textareas share the id "operationActivities" — set every instance
+            // (only the selected option's block is visible) and update each counter.
+            if (formData['operationActivities']) {
+                const actVal = formData['operationActivities'];
+                document.querySelectorAll('[id="operationActivities"]').forEach(el => { el.value = actVal; });
+                document.querySelectorAll('[id="counter-operationActivities"]').forEach(c => { c.textContent = `${actVal.length}/250`; });
+            }
+            // Prefilled follow-up text field under vatRegistered = "Yes"
+            if (formData['vatNumber']) {
+                const vatEl = document.getElementById('vatNumber');
+                if (vatEl) vatEl.value = formData['vatNumber'];
+            }
             if (formData['protoPrefilling'] === 'Yes' && formData['revenueSources']?.length) {
                 const percentEl = document.getElementById('revenueSources-0-percent');
                 if (percentEl) {
@@ -4867,10 +4953,25 @@
                 groupStyle = ' style="display:none;"';
             }
             let prefix = '';
-            if (formData['protoPrefilling'] === 'Yes' && (question.id === 'tradingName' || question.id === 'website' || question.id === 'revenueSources' || question.id === 'operationLocation' || question.id === 'correspondenceAddress')) {
+            // Never show the note above a question that's hidden this render (e.g. a
+            // regulator question with no options, or a follow-up that isn't triggered).
+            const questionHidden = groupStyle.includes('display:none');
+            if (formData['protoPrefilling'] === 'Yes' && !questionHidden && PREFILLED_FIELD_IDS.includes(question.id)) {
+                let prefillMessage;
+                if (question.id === 'documentUpload') {
+                    // Proof of trading address is verified electronically rather than
+                    // answered, so it always gets its own tailored message.
+                    prefillMessage = "We verified your trading address from public and credit-reference sources, so you don't need to upload proof.";
+                } else if (question.id === firstPrefilledFieldId()) {
+                    // Full explanation on the first prefilled field in the flow…
+                    prefillMessage = "This answer is prefilled from public sources. Check and update if needed.";
+                } else {
+                    // …and a one-line reminder on every later prefilled field.
+                    prefillMessage = "Please check this prefilled answer";
+                }
                 prefix = `<div class="prefill-alert">
-                    <svg class="prefill-alert-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="10" cy="10" r="9.25" stroke="#515151" stroke-width="1.5"/><rect x="9.25" y="8.5" width="1.5" height="6.5" rx="0.75" fill="#515151"/><circle cx="10" cy="6" r="1" fill="#515151"/></svg>
-                    <p class="prefill-alert-text">We prefilled this answer based on public sources. If this isn't right, please update it.</p>
+                    <svg class="prefill-alert-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#006de3"/><circle cx="12" cy="7.75" r="1.4" fill="#ffffff"/><rect x="10.75" y="10.5" width="2.5" height="7" rx="1.25" fill="#ffffff"/></svg>
+                    <p class="prefill-alert-text">${prefillMessage}</p>
                 </div>`;
             }
             let html = prefix + `<div class="question-group" id="q-${question.id}"${groupStyle}>`;
@@ -5378,21 +5479,50 @@
             // Prefilling side-effects
             if (questionId === 'protoPrefilling') {
                 if (formData['protoPrefilling'] === 'Yes') {
+                    // Example answers for a fictional retailer, "Super Deals", so every
+                    // prefillable field shows a realistic prefilled value beside its note.
                     formData['tradingName'] = 'Yes';
                     formData['tradingNameValue'] = 'Super Deals';
                     formData['website'] = 'Yes';
                     formData['websiteUrl'] = 'www.superdeals.com';
+                    formData['businessDescription'] = 'We sell discounted consumer electronics and homeware online and through our high-street stores, serving retail customers across the UK.';
+                    formData['employees'] = '10 to 24';
+                    formData['secondaryLineOfBusiness'] = 'No';
                     formData['revenueSources'] = ['Sale of goods (online, physical stores)'];
                     formData['operationLocation'] = 'Trading address';
+                    formData['operationActivities'] = 'This is our main shop and office, where we sell goods to customers and manage the day-to-day running of the business.';
                     formData['correspondenceAddress'] = 'Registered address';
+                    formData['internationalOps'] = 'No';
+                    // The industry regulator depends on the selected profession, so prefill
+                    // the first regulator that profession is associated with (if any).
+                    const regs = professionRegulators[formData['protoRegulatedSector']] || [];
+                    if (regs.length) formData['industryRegulator'] = [regs[0].name];
+                    formData['financialServices'] = 'No';
+                    formData['gambling'] = 'No';
+                    formData['importExport'] = 'No';
+                    formData['ukTax'] = 'Yes';
+                    formData['vatRegistered'] = 'Yes';
+                    formData['vatNumber'] = 'GB123456789';
                 } else {
                     delete formData['tradingName'];
                     delete formData['tradingNameValue'];
                     delete formData['website'];
                     delete formData['websiteUrl'];
+                    delete formData['businessDescription'];
+                    delete formData['employees'];
+                    delete formData['secondaryLineOfBusiness'];
                     delete formData['revenueSources'];
                     delete formData['operationLocation'];
+                    delete formData['operationActivities'];
                     delete formData['correspondenceAddress'];
+                    delete formData['internationalOps'];
+                    delete formData['industryRegulator'];
+                    delete formData['financialServices'];
+                    delete formData['gambling'];
+                    delete formData['importExport'];
+                    delete formData['ukTax'];
+                    delete formData['vatRegistered'];
+                    delete formData['vatNumber'];
                 }
             }
 
@@ -7281,6 +7411,27 @@
             document.getElementById('contentArea').scrollTop = 0;
         }
 
+        /* ===== PROTOTYPE-ONLY: screen jump navigation (‹ › steppers + drawer) ===== */
+        // Step one screen at a time via the arrows either side of the header label.
+        function stepScreen(delta) {
+            const t = currentScreen + delta;
+            if (t < 0 || t >= screenDefinitions.length) return;
+            renderScreen(t);
+            document.getElementById('contentArea').scrollTop = 0;
+        }
+
+        // Tapping the header label opens a drawer listing every screen (flat, no
+        // grouping); picking one jumps straight to it via goToScreen.
+        function openJumpDrawer() {
+            const rows = screenDefinitions.map((s, i) => `
+                <button type="button" class="jump-item${i === currentScreen ? ' jump-item--active' : ''}" onclick="goToScreen(${i})">
+                    <span class="jump-item-num">${i}</span><span>${s.jumpLabel || s.title}</span>
+                    ${i === currentScreen ? '<span class="jump-item-now">Current</span>' : ''}
+                </button>`).join('');
+            openHelpDrawer('Jump to screen', `<div class="jump-list">${rows}</div>`);
+        }
+        /* ===== END PROTOTYPE-ONLY: screen jump navigation ===== */
+
         /* ============================================================
            PROTOTYPE-ONLY: COPY CHANGE TOOL
            A reviewer aid for suggesting wording changes. NOT part of the
@@ -7506,6 +7657,7 @@
             const resetBtn = document.querySelector('.copy-drawer-reset');
             if (copyBtn) copyBtn.disabled = !hasChanges;
             if (resetBtn) resetBtn.disabled = !hasChanges;
+            disarmCopyReset();   // never reopen in the armed "Confirm reset?" state
             // Clear any previous import summary (showDrawerSummary re-shows it after a merge).
             const sum = document.getElementById('copyDrawerSummary');
             if (sum) { sum.style.display = 'none'; sum.textContent = ''; }
@@ -7523,6 +7675,7 @@
             const ov = document.getElementById('copyDrawerOverlay');
             ov.classList.remove('open', 'minimized');
             document.body.style.overflow = 'auto';
+            disarmCopyReset();
         }
         function setCopyDrawerMinLabel(minimized) {
             const btn = document.querySelector('#copyDrawerOverlay .copy-drawer-min');
@@ -7556,9 +7709,27 @@
             renderScreen(currentScreen);
             if (Object.keys(textOverrides).length) { openCopyDrawer(); } else { closeCopyDrawerForce(); }
         }
+        // Two-tap confirm: the native confirm() dialog is suppressed in the preview
+        // sandbox, so the first tap arms the button ("Confirm reset?") and the second
+        // performs the wipe. It disarms itself after 4s, or when the drawer opens/closes.
+        let copyResetArmed = false;
+        let copyResetTimer = null;
+        function disarmCopyReset() {
+            copyResetArmed = false;
+            if (copyResetTimer) { clearTimeout(copyResetTimer); copyResetTimer = null; }
+            const btn = document.querySelector('.copy-drawer-reset');
+            if (btn) { btn.textContent = 'Reset all'; btn.classList.remove('armed'); }
+        }
         function resetAllCopyChanges() {
             if (!Object.keys(textOverrides).length) return;
-            if (!confirm('Remove all copy changes? This cannot be undone.')) return;
+            if (!copyResetArmed) {
+                copyResetArmed = true;
+                const btn = document.querySelector('.copy-drawer-reset');
+                if (btn) { btn.textContent = 'Confirm reset?'; btn.classList.add('armed'); }
+                copyResetTimer = setTimeout(disarmCopyReset, 4000);
+                return;
+            }
+            disarmCopyReset();
             Object.keys(textOverrides).forEach(k => delete textOverrides[k]);
             changesExported = false;
             saveCopyOverrides();
